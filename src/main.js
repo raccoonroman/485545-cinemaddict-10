@@ -244,7 +244,7 @@ render(headerElement, createUserRankTemplate());
 render(mainElement, createMainNavigationTemplate());
 render(mainElement, createSortListTemplate());
 render(mainElement, createFilmsTemplate());
-render(mainElement, createFilmDetailsTemplate(), `afterend`); // отрисовал попап
+// render(mainElement, createFilmDetailsTemplate(), `afterend`); // отрисовал попап
 
 const filmsElement = mainElement.querySelector(`.films`);
 render(filmsElement, createFilmsListTemplate());
@@ -259,11 +259,11 @@ filmsListExtraTitles.forEach((title) => render(filmsElement, createFilmsListExtr
 const filmsListExtraContainerElements = document.querySelectorAll(`.films-list--extra .films-list__container`);
 
 filmsListExtraContainerElements.forEach((filmsListExtraContainerElement) => {
-  new Array(FILMS_IN_EXTRA_COUNT)
-    .fill(``)
-    .forEach(() => render(filmsListExtraContainerElement, createFilmCardTemplate()));
+  for (let i = 0; i < FILMS_IN_EXTRA_COUNT; i += 1) {
+    render(filmsListExtraContainerElement, createFilmCardTemplate());
+  }
 });
 
-new Array(FILM_CARD_COUNT)
-  .fill(``)
-  .forEach(() => render(filmsListContainerElement, createFilmCardTemplate()));
+for (let i = 0; i < FILM_CARD_COUNT; i += 1) {
+  render(filmsListContainerElement, createFilmCardTemplate());
+}
