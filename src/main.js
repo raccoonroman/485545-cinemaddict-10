@@ -244,7 +244,7 @@ render(headerElement, createUserRankTemplate());
 render(mainElement, createMainNavigationTemplate());
 render(mainElement, createSortListTemplate());
 render(mainElement, createFilmsTemplate());
-// render(mainElement, createFilmDetailsTemplate(), `afterend`); // отрисовал попап
+render(mainElement, createFilmDetailsTemplate(), `afterend`); // отрисовал попап
 
 const filmsElement = mainElement.querySelector(`.films`);
 render(filmsElement, createFilmsListTemplate());
