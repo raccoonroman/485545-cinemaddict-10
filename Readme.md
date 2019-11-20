@@ -1,7 +1,7 @@
 # Личный проект «Киноман» [![Build status][travis-image]][travis-url]
 
 * Студент: [Роман Кушнир](https://up.htmlacademy.ru/ecmascript/10/user/485545).
-* Наставник: `Неизвестно`.
+* Наставник: [Олег Запорожец](https://htmlacademy.ru/profile/id261007).
 
 ---
 
