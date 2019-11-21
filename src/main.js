@@ -1,8 +1,8 @@
 'use strict';
 
-const FILM_CARD_COUNT = 5;
+const filmCardCount = 5;
 const filmsListExtraTitles = [`Top rated`, `Most commented`];
-const FILMS_IN_EXTRA_COUNT = 2;
+const filmsInExtraCount = filmsListExtraTitles.length;
 
 const createUserRankTemplate = () =>
   `<section class="header__profile profile">
@@ -233,8 +233,10 @@ const createFilmDetailsTemplate = () =>
   </section>`;
 
 
-const render = (container, template, place = `beforeend`) => {
-  container.insertAdjacentHTML(place, template);
+const render = (container, template, place = `beforeend`, quantity = 1) => {
+  for (let i = 0; i < quantity; i++) {
+    container.insertAdjacentHTML(place, template);
+  }
 };
 
 const headerElement = document.querySelector(`.header`);
@@ -259,11 +261,7 @@ filmsListExtraTitles.forEach((title) => render(filmsElement, createFilmsListExtr
 const filmsListExtraContainerElements = document.querySelectorAll(`.films-list--extra .films-list__container`);
 
 filmsListExtraContainerElements.forEach((filmsListExtraContainerElement) => {
-  for (let i = 0; i < FILMS_IN_EXTRA_COUNT; i += 1) {
-    render(filmsListExtraContainerElement, createFilmCardTemplate());
-  }
+  render(filmsListExtraContainerElement, createFilmCardTemplate(), `beforeend`, filmsInExtraCount);
 });
 
-for (let i = 0; i < FILM_CARD_COUNT; i += 1) {
-  render(filmsListContainerElement, createFilmCardTemplate());
-}
+render(filmsListContainerElement, createFilmCardTemplate(), `beforeend`, filmCardCount);
