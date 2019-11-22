@@ -241,7 +241,7 @@ const multipleRender = (container, template, place = `beforeend`, quantity = 1) 
   for (let i = 0; i < quantity; i++) {
     render(container, template, place);
   }
-}
+};
 
 const headerElement = document.querySelector(`.header`);
 const mainElement = document.querySelector(`.main`);
