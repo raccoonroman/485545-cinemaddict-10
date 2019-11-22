@@ -233,11 +233,15 @@ const createFilmDetailsTemplate = () =>
   </section>`;
 
 
-const render = (container, template, place = `beforeend`, quantity = 1) => {
-  for (let i = 0; i < quantity; i++) {
-    container.insertAdjacentHTML(place, template);
-  }
+const render = (container, template, place = `beforeend`) => {
+  container.insertAdjacentHTML(place, template);
 };
+
+const multipleRender = (container, template, place = `beforeend`, quantity = 1) => {
+  for (let i = 0; i < quantity; i++) {
+    render(container, template, place);
+  }
+}
 
 const headerElement = document.querySelector(`.header`);
 const mainElement = document.querySelector(`.main`);
@@ -246,7 +250,7 @@ render(headerElement, createUserRankTemplate());
 render(mainElement, createMainNavigationTemplate());
 render(mainElement, createSortListTemplate());
 render(mainElement, createFilmsTemplate());
-render(mainElement, createFilmDetailsTemplate(), `afterend`); // отрисовал попап
+render(mainElement, createFilmDetailsTemplate(), `afterend`);
 
 const filmsElement = mainElement.querySelector(`.films`);
 render(filmsElement, createFilmsListTemplate());
@@ -256,12 +260,12 @@ const filmsListContainerElement = filmsElement.querySelector(`.films-list__conta
 
 render(filmsListElement, createLoadMoreButtonTemplate());
 
-filmsListExtraTitles.forEach((title) => render(filmsElement, createFilmsListExtraTemplate(title))); // отрисовал 2 блока с названиями - Top rated и Most commented
+filmsListExtraTitles.forEach((title) => render(filmsElement, createFilmsListExtraTemplate(title)));
 
 const filmsListExtraContainerElements = document.querySelectorAll(`.films-list--extra .films-list__container`);
 
 filmsListExtraContainerElements.forEach((filmsListExtraContainerElement) => {
-  render(filmsListExtraContainerElement, createFilmCardTemplate(), `beforeend`, filmsInExtraCount);
+  multipleRender(filmsListExtraContainerElement, createFilmCardTemplate(), `beforeend`, filmsInExtraCount);
 });
 
-render(filmsListContainerElement, createFilmCardTemplate(), `beforeend`, filmCardCount);
+multipleRender(filmsListContainerElement, createFilmCardTemplate(), `beforeend`, filmCardCount);
