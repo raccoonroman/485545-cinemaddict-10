@@ -1,5 +1,5 @@
 import {text} from './../const';
-import {getRandomIntInclusive, getRandomArrayItem} from './../utils';
+import {getRandomArbitrary, getRandomIntInclusive, getRandomArrayItem} from './../utils';
 
 const filmTitles = [
   `The Blind Side`,
@@ -32,12 +32,11 @@ const genres = [
   `Horror`,
   `Musical`,
   `Romance`,
-  `Science Fiction`,
+  `Sci-Fi`,
   `Thriller`,
   `Western`,
 ];
 
-// const getRundomRate = () => getRandomArbitrary(0, 10).toFixed(1);
 // const getRundomCommentCount = () => getRandomIntInclusive(0, 100);
 // const getPosterFileName = (filmTitle) => filmTitle
 //   .split(` `)
@@ -60,10 +59,12 @@ const generateDescription = () => {
 
 const generateFilmCard = () => ({
   title: getRandomArrayItem(filmTitles),
+  rate: getRandomArbitrary(0, 10).toFixed(1),
   year: getRandomIntInclusive(1940, 2020),
   genre: getRandomArrayItem(genres),
-  duration: getRandomIntInclusive(60, 180),
-  description: generateDescription()
+  duration: getRandomIntInclusive(10, 180),
+  description: generateDescription(),
+  commentsCount: getRandomIntInclusive(0, 100)
 });
 
 const generateFilmCards = (count) => {
