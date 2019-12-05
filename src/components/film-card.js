@@ -4,7 +4,7 @@ import {formatDuration, getFileName, createElement} from './../utils';
 const setControlClass = (control) => control ? `film-card__controls-item--active` : ``;
 
 
-const createFilmCardTemplate = (filmCard) => {
+const createFilmCardTemplate = (film) => {
   const {
     title,
     rate,
@@ -16,7 +16,7 @@ const createFilmCardTemplate = (filmCard) => {
     isInWatchlist,
     isWatched,
     isFavorite,
-  } = filmCard;
+  } = film;
 
   const formattedDuration = formatDuration(duration);
   const fileName = getFileName(title);
@@ -47,13 +47,13 @@ const createFilmCardTemplate = (filmCard) => {
 };
 
 export default class FilmCard {
-  constructor(filmCard) {
-    this._filmCard = filmCard;
+  constructor(film) {
+    this._film = film;
     this._element = null;
   }
 
   getTemplate() {
-    return createFilmCardTemplate(this._filmCard);
+    return createFilmCardTemplate(this._film);
   }
 
   getElement() {

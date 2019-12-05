@@ -7,16 +7,17 @@ import FilmsListComponent from './components/films-list';
 import LoadMoreButtonComponent from './components/load-more-button';
 import FilmsListExtraComponent from './components/films-list-extra';
 import FilmCardComponent from './components/film-card';
-import {generateFilmCards} from './mock/film-card';
+import {generateFilms} from './mock/film';
 import {RenderPosition, render} from './utils';
 
 
-const FILM_CARD_COUNT = 15;
+const FILM_COUNT = 15;
 const SHOWING_FILM_CARD_COUNT_ON_START = 5;
 const SHOWING_FILM_CARD_COUNT_BY_BUTTON = 5;
 const SHOWING_FILM_CARD_COUNT_BY_EXTRA = 2;
 
-const filmCards = generateFilmCards(FILM_CARD_COUNT);
+
+const filmCards = generateFilms(FILM_COUNT);
 const filmsListExtraTitles = [`Top rated`, `Most commented`];
 
 

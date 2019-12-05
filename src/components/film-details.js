@@ -1,6 +1,6 @@
 import {formatDuration, getFileName, createElement} from './../utils';
 
-const createFilmDetailsTemplate = (filmCard) => {
+const createFilmDetailsTemplate = (film) => {
   const {
     title,
     rate,
@@ -9,7 +9,7 @@ const createFilmDetailsTemplate = (filmCard) => {
     genre,
     description,
     commentsCount,
-  } = filmCard;
+  } = film;
 
   const formattedDuration = formatDuration(duration);
   const fileName = getFileName(title);
@@ -184,13 +184,13 @@ const createFilmDetailsTemplate = (filmCard) => {
 };
 
 export default class FilmDetails {
-  constructor(filmCard) {
-    this._filmCard = filmCard;
+  constructor(film) {
+    this._film = film;
     this._element = null;
   }
 
   getTemplate() {
-    return createFilmDetailsTemplate(this._filmCard);
+    return createFilmDetailsTemplate(this._film);
   }
 
   getElement() {
