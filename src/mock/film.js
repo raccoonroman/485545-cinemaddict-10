@@ -61,7 +61,7 @@ const generateDescription = () => {
 };
 
 
-const generateFilmCard = () => ({
+const generateFilm = () => ({
   title: getRandomArrayItem(filmTitles),
   rate: +getRandomArbitrary(0, 10).toFixed(1),
   year: getRandomIntInclusive(1940, 2020),
@@ -75,14 +75,14 @@ const generateFilmCard = () => ({
 });
 
 
-const generateFilmCards = (count) => {
+const generateFilms = (count) => {
   const result = [];
 
   for (let i = 0; i < count; i++) {
-    result.push(generateFilmCard());
+    result.push(generateFilm());
   }
 
   return result;
 };
 
-export {generateFilmCard, generateFilmCards};
+export {generateFilm, generateFilms};
