@@ -1,4 +1,4 @@
-import {formatDuration, getFileName} from './../utils';
+import {formatDuration, getFileName, createElement} from './../utils';
 
 const createFilmDetailsTemplate = (filmCard) => {
   const {
@@ -183,4 +183,25 @@ const createFilmDetailsTemplate = (filmCard) => {
   </section>`;
 };
 
-export {createFilmDetailsTemplate};
+export default class FilmDetails {
+  constructor(filmCard) {
+    this._filmCard = filmCard;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmDetailsTemplate(this._filmCard);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

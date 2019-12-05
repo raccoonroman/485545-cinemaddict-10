@@ -1,4 +1,4 @@
-import {formatDuration, getFileName} from './../utils';
+import {formatDuration, getFileName, createElement} from './../utils';
 
 
 const setControlClass = (control) => control ? `film-card__controls-item--active` : ``;
@@ -46,4 +46,25 @@ const createFilmCardTemplate = (filmCard) => {
   </article>`;
 };
 
-export {createFilmCardTemplate};
+export default class FilmCard {
+  constructor(filmCard) {
+    this._filmCard = filmCard;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmCardTemplate(this._filmCard);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

@@ -1,13 +1,14 @@
-import {createUserRankTemplate} from './components/user-rank';
-import {createMainNavigationTemplate} from './components/main-navigation';
-import {createSortListTemplate} from './components/sort-list';
-import {createFilmsTemplate} from './components/films';
-import {createFilmDetailsTemplate} from './components/film-details';
-import {createFilmsListTemplate} from './components/films-list';
-import {createLoadMoreButtonTemplate} from './components/load-more-button';
-import {createFilmsListExtraTemplate} from './components/films-list-extra';
-import {createFilmCardTemplate} from './components/film-card';
+import UserRankComponent from './components/user-rank';
+import MainNavigationComponent from './components/main-navigation';
+import SortListComponent from './components/sort-list';
+import FilmsComponent from './components/films';
+import FilmDetailsComponent from './components/film-details';
+import FilmsListComponent from './components/films-list';
+import LoadMoreButtonComponent from './components/load-more-button';
+import FilmsListExtraComponent from './components/films-list-extra';
+import FilmCardComponent from './components/film-card';
 import {generateFilmCards} from './mock/film-card';
+import {RenderPosition, render} from './utils';
 
 
 const FILM_CARD_COUNT = 15;
@@ -19,14 +20,10 @@ const filmCards = generateFilmCards(FILM_CARD_COUNT);
 const filmsListExtraTitles = [`Top rated`, `Most commented`];
 
 
-const render = (container, template, place = `beforeend`) => {
-  container.insertAdjacentHTML(place, template);
-};
-
 const renderCardsAmount = (cards, sliceFrom, sliceTo, container) => {
   cards
     .slice(sliceFrom, sliceTo)
-    .forEach((card) => render(container, createFilmCardTemplate(card)));
+    .forEach((card) => render(container, new FilmCardComponent(card).getElement(), RenderPosition.BEFOREEND));
 };
 
 
@@ -40,15 +37,16 @@ const footerStatisticsElement = document.querySelector(`.footer__statistics p`);
 
 footerStatisticsElement.textContent = `${filmCards.length} movies inside`;
 
-render(headerElement, createUserRankTemplate(filmsWatchList.length));
-render(mainElement, createMainNavigationTemplate(filmsWatchList.length, filmsWatched.length, filmFavorite.length));
-render(mainElement, createSortListTemplate());
-render(mainElement, createFilmsTemplate());
-render(mainElement, createFilmDetailsTemplate(filmCards[0]), `afterend`);
+render(headerElement, new UserRankComponent(filmsWatchList.length).getElement(), RenderPosition.BEFOREEND);
+render(mainElement, new MainNavigationComponent(filmsWatchList.length, filmsWatched.length, filmFavorite.length).getElement(), RenderPosition.BEFOREEND);
+render(mainElement, new SortListComponent().getElement(), RenderPosition.BEFOREEND);
+render(mainElement, new FilmsComponent().getElement(), RenderPosition.BEFOREEND);
+
+render(mainElement, new FilmDetailsComponent(filmCards[0]).getElement(), RenderPosition.BEFOREEND);
 
 const filmsElement = mainElement.querySelector(`.films`);
 
-render(filmsElement, createFilmsListTemplate());
+render(filmsElement, new FilmsListComponent().getElement(), RenderPosition.BEFOREEND);
 
 const filmsListElement = filmsElement.querySelector(`.films-list`);
 const filmsListContainerElement = filmsElement.querySelector(`.films-list__container`);
@@ -57,7 +55,7 @@ let showingFilmCardsCount = SHOWING_FILM_CARD_COUNT_ON_START;
 
 renderCardsAmount(filmCards, 0, showingFilmCardsCount, filmsListContainerElement);
 
-render(filmsListElement, createLoadMoreButtonTemplate());
+render(filmsListElement, new LoadMoreButtonComponent().getElement(), RenderPosition.BEFOREEND);
 
 const loadMoreButton = filmsListElement.querySelector(`.films-list__show-more`);
 
@@ -78,7 +76,7 @@ const commentsSum = filmCards.reduce((acc, {commentsCount}) => commentsCount + a
 
 
 if (rateSum > 0) {
-  render(filmsElement, createFilmsListExtraTemplate(filmsListExtraTitles[0]));
+  render(filmsElement, new FilmsListExtraComponent(filmsListExtraTitles[0]).getElement(), RenderPosition.BEFOREEND);
 
   const sortedFilmCardsByRate = filmCards.slice().sort((a, b) => {
     return b.rate - a.rate;
@@ -91,7 +89,7 @@ if (rateSum > 0) {
 
 
 if (commentsSum > 0) {
-  render(filmsElement, createFilmsListExtraTemplate(filmsListExtraTitles[1]));
+  render(filmsElement, new FilmsListExtraComponent(filmsListExtraTitles[1]).getElement(), RenderPosition.BEFOREEND);
 
   const sortedFilmCardsByCommentCount = filmCards.slice().sort((a, b) => {
     return b.commentsCount - a.commentsCount;
