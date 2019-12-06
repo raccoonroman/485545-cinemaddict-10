@@ -26,14 +26,24 @@ const renderFilm = (container, film) => {
   const filmTCommentsElement = FilmCard.getElement().querySelector(`.film-card__comments`);
   const closeDetailsButton = FilmDetails.getElement().querySelector(`.film-details__close-btn`);
 
+  const onEscKeyDown = (evt) => {
+    const escKey = evt.key === `Escape` || evt.key === `Esc`;
+
+    if (escKey) {
+      closeFilmDetails(evt);
+    }
+  };
+
   const openFilmDetails = (evt) => {
     evt.preventDefault();
     render(mainElement, FilmDetails.getElement(), RenderPosition.BEFOREEND);
+    document.addEventListener(`keydown`, onEscKeyDown);
   };
 
   const closeFilmDetails = (evt) => {
     evt.preventDefault();
     FilmDetails.getElement().remove();
+    document.removeEventListener(`keydown`, onEscKeyDown);
   };
 
   filmPosterElement.addEventListener(`click`, openFilmDetails);
