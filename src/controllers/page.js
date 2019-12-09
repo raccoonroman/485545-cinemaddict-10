@@ -1,4 +1,5 @@
-import FilmsListExtraComponent from './../components/films-list-extra';
+import FilmsListTopRatedComponent from './../components/film-list-top-rated';
+import FilmsListMostCommentedComponent from './../components/film-list-most-commented';
 import FilmListContainerComponent from './../components/film-list-container';
 import LoadMoreButtonComponent from './../components/load-more-button';
 import FilmCardComponent from './../components/film-card';
@@ -49,8 +50,8 @@ export default class PageController {
     this._filmsComponent = filmsComponent;
     this._filmListContainerComponent = new FilmListContainerComponent();
     this._loadMoreButtonComponent = new LoadMoreButtonComponent();
-    this._filmsListTopRatedComponent = new FilmsListExtraComponent(`Top rated`);
-    this._filmsListMostCommentedComponent = new FilmsListExtraComponent(`Most commented`);
+    this._filmsListTopRatedComponent = new FilmsListTopRatedComponent();
+    this._filmsListMostCommentedComponent = new FilmsListMostCommentedComponent();
   }
 
   render(films) {
@@ -83,35 +84,25 @@ export default class PageController {
       });
 
 
-      const rateSum = films.reduce((acc, {rate}) => rate + acc, 0);
-      const commentsSum = films.reduce((acc, {commentsCount}) => commentsCount + acc, 0);
-
-
-      if (rateSum > 0) {
+      if (this._filmsListTopRatedComponent.hasRates(films)) {
         render(filmsElement, this._filmsListTopRatedComponent, RenderPosition.BEFOREEND);
 
-        const sortedFilmCardsByRate = films
-          .slice()
-          .sort((a, b) => b.rate - a.rate);
-
+        const sortedFilms = this._filmsListTopRatedComponent.getSortedFilmsByRate(films);
         const topRatedContainerElements = filmsElement.querySelector(`.films-list--extra:nth-child(2) .films-list__container`);
 
-        sortedFilmCardsByRate
+        sortedFilms
           .slice(0, SHOWING_FILM_CARD_COUNT_BY_EXTRA)
           .forEach((card) => renderFilm(topRatedContainerElements, filmsElement, card));
       }
 
 
-      if (commentsSum > 0) {
+      if (this._filmsListMostCommentedComponent.hasComments(films)) {
         render(filmsElement, this._filmsListMostCommentedComponent, RenderPosition.BEFOREEND);
 
-        const sortedFilmCardsByCommentCount = films
-          .slice()
-          .sort((a, b) => b.commentsCount - a.commentsCount);
-
+        const sortedFilms = this._filmsListMostCommentedComponent.getSortedFilmsByCommentCount(films);
         const mostCommentedContainerElements = filmsElement.querySelector(`.films-list--extra:last-child .films-list__container`);
 
-        sortedFilmCardsByCommentCount
+        sortedFilms
           .slice(0, SHOWING_FILM_CARD_COUNT_BY_EXTRA)
           .forEach((card) => renderFilm(mostCommentedContainerElements, filmsElement, card));
       }
