@@ -1,4 +1,5 @@
-import {createElement} from '../utils.js';
+import AbstractComponent from './abstract-component';
+
 
 const userRanks = [
   {
@@ -30,25 +31,14 @@ const createUserRankTemplate = (watchedMoviesCount) => {
   </section>`;
 };
 
-export default class UserRank {
+
+export default class UserRank extends AbstractComponent {
   constructor(watchedMoviesCount) {
+    super();
     this._watchedMoviesCount = watchedMoviesCount;
-    this._element = null;
   }
 
   getTemplate() {
     return createUserRankTemplate(this._watchedMoviesCount);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

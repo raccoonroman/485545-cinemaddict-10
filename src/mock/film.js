@@ -4,7 +4,7 @@ import {
   getRandomIntInclusive,
   getRandomArrayItem,
   getRandomBooleanValue,
-} from './../utils';
+} from './../utils/common';
 
 const filmTitles = [
   `The Blind Side`,
