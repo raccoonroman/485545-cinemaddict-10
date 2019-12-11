@@ -25,10 +25,11 @@ const footerStatisticsElement = document.querySelector(`.footer__statistics p`);
 footerStatisticsElement.textContent = `${films.length} movies inside`;
 
 const filmsComponent = new FilmsComponent();
+const sortComponent = new SortListComponent();
 
 render(headerElement, new UserRankComponent(filmsWatchList.length), RenderPosition.BEFOREEND);
 render(mainElement, new MainNavigationComponent(filmsWatchList.length, filmsWatched.length, filmFavorite.length), RenderPosition.BEFOREEND);
-render(mainElement, new SortListComponent(), RenderPosition.BEFOREEND);
+render(mainElement, sortComponent, RenderPosition.BEFOREEND);
 render(mainElement, filmsComponent, RenderPosition.BEFOREEND);
 
 
@@ -40,7 +41,7 @@ const filmsListElement = filmsElement.querySelector(`.films-list`);
 
 render(filmsListElement, new FilmListTitleComponent(films), RenderPosition.BEFOREEND);
 
-const pageController = new PageController(filmsComponent);
+const pageController = new PageController(filmsComponent, sortComponent);
 
 pageController.render(films);
 
