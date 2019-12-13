@@ -6,7 +6,7 @@ import {
   getRandomBooleanValue,
 } from './../utils/common';
 
-const filmTitles = [
+const FilmTitles = [
   `The Blind Side`,
   `Casablanca`,
   `Edge of Tomorrow`,
@@ -24,7 +24,7 @@ const filmTitles = [
   `The Shawshank Redemption`,
 ];
 
-const genres = [
+const Genres = [
   `Action`,
   `Animation`,
   `Cartoon`,
@@ -60,19 +60,37 @@ const generateDescription = () => {
   return result.join(` `);
 };
 
+const generateGenres = (genres) => genres
+  .filter(getRandomBooleanValue)
+  .slice(0, getRandomIntInclusive(1, 3));
 
-const generateFilm = () => ({
-  title: getRandomArrayItem(filmTitles),
-  rate: +getRandomArbitrary(0, 10).toFixed(1),
-  year: getRandomIntInclusive(1940, 2020),
-  genre: getRandomArrayItem(genres),
-  duration: getRandomIntInclusive(10, 180),
-  description: generateDescription(),
-  commentsCount: getRandomIntInclusive(0, 100),
-  isInWatchlist: getRandomBooleanValue(),
-  isWatched: getRandomBooleanValue(),
-  isFavorite: getRandomBooleanValue(),
-});
+const getRundomRating = () => +getRandomArbitrary(1, 9).toFixed(1);
+
+const getRandomDate = () => {
+  const targetDate = new Date();
+  const diffYear = getRandomIntInclusive(0, 100);
+  targetDate.setFullYear(targetDate.getFullYear() - diffYear);
+
+  return targetDate;
+};
+
+
+const generateFilm = () => {
+  const rating = getRandomBooleanValue() ? getRundomRating() : null;
+
+  return {
+    title: getRandomArrayItem(FilmTitles),
+    rating,
+    year: getRandomDate(),
+    genres: new Set(generateGenres(Genres)),
+    duration: getRandomIntInclusive(10, 180),
+    description: generateDescription(),
+    commentsCount: getRandomIntInclusive(0, 100),
+    isInWatchlist: getRandomBooleanValue(),
+    isWatched: getRandomBooleanValue(),
+    isFavorite: getRandomBooleanValue(),
+  };
+};
 
 
 const generateFilms = (count) => {
