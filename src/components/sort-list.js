@@ -7,9 +7,6 @@ export const SortType = {
   DEFAULT: `default`,
 };
 
-// const setActiveSortLink = (listElement, evt) => {
-//   console.log(evt.target);
-// };
 
 const createSortListTemplate = () =>
   `<ul class="sort">

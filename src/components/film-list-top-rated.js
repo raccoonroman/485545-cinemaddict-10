@@ -14,11 +14,11 @@ export default class FilmsListTopRated extends AbstractComponent {
   }
 
   hasRates(films) {
-    const ratesSum = films.reduce((acc, {rate}) => rate + acc, 0);
+    const ratesSum = films.reduce((acc, {rating}) => rating + acc, 0);
     return ratesSum > 0;
   }
 
   getSortedFilmsByRate(films) {
-    return films.slice().sort((a, b) => b.rate - a.rate);
+    return films.slice().sort((a, b) => b.rating - a.rating);
   }
 }

@@ -1,18 +1,26 @@
-import {formatDuration, getFileName} from './../utils/common';
+import {formatDuration, formatDate, getFileName} from './../utils/common';
 import AbstractComponent from './abstract-component';
+
+
+const createGenresMarkup = (genres) => genres
+  .map((genre) => `<span class="film-details__genre">${genre}</span>`)
+  .join(`\n`);
+
+const createGenresTitleText = (genres) => genres.length > 1 ? `Genres` : `Genre`;
+const createRatingText = (rating) => rating ? rating : `N/A`;
+
 
 const createFilmDetailsTemplate = (film) => {
   const {
     title,
-    rate,
-    year,
+    rating,
+    releaseDate,
     duration,
-    genre,
+    genres,
     description,
     commentsCount,
   } = film;
 
-  const formattedDuration = formatDuration(duration);
   const fileName = getFileName(title);
 
   return `<section class="film-details">
@@ -36,7 +44,7 @@ const createFilmDetailsTemplate = (film) => {
               </div>
 
               <div class="film-details__rating">
-                <p class="film-details__total-rating">${rate}</p>
+                <p class="film-details__total-rating">${createRatingText(rating)}</p>
               </div>
             </div>
 
@@ -55,22 +63,19 @@ const createFilmDetailsTemplate = (film) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">30 March ${year}</td>
+                <td class="film-details__cell">${formatDate(releaseDate)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${formattedDuration}</td>
+                <td class="film-details__cell">${formatDuration(duration)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
                 <td class="film-details__cell">USA</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">Genres</td>
-                <td class="film-details__cell">
-                  <span class="film-details__genre">${genre}</span>
-                  <span class="film-details__genre">Film-Noir</span>
-                  <span class="film-details__genre">Mystery</span></td>
+                <td class="film-details__term">${createGenresTitleText(genres)}</td>
+                <td class="film-details__cell">${createGenresMarkup(genres)}</td>
               </tr>
             </table>
 

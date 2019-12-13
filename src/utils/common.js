@@ -1,3 +1,6 @@
+import moment from 'moment';
+
+
 const getRandomArbitrary = (min, max) => Math.random() * (max - min) + min;
 
 const getRandomIntInclusive = (min, max) => {
@@ -15,6 +18,7 @@ const getRandomArrayItem = (array) => {
 
 const getRandomBooleanValue = () => Math.random() >= 0.5;
 
+
 const formatDuration = (duration) => {
   const hours = Math.floor(duration / 60);
   const minutes = duration % 60;
@@ -23,6 +27,9 @@ const formatDuration = (duration) => {
 
   return `${formatingHours} ${formatingMinutes}`;
 };
+
+const formatYear = (date) => moment(date).format(`YYYY`);
+const formatDate = (date) => moment(date).format(`DD MMMM YYYY`);
 
 
 const getFileName = (title) => title
@@ -37,5 +44,7 @@ export {
   getRandomArrayItem,
   getRandomBooleanValue,
   formatDuration,
-  getFileName
+  formatYear,
+  formatDate,
+  getFileName,
 };

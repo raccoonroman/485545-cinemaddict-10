@@ -81,8 +81,8 @@ const generateFilm = () => {
   return {
     title: getRandomArrayItem(FilmTitles),
     rating,
-    year: getRandomDate(),
-    genres: new Set(generateGenres(Genres)),
+    releaseDate: getRandomDate(),
+    genres: [...new Set(generateGenres(Genres))],
     duration: getRandomIntInclusive(10, 180),
     description: generateDescription(),
     commentsCount: getRandomIntInclusive(0, 100),
