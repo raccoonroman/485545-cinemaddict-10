@@ -1,5 +1,5 @@
 import {formatDuration, formatDate, getFileName} from './../utils/common';
-import AbstractComponent from './abstract-component';
+import AbstractSmartComponent from './abstract-smart-component';
 
 
 const createGenresMarkup = (genres) => genres
@@ -189,18 +189,36 @@ const createFilmDetailsTemplate = (film) => {
   </section>`;
 };
 
-export default class FilmDetails extends AbstractComponent {
+export default class FilmDetails extends AbstractSmartComponent {
   constructor(film) {
     super();
     this._film = film;
+
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
     return createFilmDetailsTemplate(this._film);
   }
 
+  recoveryListeners() {
+    this._subscribeOnEvents();
+  }
+
+  rerender() {
+    super.rerender();
+  }
+
+  reset() {
+    this.rerender();
+  }
+
   setCloseDetailsButtonClickHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);
+  }
+
+  _subscribeOnEvents() {
+
   }
 }
