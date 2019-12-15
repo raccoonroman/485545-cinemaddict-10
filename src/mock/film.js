@@ -102,7 +102,7 @@ const generateFilms = (count) => {
   for (let i = 0; i < count; i++) {
     result.push(generateFilm());
   }
-  console.log(result);
+
   return result;
 };
 

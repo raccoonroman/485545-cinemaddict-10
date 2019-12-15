@@ -10,10 +10,11 @@ const Mode = {
 
 
 export default class MovieController {
-  constructor(cardContainer, detailsContainer, onDataChange) {
+  constructor(cardContainer, detailsContainer, onDataChange, onViewChange) {
     this._cardContainer = cardContainer;
     this._detailsContainer = detailsContainer;
     this._onDataChange = onDataChange;
+    this._onViewChange = onViewChange;
 
     this._mode = Mode.DEFAULT;
 
@@ -75,15 +76,24 @@ export default class MovieController {
     }
   }
 
-  _renderDetails() {
-    render(this._detailsContainer, this._movieDetailsComponent, RenderPosition.BEFOREEND);
-    this._mode = Mode.DETAILS;
+  setDefaultView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._removeDetails();
+    }
   }
 
   _removeDetails() {
     this._movieDetailsComponent.reset();
+
     remove(this._movieDetailsComponent);
     this._mode = Mode.DEFAULT;
+  }
+
+  _renderDetails() {
+    this._onViewChange();
+
+    render(this._detailsContainer, this._movieDetailsComponent, RenderPosition.BEFOREEND);
+    this._mode = Mode.DETAILS;
   }
 
   _onEscKeyDown(evt) {
