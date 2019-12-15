@@ -4,12 +4,12 @@ import {formatDuration, formatYear, getFileName} from './../utils/common';
 
 const createRatingText = (rating) => rating ? rating : `N/A`;
 
-const createControlButtonMarkup = (name, isActive) =>
+const createControlItemMarkup = (name, buttonText, isActive) =>
   `<button
     class="film-card__controls-item button
     film-card__controls-item--${name}
     ${isActive ? `film-card__controls-item--active` : ``}
-  ">${name}</button>`;
+  ">${buttonText}</button>`;
 
 
 const createFilmCardTemplate = (film) => {
@@ -27,9 +27,9 @@ const createFilmCardTemplate = (film) => {
   } = film;
 
   const [mainGenre] = genres;
-  const watchlistButton = createControlButtonMarkup(`add-to-watchlist`, isInWatchlist);
-  const watchedButton = createControlButtonMarkup(`mark-as-watched`, isWatched);
-  const favoriteButton = createControlButtonMarkup(`favorite`, isFavorite);
+  const watchlistButton = createControlItemMarkup(`add-to-watchlist`, `Add to watchlist`, isInWatchlist);
+  const watchedButton = createControlItemMarkup(`mark-as-watched`, `Mark as watched`, isWatched);
+  const favoriteButton = createControlItemMarkup(`favorite`, `Mark as favorite`, isFavorite);
 
   return `<article class="film-card">
     <h3 class="film-card__title">${title}</h3>

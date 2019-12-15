@@ -10,9 +10,10 @@ const Mode = {
 
 
 export default class MovieController {
-  constructor(cardContainer, detailsContainer) {
+  constructor(cardContainer, detailsContainer, onDataChange) {
     this._cardContainer = cardContainer;
     this._detailsContainer = detailsContainer;
+    this._onDataChange = onDataChange;
 
     this._mode = Mode.DEFAULT;
 
@@ -45,6 +46,26 @@ export default class MovieController {
     this._movieCardComponent.setFilmTitleClickHandler(openMovieDetails);
     this._movieCardComponent.setFilmCommentsClickHandler(openMovieDetails);
     this._movieDetailsComponent.setCloseDetailsButtonClickHandler(closeMovieDetails);
+
+
+    this._movieCardComponent.setWatchlistButtonClickHandler(() => {
+      this._onDataChange(this, movie, Object.assign({}, movie, {
+        isInWatchlist: !movie.isInWatchlist,
+      }));
+    });
+
+    this._movieCardComponent.setWatchedButtonClickHandler(() => {
+      this._onDataChange(this, movie, Object.assign({}, movie, {
+        isWatched: !movie.isWatched,
+      }));
+    });
+
+    this._movieCardComponent.setFavoriteButtonClickHandler(() => {
+      this._onDataChange(this, movie, Object.assign({}, movie, {
+        isFavorite: !movie.isFavorite,
+      }));
+    });
+
 
     if (oldMovieCardComponent && oldMovieDetailsComponent) {
       replace(this._movieCardComponent, oldMovieCardComponent);

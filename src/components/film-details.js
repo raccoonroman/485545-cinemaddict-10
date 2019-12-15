@@ -6,6 +6,12 @@ const createGenresMarkup = (genres) => genres
   .map((genre) => `<span class="film-details__genre">${genre}</span>`)
   .join(`\n`);
 
+const createControlItemMarkup = (name, labelText, isActive) => {
+  return `<input type="checkbox" class="film-details__control-input visually-hidden" id="${name}" name="${name}" ${isActive ? `checked` : ``}>
+  <label for="${name}" class="film-details__control-label film-details__control-label--${name}">${labelText}</label>`;
+};
+
+
 const createGenresTitleText = (genres) => genres.length > 1 ? `Genres` : `Genre`;
 const createRatingText = (rating) => rating ? rating : `N/A`;
 
@@ -19,9 +25,15 @@ const createFilmDetailsTemplate = (film) => {
     genres,
     description,
     commentsCount,
+    isInWatchlist,
+    isWatched,
+    isFavorite,
   } = film;
 
   const fileName = getFileName(title);
+  const watchlistItem = createControlItemMarkup(`watchlist`, `Add to watchlist`, isInWatchlist);
+  const watchedItem = createControlItemMarkup(`watched`, `Already watched`, isWatched);
+  const favoriteItem = createControlItemMarkup(`favorite`, `Add to favorites`, isFavorite);
 
   return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -84,14 +96,9 @@ const createFilmDetailsTemplate = (film) => {
         </div>
 
         <section class="film-details__controls">
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
-          <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
-
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
-          <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
-
-          <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
-          <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
+          ${watchlistItem}
+          ${watchedItem}
+          ${favoriteItem}
         </section>
       </div>
 
