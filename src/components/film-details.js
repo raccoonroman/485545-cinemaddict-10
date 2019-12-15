@@ -11,12 +11,25 @@ const createControlItemMarkup = (name, labelText, isActive) => {
   <label for="${name}" class="film-details__control-label film-details__control-label--${name}">${labelText}</label>`;
 };
 
+const createRatingScoreMarkup = (userRating) => {
+  const from = 1;
+  const to = 9;
+  const result = [];
+
+  for (let i = from; i <= to; i++) {
+    result.push(`<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${i}" id="rating-${i}" ${userRating === i ? `checked` : ``}>
+    <label class="film-details__user-rating-label" for="rating-${i}">${i}</label>`);
+  }
+
+  return result.join(`\n`);
+};
+
 
 const createGenresTitleText = (genres) => genres.length > 1 ? `Genres` : `Genre`;
 const createRatingText = (rating) => rating ? rating : `N/A`;
 
 
-const createFilmDetailsTemplate = (film) => {
+const createFilmDetailsTemplate = (film, options = {}) => {
   const {
     title,
     rating,
@@ -25,10 +38,14 @@ const createFilmDetailsTemplate = (film) => {
     genres,
     description,
     commentsCount,
+  } = film;
+
+  const {
+    userRating,
     isInWatchlist,
     isWatched,
     isFavorite,
-  } = film;
+  } = options;
 
   const fileName = getFileName(title);
   const watchlistItem = createControlItemMarkup(`watchlist`, `Add to watchlist`, isInWatchlist);
@@ -57,6 +74,7 @@ const createFilmDetailsTemplate = (film) => {
 
               <div class="film-details__rating">
                 <p class="film-details__total-rating">${createRatingText(rating)}</p>
+                ${userRating ? `<p class="film-details__user-rating">Your rate ${userRating}</p>` : ``}
               </div>
             </div>
 
@@ -101,6 +119,30 @@ const createFilmDetailsTemplate = (film) => {
           ${favoriteItem}
         </section>
       </div>
+
+      ${isWatched ? `<div class="form-details__middle-container">
+        <section class="film-details__user-rating-wrap">
+          <div class="film-details__user-rating-controls">
+            <button class="film-details__watched-reset" type="button">Undo</button>
+          </div>
+
+          <div class="film-details__user-score">
+            <div class="film-details__user-rating-poster">
+              <img src="./images/posters/${fileName}.jpg" alt="film-poster" class="film-details__user-rating-img">
+            </div>
+
+            <section class="film-details__user-rating-inner">
+              <h3 class="film-details__user-rating-title">${title}</h3>
+
+              <p class="film-details__user-rating-feelings">How you feel it?</p>
+
+              <div class="film-details__user-rating-score">
+                ${createRatingScoreMarkup(userRating)}
+              </div>
+            </section>
+          </div>
+        </section>
+      </div>` : ``}
 
       <div class="form-details__bottom-container">
         <section class="film-details__comments-wrap">
@@ -200,12 +242,21 @@ export default class FilmDetails extends AbstractSmartComponent {
   constructor(film) {
     super();
     this._film = film;
+    this._userRating = film.userRating;
+    this._isInWatchlist = film.isInWatchlist;
+    this._isWatched = film.isWatched;
+    this._isFavorite = film.isFavorite;
 
     this._subscribeOnEvents();
   }
 
   getTemplate() {
-    return createFilmDetailsTemplate(this._film);
+    return createFilmDetailsTemplate(this._film, {
+      userRating: this._userRating,
+      isInWatchlist: this._isInWatchlist,
+      isWatched: this._isWatched,
+      isFavorite: this._isFavorite,
+    });
   }
 
   recoveryListeners() {
@@ -217,6 +268,12 @@ export default class FilmDetails extends AbstractSmartComponent {
   }
 
   reset() {
+    const film = this._film;
+    this._userRating = film.userRating;
+    this._isInWatchlist = film.isInWatchlist;
+    this._isWatched = film.isWatched;
+    this._isFavorite = film.isFavorite;
+
     this.rerender();
   }
 
@@ -226,6 +283,43 @@ export default class FilmDetails extends AbstractSmartComponent {
   }
 
   _subscribeOnEvents() {
+    const element = this.getElement();
 
+    element.querySelector(`.film-details__control-label--watchlist`)
+      .addEventListener(`click`, () => {
+        this._isInWatchlist = !this._isInWatchlist;
+        this.rerender();
+      });
+
+    element.querySelector(`.film-details__control-label--watched`)
+      .addEventListener(`click`, () => {
+        if (this._isWatched) {
+          this._userRating = null;
+        }
+        this._isWatched = !this._isWatched;
+        this.rerender();
+      });
+
+    element.querySelector(`.film-details__control-label--favorite`)
+      .addEventListener(`click`, () => {
+        this._isFavorite = !this._isFavorite;
+        this.rerender();
+      });
+
+    const userRatingElement = element.querySelector(`.film-details__user-rating-score`);
+
+    if (userRatingElement) {
+      const ratingInputs = userRatingElement.querySelectorAll(`input`);
+      userRatingElement.addEventListener(`click`, (evt) => {
+        if ([...ratingInputs].some((el) => el === evt.target)) {
+          const rating = +evt.target.value;
+          const isSameInput = this._userRating === rating;
+          if (!isSameInput) {
+            this._userRating = rating;
+            this.rerender();
+          }
+        }
+      });
+    }
   }
 }

@@ -12,38 +12,6 @@ const SHOWING_FILM_CARD_COUNT_BY_BUTTON = 5;
 const SHOWING_FILM_CARD_COUNT_BY_EXTRA = 2;
 
 
-// const renderFilm = (cardContainer, detailsContainer, film) => {
-//   const FilmCard = new FilmCardComponent(film);
-//   const FilmDetails = new FilmDetailsComponent(film);
-
-//   const onEscKeyDown = (evt) => {
-//     const escKey = evt.key === `Escape` || evt.key === `Esc`;
-
-//     if (escKey) {
-//       closeFilmDetails(evt);
-//     }
-//   };
-
-//   const openFilmDetails = (evt) => {
-//     evt.preventDefault();
-//     render(detailsContainer, FilmDetails, RenderPosition.BEFOREEND);
-//     document.addEventListener(`keydown`, onEscKeyDown);
-//   };
-
-//   const closeFilmDetails = (evt) => {
-//     evt.preventDefault();
-//     remove(FilmDetails);
-//     document.removeEventListener(`keydown`, onEscKeyDown);
-//   };
-
-//   FilmCard.setFilmPosterClickHandler(openFilmDetails);
-//   FilmCard.setFilmTitleClickHandler(openFilmDetails);
-//   FilmCard.setFilmCommentsClickHandler(openFilmDetails);
-//   FilmDetails.setCloseDetailsButtonClickHandler(closeFilmDetails);
-
-//   render(cardContainer, FilmCard, RenderPosition.BEFOREEND);
-// };
-
 const renderFilms = (cardContainer, detailsContainer, films, onDataChange) => {
   return films.map((film) => {
     const filmController = new MovieController(cardContainer, detailsContainer, onDataChange);

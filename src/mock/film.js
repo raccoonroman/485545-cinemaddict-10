@@ -77,17 +77,20 @@ const getRandomDate = () => {
 
 const generateFilm = () => {
   const rating = getRandomBooleanValue() ? getRundomRating() : null;
+  const userRating = getRandomBooleanValue() ? getRandomIntInclusive(1, 9) : null;
+  const isWatched = getRandomBooleanValue();
 
   return {
     title: getRandomArrayItem(FilmTitles),
     rating,
+    userRating: isWatched && rating ? userRating : null,
     releaseDate: getRandomDate(),
     genres: [...new Set(generateGenres(Genres))],
     duration: getRandomIntInclusive(10, 180),
     description: generateDescription(),
     commentsCount: getRandomIntInclusive(0, 100),
     isInWatchlist: getRandomBooleanValue(),
-    isWatched: getRandomBooleanValue(),
+    isWatched,
     isFavorite: getRandomBooleanValue(),
   };
 };
@@ -99,7 +102,7 @@ const generateFilms = (count) => {
   for (let i = 0; i < count; i++) {
     result.push(generateFilm());
   }
-
+  console.log(result);
   return result;
 };
 

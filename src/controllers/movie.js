@@ -81,7 +81,7 @@ export default class MovieController {
   }
 
   _removeDetails() {
-    // this._movieDetailsComponent.reset();
+    this._movieDetailsComponent.reset();
     remove(this._movieDetailsComponent);
     this._mode = Mode.DEFAULT;
   }
