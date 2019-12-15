@@ -1,8 +1,6 @@
 import AbstractComponent from './abstract-component';
-import {formatDuration, formatYear, getFileName} from './../utils/common';
+import {formatDuration, formatYear, getFileName, createRatingText} from './../utils/common';
 
-
-const createRatingText = (rating) => rating ? rating : `N/A`;
 
 const createControlItemMarkup = (name, buttonText, isActive) =>
   `<button

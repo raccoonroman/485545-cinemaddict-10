@@ -37,6 +37,8 @@ const getFileName = (title) => title
   .map((word) => word.toLowerCase())
   .join(`-`);
 
+const createRatingText = (rating) => rating || `N/A`;
+
 
 export {
   getRandomArbitrary,
@@ -47,4 +49,5 @@ export {
   formatYear,
   formatDate,
   getFileName,
+  createRatingText,
 };

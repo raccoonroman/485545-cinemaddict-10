@@ -1,4 +1,4 @@
-import {formatDuration, formatDate, getFileName} from './../utils/common';
+import {formatDuration, formatDate, getFileName, createRatingText} from './../utils/common';
 import AbstractSmartComponent from './abstract-smart-component';
 
 
@@ -7,8 +7,16 @@ const createGenresMarkup = (genres) => genres
   .join(`\n`);
 
 const createControlItemMarkup = (name, labelText, isActive) => {
-  return `<input type="checkbox" class="film-details__control-input visually-hidden" id="${name}" name="${name}" ${isActive ? `checked` : ``}>
-  <label for="${name}" class="film-details__control-label film-details__control-label--${name}">${labelText}</label>`;
+  return `<input
+    type="checkbox"
+    class="film-details__control-input visually-hidden"
+    id="${name}"
+    name="${name}"
+    ${isActive ? `checked` : ``}>
+  <label
+    for="${name}"
+    class="film-details__control-label film-details__control-label--${name}"
+  >${labelText}</label>`;
 };
 
 const createRatingScoreMarkup = (userRating) => {
@@ -17,16 +25,24 @@ const createRatingScoreMarkup = (userRating) => {
   const result = [];
 
   for (let i = from; i <= to; i++) {
-    result.push(`<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${i}" id="rating-${i}" ${userRating === i ? `checked` : ``}>
-    <label class="film-details__user-rating-label" for="rating-${i}">${i}</label>`);
+    result.push(`<input
+      type="radio"
+      name="score"
+      class="film-details__user-rating-input visually-hidden"
+      value="${i}"
+      id="rating-${i}"
+      ${userRating === i ? `checked` : ``}
+    >
+    <label
+      class="film-details__user-rating-label"
+      for="rating-${i}"
+    >${i}</label>`);
   }
 
   return result.join(`\n`);
 };
 
-
 const createGenresTitleText = (genres) => genres.length > 1 ? `Genres` : `Genre`;
-const createRatingText = (rating) => rating ? rating : `N/A`;
 
 
 const createFilmDetailsTemplate = (film, options = {}) => {

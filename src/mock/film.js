@@ -64,7 +64,7 @@ const generateGenres = (genres) => genres
   .filter(getRandomBooleanValue)
   .slice(0, getRandomIntInclusive(1, 3));
 
-const getRundomRating = () => +getRandomArbitrary(1, 9).toFixed(1);
+const getRandomRating = () => +getRandomArbitrary(1, 9).toFixed(1);
 
 const getRandomDate = () => {
   const targetDate = new Date();
@@ -76,7 +76,7 @@ const getRandomDate = () => {
 
 
 const generateFilm = () => {
-  const rating = getRandomBooleanValue() ? getRundomRating() : null;
+  const rating = getRandomBooleanValue() ? getRandomRating() : null;
   const userRating = getRandomBooleanValue() ? getRandomIntInclusive(1, 9) : null;
   const isWatched = getRandomBooleanValue();
 
