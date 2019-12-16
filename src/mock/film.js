@@ -42,6 +42,47 @@ const Genres = [
   `Western`,
 ];
 
+const Emotions = [
+  `angry`,
+  `puke`,
+  `sleeping`,
+  `smile`,
+  `trophy`,
+];
+
+const Users = [
+  `Sasha`,
+  `Paul van Dyk`,
+  `Armin Van Buuren`,
+  `Ferry Corsten`,
+  `Christopher Lawrence`,
+  `ATB`,
+  `Marco V`,
+  `Benny Benassi`,
+  `Johan Gielen`,
+  `Markus Schulz`,
+  `Above & Beyond`,
+  `Max Graham`,
+];
+
+
+const getRandomRating = () => +getRandomArbitrary(1, 9).toFixed(1);
+
+const getRandomReleaseDate = () => {
+  const targetDate = new Date();
+  const diffYear = getRandomIntInclusive(0, 100);
+  targetDate.setFullYear(targetDate.getFullYear() - diffYear);
+
+  return targetDate;
+};
+
+const getRandomCommentDate = () => {
+  const currentDate = Date.now();
+  const threeDaysInMs = 1000 * 60 * 60 * 24 * 3;
+  const diffDate = getRandomIntInclusive(0, threeDaysInMs);
+  return new Date(currentDate - diffDate);
+};
+
 
 const generateDescription = () => {
   const sentences = text
@@ -64,14 +105,24 @@ const generateGenres = (genres) => genres
   .filter(getRandomBooleanValue)
   .slice(0, getRandomIntInclusive(1, 3));
 
-const getRandomRating = () => +getRandomArbitrary(1, 9).toFixed(1);
+const generateComment = () => {
+  return {
+    text: generateDescription(),
+    emotions: getRandomArrayItem(Emotions),
+    author: getRandomArrayItem(Users),
+    date: getRandomCommentDate(),
+  };
+};
 
-const getRandomDate = () => {
-  const targetDate = new Date();
-  const diffYear = getRandomIntInclusive(0, 100);
-  targetDate.setFullYear(targetDate.getFullYear() - diffYear);
+const generateComments = () => {
+  const commentsAmount = getRandomIntInclusive(0, 5);
+  const result = [];
 
-  return targetDate;
+  for (let i = 0; i < commentsAmount; i++) {
+    result.push(generateComment());
+  }
+
+  return result;
 };
 
 
@@ -84,14 +135,14 @@ const generateFilm = () => {
     title: getRandomArrayItem(FilmTitles),
     rating,
     userRating: isWatched && rating ? userRating : null,
-    releaseDate: getRandomDate(),
+    releaseDate: getRandomReleaseDate(),
     genres: [...new Set(generateGenres(Genres))],
     duration: getRandomIntInclusive(10, 180),
     description: generateDescription(),
-    commentsCount: getRandomIntInclusive(0, 100),
     isInWatchlist: getRandomBooleanValue(),
     isWatched,
     isFavorite: getRandomBooleanValue(),
+    comments: generateComments(),
   };
 };
 
