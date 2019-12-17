@@ -14,11 +14,11 @@ export default class FilmsListMostCommented extends AbstractComponent {
   }
 
   hasComments(films) {
-    const commentsSum = films.reduce((acc, {commentsCount}) => commentsCount + acc, 0);
+    const commentsSum = films.reduce((acc, {comments}) => comments.length + acc, 0);
     return commentsSum > 0;
   }
 
   getSortedFilmsByCommentCount(films) {
-    return films.slice().sort((a, b) => b.commentsCount - a.commentsCount);
+    return films.slice().sort((a, b) => b.comments.length - a.comments.length);
   }
 }

@@ -30,6 +30,7 @@ const formatDuration = (duration) => {
 
 const formatYear = (date) => moment(date).format(`YYYY`);
 const formatDate = (date) => moment(date).format(`DD MMMM YYYY`);
+const formatRelativeTime = (date) => moment(date).fromNow();
 
 
 const getFileName = (title) => title
@@ -48,6 +49,7 @@ export {
   formatDuration,
   formatYear,
   formatDate,
+  formatRelativeTime,
   getFileName,
   createRatingText,
 };
