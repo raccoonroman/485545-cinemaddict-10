@@ -1,7 +1,7 @@
 import AbstractComponent from './abstract-component';
 
 
-const createMainNavigationTemplate = (watchListCount, watchedCount, favoriteCount) =>
+const createFilterTemplate = (watchListCount, watchedCount, favoriteCount) =>
   `<nav class="main-navigation">
     <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
     <a href="#watchlist" class="main-navigation__item">Watchlist <span class="main-navigation__item-count">${watchListCount}</span></a>
@@ -11,7 +11,7 @@ const createMainNavigationTemplate = (watchListCount, watchedCount, favoriteCoun
   </nav>`;
 
 
-export default class MainNavigation extends AbstractComponent {
+export default class Filter extends AbstractComponent {
   constructor(watchListCount, watchedCount, favoriteCount) {
     super();
     this._watchListCount = watchListCount;
@@ -20,6 +20,6 @@ export default class MainNavigation extends AbstractComponent {
   }
 
   getTemplate() {
-    return createMainNavigationTemplate(this._watchListCount, this._watchedCount, this._favoriteCount);
+    return createFilterTemplate(this._watchListCount, this._watchedCount, this._favoriteCount);
   }
 }

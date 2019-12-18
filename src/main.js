@@ -1,5 +1,5 @@
 import UserRankComponent from './components/user-rank';
-import MainNavigationComponent from './components/main-navigation';
+import FilterComponent from './components/filter';
 import SortListComponent from './components/sort-list';
 import FilmsComponent from './components/films';
 import FilmsListComponent from './components/films-list';
@@ -30,7 +30,7 @@ const filmsComponent = new FilmsComponent();
 const sortComponent = new SortListComponent();
 
 render(headerElement, new UserRankComponent(filmsWatchList.length), RenderPosition.BEFOREEND);
-render(mainElement, new MainNavigationComponent(filmsWatchList.length, filmsWatched.length, filmFavorite.length), RenderPosition.BEFOREEND);
+render(mainElement, new FilterComponent(filmsWatchList.length, filmsWatched.length, filmFavorite.length), RenderPosition.BEFOREEND);
 render(mainElement, sortComponent, RenderPosition.BEFOREEND);
 render(mainElement, filmsComponent, RenderPosition.BEFOREEND);
 
