@@ -132,6 +132,7 @@ const generateFilm = () => {
   const isWatched = getRandomBooleanValue();
 
   return {
+    id: String(new Date() + Math.random()),
     title: getRandomArrayItem(FilmTitles),
     rating,
     userRating: isWatched && rating ? userRating : null,

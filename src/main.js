@@ -4,6 +4,7 @@ import SortListComponent from './components/sort-list';
 import FilmsComponent from './components/films';
 import FilmsListComponent from './components/films-list';
 import FilmListTitleComponent from './components/film-list-title';
+import MoviesModel from './models/movies';
 import PageController from './controllers/page';
 import {generateFilms} from './mock/film';
 import {RenderPosition, render} from './utils/render';
@@ -11,8 +12,9 @@ import {RenderPosition, render} from './utils/render';
 
 const FILM_COUNT = 15;
 
-
 const films = generateFilms(FILM_COUNT);
+const moviesModel = new MoviesModel();
+moviesModel.setMovies(films);
 
 const filmsWatchList = films.filter(({isInWatchlist}) => isInWatchlist);
 const filmsWatched = films.filter(({isWatched}) => isWatched);
@@ -41,7 +43,7 @@ const filmsListElement = filmsElement.querySelector(`.films-list`);
 
 render(filmsListElement, new FilmListTitleComponent(films), RenderPosition.BEFOREEND);
 
-const pageController = new PageController(filmsComponent, sortComponent);
+const pageController = new PageController(filmsComponent, sortComponent, moviesModel);
 
-pageController.render(films);
+pageController.render();
 

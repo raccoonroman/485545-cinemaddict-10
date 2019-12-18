@@ -83,6 +83,8 @@ export default class MovieController {
   }
 
   _removeDetails() {
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
+
     this._movieDetailsComponent.reset();
 
     remove(this._movieDetailsComponent);

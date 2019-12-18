@@ -23,9 +23,10 @@ const renderFilms = (cardContainer, detailsContainer, films, onDataChange, onVie
 
 
 export default class PageController {
-  constructor(filmsComponent, sortComponent) {
+  constructor(filmsComponent, sortComponent, moviesModel) {
     this._filmsComponent = filmsComponent;
     this._sortComponent = sortComponent;
+    this._moviesModel = moviesModel;
 
     this._films = [];
     // this._showedFilmsControllers = []; пока закомментирую, так как считаю это лишним свойством. Если к следующей лекции это действительно станет не нужным, то удалю.
@@ -44,8 +45,8 @@ export default class PageController {
     this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
 
-  render(films) {
-    this._films = films;
+  render() {
+    const films = this._moviesModel.getMovies();
 
     if (films.length) {
       const filmsElement = this._filmsComponent.getElement();
@@ -54,18 +55,18 @@ export default class PageController {
 
       render(filmsListElement, this._filmListContainerComponent, RenderPosition.BEFOREEND);
 
-      const newFilms = renderFilms(filmsListContainerElement, filmsElement, this._films.slice(0, this._showingFilmCardCountByButton), this._onDataChange, this._onViewChange);
+      const newFilms = renderFilms(filmsListContainerElement, filmsElement, films.slice(0, this._showingFilmCardCountByButton), this._onDataChange, this._onViewChange);
       // this._showedFilmsControllers = this._showedFilmsControllers.concat(newFilms);
       this._allFilmsControllers = this._allFilmsControllers.concat(newFilms);
 
-      this._renderLoadMoreButton(this._films);
+      this._renderLoadMoreButton(films);
 
 
-      if (this._filmsListTopRatedComponent.hasRates(this._films)) {
+      if (this._filmsListTopRatedComponent.hasRates(films)) {
 
         render(filmsElement, this._filmsListTopRatedComponent, RenderPosition.BEFOREEND);
 
-        const sortedFilms = this._filmsListTopRatedComponent.getSortedFilmsByRate(this._films);
+        const sortedFilms = this._filmsListTopRatedComponent.getSortedFilmsByRate(films);
 
         const topRatedContainerElements = filmsElement.querySelector(`.films-list--extra:nth-child(2) .films-list__container`);
 
@@ -74,11 +75,11 @@ export default class PageController {
       }
 
 
-      if (this._filmsListMostCommentedComponent.hasComments(this._films)) {
+      if (this._filmsListMostCommentedComponent.hasComments(films)) {
 
         render(filmsElement, this._filmsListMostCommentedComponent, RenderPosition.BEFOREEND);
 
-        const sortedFilms = this._filmsListMostCommentedComponent.getSortedFilmsByCommentCount(this._films);
+        const sortedFilms = this._filmsListMostCommentedComponent.getSortedFilmsByCommentCount(films);
 
         const mostCommentedContainerElements = filmsElement.querySelector(`.films-list--extra:last-child .films-list__container`);
 
@@ -101,6 +102,8 @@ export default class PageController {
 
     this._loadMoreButtonComponent.setClickHandler(() => {
       const prevFilmCardsCount = this._showingFilmCardCountByButton;
+      // const films = this._moviesModel.getMovies();
+
       this._showingFilmCardCountByButton += SHOWING_FILM_CARD_COUNT_BY_BUTTON;
 
       const newFilms = renderFilms(filmsListContainerElement, filmsElement, films.slice(prevFilmCardsCount, this._showingFilmCardCountByButton), this._onDataChange, this._onViewChange);
@@ -114,15 +117,11 @@ export default class PageController {
   }
 
   _onDataChange(movieController, oldData, newData) {
-    const index = this._films.findIndex((it) => it === oldData);
+    const isSuccess = this._moviesModel.updateMovie(oldData.id, newData);
 
-    if (index === -1) {
-      return;
+    if (isSuccess) {
+      movieController.render(newData);
     }
-
-    this._films = [].concat(this._films.slice(0, index), newData, this._films.slice(index + 1));
-
-    movieController.render(this._films[index]);
   }
 
   _onViewChange() {
@@ -131,18 +130,19 @@ export default class PageController {
 
   _onSortTypeChange(sortType) {
     let sortedFilms = [];
+    const films = this._moviesModel.getMovies();
 
     switch (sortType) {
       case SortType.DATE:
-        sortedFilms = this._films.slice().sort((a, b) => {
+        sortedFilms = films.slice().sort((a, b) => {
           return new Date(b.releaseDate) - new Date(a.releaseDate);
         });
         break;
       case SortType.RATING:
-        sortedFilms = this._films.slice().sort((a, b) => b.rating - a.rating);
+        sortedFilms = films.slice().sort((a, b) => b.rating - a.rating);
         break;
       case SortType.DEFAULT:
-        sortedFilms = this._films.slice(0, this._showingFilmCardCountByButton);
+        sortedFilms = films.slice(0, this._showingFilmCardCountByButton);
         break;
     }
 
