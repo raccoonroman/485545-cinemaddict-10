@@ -1,6 +1,6 @@
 import UserRankComponent from './components/user-rank';
-import FilterComponent from './components/filter';
-import SortListComponent from './components/sort-list';
+import FilterController from './controllers/filter';
+import SortComponent from './components/sort';
 import FilmsComponent from './components/films';
 import FilmsListComponent from './components/films-list';
 import FilmListTitleComponent from './components/film-list-title';
@@ -16,9 +16,7 @@ const films = generateFilms(FILM_COUNT);
 const moviesModel = new MoviesModel();
 moviesModel.setMovies(films);
 
-const filmsWatchList = films.filter(({isInWatchlist}) => isInWatchlist);
-const filmsWatched = films.filter(({isWatched}) => isWatched);
-const filmFavorite = films.filter(({isFavorite}) => isFavorite);
+// const filmsWatchList = films.filter(({isInWatchlist}) => isInWatchlist);
 
 const headerElement = document.querySelector(`.header`);
 const mainElement = document.querySelector(`.main`);
@@ -27,10 +25,11 @@ const footerStatisticsElement = document.querySelector(`.footer__statistics p`);
 footerStatisticsElement.textContent = `${films.length} movies inside`;
 
 const filmsComponent = new FilmsComponent();
-const sortComponent = new SortListComponent();
+const sortComponent = new SortComponent();
+const filterController = new FilterController(mainElement, moviesModel);
+filterController.render();
 
-render(headerElement, new UserRankComponent(filmsWatchList.length), RenderPosition.BEFOREEND);
-render(mainElement, new FilterComponent(filmsWatchList.length, filmsWatched.length, filmFavorite.length), RenderPosition.BEFOREEND);
+// render(headerElement, new UserRankComponent(filmsWatchList.length), RenderPosition.BEFOREEND);
 render(mainElement, sortComponent, RenderPosition.BEFOREEND);
 render(mainElement, filmsComponent, RenderPosition.BEFOREEND);
 

@@ -1,25 +1,50 @@
 import AbstractComponent from './abstract-component';
 
 
-const createFilterTemplate = (watchListCount, watchedCount, favoriteCount) =>
-  `<nav class="main-navigation">
-    <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
-    <a href="#watchlist" class="main-navigation__item">Watchlist <span class="main-navigation__item-count">${watchListCount}</span></a>
-    <a href="#history" class="main-navigation__item">History <span class="main-navigation__item-count">${watchedCount}</span></a>
-    <a href="#favorites" class="main-navigation__item">Favorites <span class="main-navigation__item-count">${favoriteCount}</span></a>
+const getFilterHref = (filter) => {
+  return `#${filter.name.split(` `)[0].toLowerCase()}`;
+};
+
+const createFilterMarkup = (filter, isActive) => {
+  const {name, count} = filter;
+
+  return `<a href="${getFilterHref(filter)}" class="main-navigation__item ${isActive ? `main-navigation__item--active` : ``}" data-name="${name}">
+    ${name} ${name === `All movies` ? `` : `<span class="main-navigation__item-count">${count}</span>`}
+  </a>`;
+};
+
+const createFilterTemplate = (filters) => {
+  const filtersMarkup = filters
+    .map((filter) => createFilterMarkup(filter, filter.active))
+    .join(`\n`);
+
+  return `<nav class="main-navigation">
+    ${filtersMarkup}
     <a href="#stats" class="main-navigation__item main-navigation__item--additional">Stats</a>
   </nav>`;
+};
 
 
 export default class Filter extends AbstractComponent {
-  constructor(watchListCount, watchedCount, favoriteCount) {
+  constructor(filters) {
     super();
-    this._watchListCount = watchListCount;
-    this._watchedCount = watchedCount;
-    this._favoriteCount = favoriteCount;
+    this._filters = filters;
   }
 
   getTemplate() {
-    return createFilterTemplate(this._watchListCount, this._watchedCount, this._favoriteCount);
+    return createFilterTemplate(this._filters);
+  }
+
+  setFilterChangeHandler(handler) {
+    this.getElement().addEventListener(`click`, ({target}) => {
+      if (target.className.includes(`main-navigation__item`)) {
+        const linkElement = target.tagName === `A` ? target : target.parentElement;
+        const filterName = linkElement.dataset.name;
+
+        return handler(filterName);
+      }
+
+      return false;
+    });
   }
 }
