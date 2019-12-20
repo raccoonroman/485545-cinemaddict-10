@@ -125,17 +125,26 @@ const generateComments = () => {
   return result;
 };
 
+const generateRating = (userRating) => {
+  if (getRandomBooleanValue()) {
+    return getRandomRating();
+  }
+
+  return userRating || null;
+};
+
 
 const generateFilm = () => {
-  const rating = getRandomBooleanValue() ? getRandomRating() : null;
-  const userRating = getRandomBooleanValue() ? getRandomIntInclusive(1, 9) : null;
   const isWatched = getRandomBooleanValue();
+  const userRating = getRandomBooleanValue() ? getRandomIntInclusive(1, 9) : null;
+  const rating = generateRating(userRating);
+
 
   return {
     id: String(new Date() + Math.random()),
     title: getRandomArrayItem(FilmTitles),
     rating,
-    userRating: isWatched && rating ? userRating : null,
+    userRating: isWatched ? userRating : null,
     releaseDate: getRandomReleaseDate(),
     genres: [...new Set(generateGenres(Genres))],
     duration: getRandomIntInclusive(10, 180),
@@ -154,7 +163,7 @@ const generateFilms = (count) => {
   for (let i = 0; i < count; i++) {
     result.push(generateFilm());
   }
-
+  result.map((film) => console.log(film));
   return result;
 };
 

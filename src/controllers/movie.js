@@ -107,6 +107,8 @@ export default class MovieController {
 
     remove(this._movieDetailsComponent);
 
+    this._movieDetailsComponent.recoveryListeners();
+
     this._mode = Mode.DEFAULT;
   }
 
@@ -114,8 +116,6 @@ export default class MovieController {
     this._onViewChange();
 
     render(this._detailsContainer, this._movieDetailsComponent, RenderPosition.BEFOREEND);
-
-    this._movieDetailsComponent.recoveryListeners();
 
     this._mode = Mode.DETAILS;
   }

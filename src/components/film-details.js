@@ -74,7 +74,6 @@ const createGenresTitleText = (genres) => genres.length > 1 ? `Genres` : `Genre`
 const createFilmDetailsTemplate = (film, options = {}) => {
   const {
     title,
-    rating,
     releaseDate,
     duration,
     genres,
@@ -83,6 +82,7 @@ const createFilmDetailsTemplate = (film, options = {}) => {
   } = film;
 
   const {
+    rating,
     userRating,
     isInWatchlist,
     isWatched,
@@ -233,6 +233,7 @@ const parseFormData = (formData) => {
   const isChecked = (name) => formData.get(name) === `on`;
 
   return {
+    userRating: +formData.get(`score`),
     isInWatchlist: isChecked(`watchlist`),
     isWatched: isChecked(`watched`),
     isFavorite: isChecked(`favorite`),
@@ -244,6 +245,7 @@ export default class FilmDetails extends AbstractSmartComponent {
   constructor(film) {
     super();
     this._film = film;
+    this._rating = film.rating;
     this._userRating = film.userRating;
     this._isInWatchlist = film.isInWatchlist;
     this._isWatched = film.isWatched;
@@ -256,6 +258,7 @@ export default class FilmDetails extends AbstractSmartComponent {
 
   getTemplate() {
     return createFilmDetailsTemplate(this._film, {
+      rating: this._rating,
       userRating: this._userRating,
       isInWatchlist: this._isInWatchlist,
       isWatched: this._isWatched,
@@ -274,6 +277,7 @@ export default class FilmDetails extends AbstractSmartComponent {
 
   reset() {
     const film = this._film;
+    this._rating = film.rating;
     this._userRating = film.userRating;
     this._isInWatchlist = film.isInWatchlist;
     this._isWatched = film.isWatched;
@@ -286,7 +290,9 @@ export default class FilmDetails extends AbstractSmartComponent {
     const form = this.getElement().querySelector(`.film-details__inner`);
     const formData = new FormData(form);
 
-    return parseFormData(formData);
+    return Object.assign({}, parseFormData(formData), {
+      rating: this._rating,
+    });
   }
 
   setSubmitHandler(handler) {
@@ -323,16 +329,15 @@ export default class FilmDetails extends AbstractSmartComponent {
     const userRatingElement = element.querySelector(`.film-details__user-rating-score`);
 
     if (userRatingElement) {
-      const ratingInputs = userRatingElement.querySelectorAll(`input`);
-      userRatingElement.addEventListener(`click`, (evt) => {
-        if ([...ratingInputs].some((el) => el === evt.target)) {
-          const rating = +evt.target.value;
-          const isSameInput = this._userRating === rating;
-          if (!isSameInput) {
-            this._userRating = rating;
-            this.rerender();
-          }
+      userRatingElement.addEventListener(`change`, (evt) => {
+        const userRating = +evt.target.value;
+
+        if (!this._rating) {
+          this._rating = userRating;
         }
+
+        this._userRating = userRating;
+        this.rerender();
       });
     }
   }
