@@ -1,4 +1,4 @@
-import UserRankComponent from './components/user-rank';
+import UserRankController from './controllers/user-rank';
 import FilterController from './controllers/filter';
 import SortComponent from './components/sort';
 import FilmsComponent from './components/films';
@@ -8,8 +8,6 @@ import MoviesModel from './models/movies';
 import PageController from './controllers/page';
 import {generateFilms} from './mock/film';
 import {RenderPosition, render} from './utils/render';
-import {getFilmsByFilter} from './utils/filter';
-import {FilterType} from './const';
 
 
 const FILM_COUNT = 15;
@@ -27,12 +25,13 @@ footerStatisticsElement.textContent = `${films.length} movies inside`;
 
 const filmsComponent = new FilmsComponent();
 const sortComponent = new SortComponent();
+
 const filterController = new FilterController(mainElement, moviesModel);
+const userRankController = new UserRankController(headerElement, moviesModel);
+
 filterController.render();
+userRankController.render();
 
-const watchedFilms = getFilmsByFilter(films, FilterType.HISTORY); // временное решение, пока не придумал, как автоматически обновлять звание пользователя
-
-render(headerElement, new UserRankComponent(watchedFilms.length), RenderPosition.BEFOREEND);
 render(mainElement, sortComponent, RenderPosition.BEFOREEND);
 render(mainElement, filmsComponent, RenderPosition.BEFOREEND);
 
