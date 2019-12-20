@@ -106,6 +106,7 @@ export default class MovieController {
     this._movieDetailsComponent.reset();
 
     remove(this._movieDetailsComponent);
+
     this._mode = Mode.DEFAULT;
   }
 
@@ -113,6 +114,9 @@ export default class MovieController {
     this._onViewChange();
 
     render(this._detailsContainer, this._movieDetailsComponent, RenderPosition.BEFOREEND);
+
+    this._movieDetailsComponent.recoveryListeners();
+
     this._mode = Mode.DETAILS;
   }
 
@@ -121,7 +125,6 @@ export default class MovieController {
 
     if (isEscKey) {
       this._removeDetails();
-      document.removeEventListener(`keydown`, this._onEscKeyDown);
     }
   }
 }
