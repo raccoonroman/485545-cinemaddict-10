@@ -229,6 +229,17 @@ const createFilmDetailsTemplate = (film, options = {}) => {
   </section>`;
 };
 
+const parseFormData = (formData) => {
+  const isChecked = (name) => formData.get(name) === `on`;
+
+  return {
+    isInWatchlist: isChecked(`watchlist`),
+    isWatched: isChecked(`watched`),
+    isFavorite: isChecked(`favorite`),
+  };
+};
+
+
 export default class FilmDetails extends AbstractSmartComponent {
   constructor(film) {
     super();
@@ -237,6 +248,8 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._isInWatchlist = film.isInWatchlist;
     this._isWatched = film.isWatched;
     this._isFavorite = film.isFavorite;
+
+    this._submitHandler = null;
 
     this._subscribeOnEvents();
   }
@@ -251,6 +264,7 @@ export default class FilmDetails extends AbstractSmartComponent {
   }
 
   recoveryListeners() {
+    this.setSubmitHandler(this._submitHandler);
     this._subscribeOnEvents();
   }
 
@@ -268,9 +282,18 @@ export default class FilmDetails extends AbstractSmartComponent {
     this.rerender();
   }
 
-  setCloseDetailsButtonClickHandler(handler) {
+  getData() {
+    const form = this.getElement().querySelector(`.film-details__inner`);
+    const formData = new FormData(form);
+
+    return parseFormData(formData);
+  }
+
+  setSubmitHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);
+
+    this._submitHandler = handler;
   }
 
   _subscribeOnEvents() {

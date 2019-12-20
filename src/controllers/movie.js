@@ -3,7 +3,7 @@ import FilmDetailsComponent from './../components/film-details';
 import {RenderPosition, render, replace, remove} from './../utils/render';
 
 
-const Mode = {
+export const Mode = {
   DEFAULT: `default`,
   DETAILS: `details`,
 };
@@ -37,43 +37,55 @@ export default class MovieController {
       document.addEventListener(`keydown`, this._onEscKeyDown);
     };
 
-    const closeMovieDetails = (evt) => {
-      evt.preventDefault();
-      this._removeDetails();
-      document.removeEventListener(`keydown`, this._onEscKeyDown);
-    };
+    // const closeMovieDetails = (evt) => {
+    //   evt.preventDefault();
+    //   this._removeDetails();
+    //   document.removeEventListener(`keydown`, this._onEscKeyDown);
+    // };
 
     this._movieCardComponent.setFilmPosterClickHandler(openMovieDetails);
     this._movieCardComponent.setFilmTitleClickHandler(openMovieDetails);
     this._movieCardComponent.setFilmCommentsClickHandler(openMovieDetails);
-    this._movieDetailsComponent.setCloseDetailsButtonClickHandler(closeMovieDetails);
 
-
-    this._movieCardComponent.setWatchlistButtonClickHandler(() => {
+    this._movieCardComponent.setWatchlistButtonClickHandler((evt) => {
+      evt.preventDefault();
       this._onDataChange(this, movie, Object.assign({}, movie, {
         isInWatchlist: !movie.isInWatchlist,
       }));
     });
 
-    this._movieCardComponent.setWatchedButtonClickHandler(() => {
+    this._movieCardComponent.setWatchedButtonClickHandler((evt) => {
+      evt.preventDefault();
       this._onDataChange(this, movie, Object.assign({}, movie, {
         isWatched: !movie.isWatched,
       }));
     });
 
-    this._movieCardComponent.setFavoriteButtonClickHandler(() => {
+    this._movieCardComponent.setFavoriteButtonClickHandler((evt) => {
+      evt.preventDefault();
       this._onDataChange(this, movie, Object.assign({}, movie, {
         isFavorite: !movie.isFavorite,
       }));
     });
 
+    this._movieDetailsComponent.setSubmitHandler((evt) => {
+      evt.preventDefault();
+      const data = this._movieDetailsComponent.getData();
+      this._onDataChange(this, movie, Object.assign({}, movie, data));
+    });
 
+
+    // switch (mode) {
+    // case Mode.DEFAULT:
     if (oldMovieCardComponent && oldMovieDetailsComponent) {
       replace(this._movieCardComponent, oldMovieCardComponent);
       replace(this._movieDetailsComponent, oldMovieDetailsComponent);
+      this._removeDetails();
     } else {
       render(this._cardContainer, this._movieCardComponent, RenderPosition.BEFOREEND);
     }
+    // break;
+    // }
   }
 
   setDefaultView() {
@@ -81,6 +93,12 @@ export default class MovieController {
       this._removeDetails();
     }
   }
+
+  // destroy() {
+  //   remove(this._movieDetailsComponent);
+  //   remove(this._movieCardComponent);
+  //   document.removeEventListener(`keydown`, this._onEscKeyDown);
+  // }
 
   _removeDetails() {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
