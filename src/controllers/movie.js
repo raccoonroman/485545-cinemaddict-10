@@ -20,8 +20,6 @@ export default class MovieController {
 
     this._movieCardComponent = null;
     this._movieDetailsComponent = null;
-
-    this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
   render(movie) {
@@ -31,17 +29,33 @@ export default class MovieController {
     this._movieCardComponent = new FilmCardComponent(movie);
     this._movieDetailsComponent = new FilmDetailsComponent(movie);
 
-    const openMovieDetails = (evt) => {
-      evt.preventDefault();
-      this._renderDetails();
-      document.addEventListener(`keydown`, this._onEscKeyDown);
+    const onEscKeyDown = (evt) => {
+      const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+
+      if (isEscKey) {
+        closeMovieDetails(evt);
+      }
     };
 
-    // const closeMovieDetails = (evt) => {
-    //   evt.preventDefault();
-    //   this._removeDetails();
-    //   document.removeEventListener(`keydown`, this._onEscKeyDown);
-    // };
+    const openMovieDetails = (evt) => {
+      evt.preventDefault();
+      this._onViewChange();
+
+      render(this._detailsContainer, this._movieDetailsComponent, RenderPosition.BEFOREEND);
+
+      this._mode = Mode.DETAILS;
+
+      document.addEventListener(`keydown`, onEscKeyDown);
+    };
+
+    const closeMovieDetails = (evt) => {
+      evt.preventDefault();
+
+      const data = this._movieDetailsComponent.getData();
+      this._onDataChange(this, movie, Object.assign({}, movie, data));
+
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    };
 
     this._movieCardComponent.setFilmPosterClickHandler(openMovieDetails);
     this._movieCardComponent.setFilmTitleClickHandler(openMovieDetails);
@@ -68,11 +82,7 @@ export default class MovieController {
       }));
     });
 
-    this._movieDetailsComponent.setSubmitHandler((evt) => {
-      evt.preventDefault();
-      const data = this._movieDetailsComponent.getData();
-      this._onDataChange(this, movie, Object.assign({}, movie, data));
-    });
+    this._movieDetailsComponent.setSubmitHandler(closeMovieDetails);
 
 
     // switch (mode) {
@@ -80,7 +90,7 @@ export default class MovieController {
     if (oldMovieCardComponent && oldMovieDetailsComponent) {
       replace(this._movieCardComponent, oldMovieCardComponent);
       replace(this._movieDetailsComponent, oldMovieDetailsComponent);
-      this._removeDetails();
+      this._removeDetailsWithoutSaving();
     } else {
       render(this._cardContainer, this._movieCardComponent, RenderPosition.BEFOREEND);
     }
@@ -90,7 +100,7 @@ export default class MovieController {
 
   setDefaultView() {
     if (this._mode !== Mode.DEFAULT) {
-      this._removeDetails();
+      this._removeDetailsWithoutSaving();
     }
   }
 
@@ -100,31 +110,12 @@ export default class MovieController {
   //   document.removeEventListener(`keydown`, this._onEscKeyDown);
   // }
 
-  _removeDetails() {
-    document.removeEventListener(`keydown`, this._onEscKeyDown);
-
+  _removeDetailsWithoutSaving() {
     this._movieDetailsComponent.reset();
 
     remove(this._movieDetailsComponent);
 
     this._movieDetailsComponent.recoveryListeners();
-
     this._mode = Mode.DEFAULT;
-  }
-
-  _renderDetails() {
-    this._onViewChange();
-
-    render(this._detailsContainer, this._movieDetailsComponent, RenderPosition.BEFOREEND);
-
-    this._mode = Mode.DETAILS;
-  }
-
-  _onEscKeyDown(evt) {
-    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-
-    if (isEscKey) {
-      this._removeDetails();
-    }
   }
 }

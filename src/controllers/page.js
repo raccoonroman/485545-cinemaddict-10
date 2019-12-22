@@ -50,18 +50,6 @@ export default class PageController {
 
       this._renderFilms(filmsListContainerElement, films.slice(0, this._showingFilmCardCountByButton));
       this._renderLoadMoreButton(films);
-
-
-      // if (this._filmsListMostCommentedComponent.hasComments(films)) {
-
-      //   render(filmsElement, this._filmsListMostCommentedComponent, RenderPosition.BEFOREEND);
-
-      //   const sortedFilms = this._filmsListMostCommentedComponent.getSortedFilmsByCommentCount(films);
-
-      //   const mostCommentedContainerElements = filmsElement.querySelector(`.films-list--extra:last-child .films-list__container`);
-
-      //   this._renderFilms(mostCommentedContainerElements, sortedFilms.slice(0, SHOWING_FILM_CARD_COUNT_BY_EXTRA));
-      // }
     }
   }
 
@@ -155,6 +143,7 @@ export default class PageController {
     }
 
     this.renderTopRatedList();
+    this.renderMostCommentedList();
   }
 
   _onViewChange() {
