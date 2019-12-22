@@ -163,7 +163,7 @@ const generateFilms = (count) => {
   for (let i = 0; i < count; i++) {
     result.push(generateFilm());
   }
-  result.map((film) => console.log(film));
+
   return result;
 };
 

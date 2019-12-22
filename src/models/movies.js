@@ -16,8 +16,8 @@ export default class Movies {
     return getFilmsByFilter(this._movies, this._activeFilterType);
   }
 
-  getWatchedMovies() {
-    return getFilmsByFilter(this._movies, FilterType.HISTORY);
+  getMoviesByFilter(filterType) {
+    return getFilmsByFilter(this._movies, filterType);
   }
 
   getMoviesAll() {
@@ -53,6 +53,14 @@ export default class Movies {
 
   setDataChangeHandler(handler) {
     this._dataChangeHandlers.push(handler);
+  }
+
+  hasRatings() {
+    return this._movies.some(({rating}) => !!rating);
+  }
+
+  getSortedMoviesByRating() {
+    return this._movies.slice().sort((a, b) => b.rating - a.rating);
   }
 
   _callHandlers(handlers) {

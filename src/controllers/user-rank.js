@@ -1,5 +1,6 @@
 import UserRankComponent from '../components/user-rank';
 import {render, replace, RenderPosition} from '../utils/render';
+import {FilterType} from '../const';
 
 export default class UserRankController {
   constructor(container, moviesModel) {
@@ -15,7 +16,7 @@ export default class UserRankController {
 
   render() {
     const container = this._container;
-    const watchedMovies = this._moviesModel.getWatchedMovies();
+    const watchedMovies = this._moviesModel.getMoviesByFilter(FilterType.HISTORY);
     const oldComponent = this._userRankComponent;
 
     this._userRankComponent = new UserRankComponent(watchedMovies);

@@ -2,24 +2,14 @@ import FilmsListTopRatedComponent from './../components/film-list-top-rated';
 import FilmsListMostCommentedComponent from './../components/film-list-most-commented';
 import FilmListContainerComponent from './../components/film-list-container';
 import LoadMoreButtonComponent from './../components/load-more-button';
-import {RenderPosition, render, remove} from './../utils/render';
+import {RenderPosition, render, replace, remove} from './../utils/render';
+import {renderFilms} from './../utils/render-films';
 import {SortType} from './../components/sort';
-import MovieController from './movie';
 
 
 const SHOWING_FILM_CARD_COUNT_ON_START = 5;
 const SHOWING_FILM_CARD_COUNT_BY_BUTTON = 5;
 const SHOWING_FILM_CARD_COUNT_BY_EXTRA = 2;
-
-
-const renderFilms = (cardContainer, detailsContainer, films, onDataChange, onViewChange) => {
-  return films.map((film) => {
-    const filmController = new MovieController(cardContainer, detailsContainer, onDataChange, onViewChange);
-    filmController.render(film);
-
-    return filmController;
-  });
-};
 
 
 export default class PageController {
@@ -35,7 +25,8 @@ export default class PageController {
 
     this._filmListContainerComponent = new FilmListContainerComponent();
     this._loadMoreButtonComponent = new LoadMoreButtonComponent();
-    this._filmsListTopRatedComponent = new FilmsListTopRatedComponent();
+
+    this._filmsListTopRatedComponent = null;
     this._filmsListMostCommentedComponent = new FilmsListMostCommentedComponent();
 
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
@@ -61,18 +52,6 @@ export default class PageController {
       this._renderLoadMoreButton(films);
 
 
-      if (this._filmsListTopRatedComponent.hasRates(films)) {
-
-        render(filmsElement, this._filmsListTopRatedComponent, RenderPosition.BEFOREEND);
-
-        const sortedFilms = this._filmsListTopRatedComponent.getSortedFilmsByRate(films);
-
-        const topRatedContainerElements = filmsElement.querySelector(`.films-list--extra:nth-child(2) .films-list__container`);
-
-        this._renderFilms(topRatedContainerElements, sortedFilms.slice(0, SHOWING_FILM_CARD_COUNT_BY_EXTRA));
-      }
-
-
       if (this._filmsListMostCommentedComponent.hasComments(films)) {
 
         render(filmsElement, this._filmsListMostCommentedComponent, RenderPosition.BEFOREEND);
@@ -83,6 +62,27 @@ export default class PageController {
 
         this._renderFilms(mostCommentedContainerElements, sortedFilms.slice(0, SHOWING_FILM_CARD_COUNT_BY_EXTRA));
       }
+    }
+  }
+
+  renderTopRatedList() {
+    if (this._moviesModel.hasRatings()) {
+      const filmsElement = this._filmsComponent.getElement();
+      const sortedFilms = this._moviesModel.getSortedMoviesByRating();
+
+      const oldComponent = this._filmsListTopRatedComponent;
+
+      this._filmsListTopRatedComponent = new FilmsListTopRatedComponent();
+
+      if (oldComponent) {
+        replace(this._filmsListTopRatedComponent, oldComponent);
+      } else {
+        render(filmsElement, this._filmsListTopRatedComponent, RenderPosition.BEFOREEND);
+      }
+
+      const topRatedContainerElements = this._filmsListTopRatedComponent.getElement().querySelector(`.films-list__container`);
+
+      this._renderFilms(topRatedContainerElements, sortedFilms.slice(0, SHOWING_FILM_CARD_COUNT_BY_EXTRA));
     }
   }
 
@@ -131,6 +131,8 @@ export default class PageController {
     if (isSuccess) {
       movieController.render(newData);
     }
+
+    this.renderTopRatedList();
   }
 
   _onViewChange() {
@@ -151,7 +153,7 @@ export default class PageController {
         sortedFilms = films.slice().sort((a, b) => b.rating - a.rating);
         break;
       case SortType.DEFAULT:
-        sortedFilms = films.slice(0, this._showingFilmCardCountByButton);
+        sortedFilms = films.slice();
         break;
     }
 

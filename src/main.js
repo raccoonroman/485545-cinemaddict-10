@@ -47,4 +47,5 @@ render(filmsListElement, new FilmListTitleComponent(films), RenderPosition.BEFOR
 const pageController = new PageController(filmsComponent, sortComponent, moviesModel);
 
 pageController.render();
+pageController.renderTopRatedList();
 
