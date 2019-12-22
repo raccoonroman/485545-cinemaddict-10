@@ -27,7 +27,7 @@ export default class PageController {
     this._loadMoreButtonComponent = new LoadMoreButtonComponent();
 
     this._filmsListTopRatedComponent = null;
-    this._filmsListMostCommentedComponent = new FilmsListMostCommentedComponent();
+    this._filmsListMostCommentedComponent = null;
 
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
@@ -52,16 +52,16 @@ export default class PageController {
       this._renderLoadMoreButton(films);
 
 
-      if (this._filmsListMostCommentedComponent.hasComments(films)) {
+      // if (this._filmsListMostCommentedComponent.hasComments(films)) {
 
-        render(filmsElement, this._filmsListMostCommentedComponent, RenderPosition.BEFOREEND);
+      //   render(filmsElement, this._filmsListMostCommentedComponent, RenderPosition.BEFOREEND);
 
-        const sortedFilms = this._filmsListMostCommentedComponent.getSortedFilmsByCommentCount(films);
+      //   const sortedFilms = this._filmsListMostCommentedComponent.getSortedFilmsByCommentCount(films);
 
-        const mostCommentedContainerElements = filmsElement.querySelector(`.films-list--extra:last-child .films-list__container`);
+      //   const mostCommentedContainerElements = filmsElement.querySelector(`.films-list--extra:last-child .films-list__container`);
 
-        this._renderFilms(mostCommentedContainerElements, sortedFilms.slice(0, SHOWING_FILM_CARD_COUNT_BY_EXTRA));
-      }
+      //   this._renderFilms(mostCommentedContainerElements, sortedFilms.slice(0, SHOWING_FILM_CARD_COUNT_BY_EXTRA));
+      // }
     }
   }
 
@@ -80,9 +80,31 @@ export default class PageController {
         render(filmsElement, this._filmsListTopRatedComponent, RenderPosition.BEFOREEND);
       }
 
-      const topRatedContainerElements = this._filmsListTopRatedComponent.getElement().querySelector(`.films-list__container`);
+      const topRatedContainerElements = this._filmsListTopRatedComponent.getElement().querySelector(`.films-list__container`
+      );
 
       this._renderFilms(topRatedContainerElements, sortedFilms.slice(0, SHOWING_FILM_CARD_COUNT_BY_EXTRA));
+    }
+  }
+
+  renderMostCommentedList() {
+    if (this._moviesModel.hasComments()) {
+      const filmsElement = this._filmsComponent.getElement();
+      const sortedFilms = this._moviesModel.getSortedMoviesByCommentsCount();
+
+      const oldComponent = this._filmsListMostCommentedComponent;
+
+      this._filmsListMostCommentedComponent = new FilmsListMostCommentedComponent();
+
+      if (oldComponent) {
+        replace(this._filmsListMostCommentedComponent, oldComponent);
+      } else {
+        render(filmsElement, this._filmsListMostCommentedComponent, RenderPosition.BEFOREEND);
+      }
+
+      const mostCommentedContainerElements = this._filmsListMostCommentedComponent.getElement().querySelector(`.films-list__container`);
+
+      this._renderFilms(mostCommentedContainerElements, sortedFilms.slice(0, SHOWING_FILM_CARD_COUNT_BY_EXTRA));
     }
   }
 

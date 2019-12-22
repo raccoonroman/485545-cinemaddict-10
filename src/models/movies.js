@@ -59,8 +59,16 @@ export default class Movies {
     return this._movies.some(({rating}) => !!rating);
   }
 
+  hasComments() {
+    return this._movies.some(({comments}) => !!comments.length);
+  }
+
   getSortedMoviesByRating() {
     return this._movies.slice().sort((a, b) => b.rating - a.rating);
+  }
+
+  getSortedMoviesByCommentsCount() {
+    return this._movies.slice().sort((a, b) => b.comments.length - a.comments.length);
   }
 
   _callHandlers(handlers) {

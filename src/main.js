@@ -48,4 +48,5 @@ const pageController = new PageController(filmsComponent, sortComponent, moviesM
 
 pageController.render();
 pageController.renderTopRatedList();
+pageController.renderMostCommentedList();
 
