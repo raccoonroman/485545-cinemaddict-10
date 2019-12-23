@@ -1,4 +1,4 @@
-import {text} from './../const';
+import {text, Emotions} from '../const';
 import {
   getRandomArbitrary,
   getRandomIntInclusive,
@@ -40,14 +40,6 @@ const Genres = [
   `Sci-Fi`,
   `Thriller`,
   `Western`,
-];
-
-const Emotions = [
-  `angry`,
-  `puke`,
-  `sleeping`,
-  `smile`,
-  `trophy`,
 ];
 
 const Users = [
@@ -109,7 +101,7 @@ const generateComment = () => {
   return {
     id: String(new Date() + Math.random()),
     text: generateDescription(),
-    emotions: getRandomArrayItem(Emotions),
+    emotion: getRandomArrayItem(Emotions),
     author: getRandomArrayItem(Users),
     date: getRandomCommentDate(),
   };

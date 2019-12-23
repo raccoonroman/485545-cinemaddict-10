@@ -1,11 +1,12 @@
 import AbstractSmartComponent from './abstract-smart-component';
+import {Emotions} from '../const';
 import {
   formatDuration,
   formatDate,
   formatRelativeTime,
   getFileName,
   createRatingText,
-} from './../utils/common';
+} from '../utils/common';
 
 
 const createGenresMarkup = (genres) => genres
@@ -50,10 +51,10 @@ const createRatingScoreMarkup = (userRating) => {
 
 const createCommentsListMarkup = (comments) => comments
   .map((comment) => {
-    const {id, text, emotions, author, date} = comment;
+    const {id, text, emotion, author, date} = comment;
     return `<li class="film-details__comment" data-comment-id="${id}">
     <span class="film-details__comment-emoji">
-      <img src="./images/emoji/${emotions}.png" width="55" height="55" alt="emoji">
+      <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji">
     </span>
     <div>
       <p class="film-details__comment-text">${text}</p>
@@ -65,8 +66,20 @@ const createCommentsListMarkup = (comments) => comments
     </div>
   </li>`;
   })
-.join(`\n`);
+  .join(`\n`);
 
+const createEmojiMarkup = (activeEmotion) => Emotions
+  .map((emotion) => {
+    return `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}" ${emotion === activeEmotion ? `checked` : ``}>
+    <label class="film-details__emoji-label" for="emoji-${emotion}">
+      <img src="./images/emoji/${emotion}.png" width="30" height="30" alt="emoji">
+    </label>`;
+  })
+  .join(`\n`);
+
+const createSelectedEmotionMarkup = (emotion) => {
+  return emotion ? `<img src="images/emoji/${emotion}.png" width="55" height="55" alt="emoji">` : ``;
+};
 
 const createGenresTitleText = (genres) => genres.length > 1 ? `Genres` : `Genre`;
 
@@ -87,6 +100,7 @@ const createFilmDetailsTemplate = (film, options = {}) => {
     isWatched,
     isFavorite,
     comments,
+    emotion,
   } = options;
 
   const fileName = getFileName(title);
@@ -195,32 +209,16 @@ const createFilmDetailsTemplate = (film, options = {}) => {
           </ul>
 
           <div class="film-details__new-comment">
-            <div for="add-emoji" class="film-details__add-emoji-label"></div>
+            <div for="add-emoji" class="film-details__add-emoji-label">
+            ${createSelectedEmotionMarkup(emotion)}
+            </div>
 
             <label class="film-details__comment-label">
               <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
             </label>
 
             <div class="film-details__emoji-list">
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="sleeping">
-              <label class="film-details__emoji-label" for="emoji-smile">
-                <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="neutral-face">
-              <label class="film-details__emoji-label" for="emoji-sleeping">
-                <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-gpuke" value="grinning">
-              <label class="film-details__emoji-label" for="emoji-gpuke">
-                <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="grinning">
-              <label class="film-details__emoji-label" for="emoji-angry">
-                <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-              </label>
+              ${createEmojiMarkup(emotion)}
             </div>
           </div>
         </section>
@@ -252,6 +250,9 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._isFavorite = film.isFavorite;
     this._comments = film.comments;
 
+    this._emotion = null;
+    this._commentText = null;
+
     this._submitHandler = null;
 
     this._subscribeOnEvents();
@@ -265,6 +266,7 @@ export default class FilmDetails extends AbstractSmartComponent {
       isWatched: this._isWatched,
       isFavorite: this._isFavorite,
       comments: this._comments,
+      emotion: this._emotion,
     });
   }
 
@@ -285,6 +287,9 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._isWatched = film.isWatched;
     this._isFavorite = film.isFavorite;
     this._comments = film.comments;
+
+    this._emotion = null;
+    this._commentText = null;
 
     this.rerender();
   }
@@ -331,7 +336,6 @@ export default class FilmDetails extends AbstractSmartComponent {
       });
 
     const userRatingElement = element.querySelector(`.film-details__user-rating-score`);
-
     if (userRatingElement) {
       userRatingElement.addEventListener(`change`, (evt) => {
         const userRating = +evt.target.value;
@@ -354,6 +358,36 @@ export default class FilmDetails extends AbstractSmartComponent {
         this._comments = [].concat(this._comments.slice(0, index), this._comments.slice(index + 1));
         this.rerender();
       });
+    });
+
+    element.querySelector(`.film-details__emoji-list`).addEventListener(`change`, (evt) => {
+      const emotion = evt.target.value;
+      this._emotion = emotion;
+
+      this.rerender();
+    });
+
+    element.querySelector(`.film-details__comment-input`).addEventListener(`input`, (evt) => {
+      this._commentText = evt.target.value;
+    });
+
+    element.addEventListener(`keydown`, (evt) => {
+      if (evt.ctrlKey && evt.keyCode === 13) {
+        if (this._emotion && this._commentText) {
+          const newComment = {
+            id: String(new Date() + Math.random()),
+            text: this._commentText,
+            emotion: this._emotion,
+            author: `You`,
+            date: new Date(),
+          };
+
+          this._comments.push(newComment);
+          this._emotion = null;
+          this._commentText = null;
+          this.rerender();
+        }
+      }
     });
   }
 }

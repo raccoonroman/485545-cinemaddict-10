@@ -7,5 +7,12 @@ const FilterType = {
   FAVORITES: `Favorites`,
 };
 
+const Emotions = [
+  `smile`,
+  `sleeping`,
+  `puke`,
+  `angry`,
+];
 
-export {text, FilterType};
+
+export {text, FilterType, Emotions};
