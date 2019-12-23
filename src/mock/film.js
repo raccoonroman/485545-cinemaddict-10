@@ -107,6 +107,7 @@ const generateGenres = (genres) => genres
 
 const generateComment = () => {
   return {
+    id: String(new Date() + Math.random()),
     text: generateDescription(),
     emotions: getRandomArrayItem(Emotions),
     author: getRandomArrayItem(Users),

@@ -50,8 +50,8 @@ const createRatingScoreMarkup = (userRating) => {
 
 const createCommentsListMarkup = (comments) => comments
   .map((comment) => {
-    const {text, emotions, author, date} = comment;
-    return `<li class="film-details__comment">
+    const {id, text, emotions, author, date} = comment;
+    return `<li class="film-details__comment" data-comment-id="${id}">
     <span class="film-details__comment-emoji">
       <img src="./images/emoji/${emotions}.png" width="55" height="55" alt="emoji">
     </span>
@@ -78,7 +78,6 @@ const createFilmDetailsTemplate = (film, options = {}) => {
     duration,
     genres,
     description,
-    comments,
   } = film;
 
   const {
@@ -87,6 +86,7 @@ const createFilmDetailsTemplate = (film, options = {}) => {
     isInWatchlist,
     isWatched,
     isFavorite,
+    comments,
   } = options;
 
   const fileName = getFileName(title);
@@ -250,6 +250,7 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._isInWatchlist = film.isInWatchlist;
     this._isWatched = film.isWatched;
     this._isFavorite = film.isFavorite;
+    this._comments = film.comments;
 
     this._submitHandler = null;
 
@@ -263,6 +264,7 @@ export default class FilmDetails extends AbstractSmartComponent {
       isInWatchlist: this._isInWatchlist,
       isWatched: this._isWatched,
       isFavorite: this._isFavorite,
+      comments: this._comments,
     });
   }
 
@@ -282,6 +284,7 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._isInWatchlist = film.isInWatchlist;
     this._isWatched = film.isWatched;
     this._isFavorite = film.isFavorite;
+    this._comments = film.comments;
 
     this.rerender();
   }
@@ -292,6 +295,7 @@ export default class FilmDetails extends AbstractSmartComponent {
 
     return Object.assign({}, parseFormData(formData), {
       rating: this._rating,
+      comments: this._comments,
     });
   }
 
@@ -340,5 +344,16 @@ export default class FilmDetails extends AbstractSmartComponent {
         this.rerender();
       });
     }
+
+    element.querySelectorAll(`.film-details__comment-delete`).forEach((deleteButton) => {
+      deleteButton.addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        const commentElement = deleteButton.closest(`.film-details__comment`);
+        const commentId = commentElement.dataset.commentId;
+        const index = this._comments.findIndex((it) => it.id === commentId);
+        this._comments = [].concat(this._comments.slice(0, index), this._comments.slice(index + 1));
+        this.rerender();
+      });
+    });
   }
 }
