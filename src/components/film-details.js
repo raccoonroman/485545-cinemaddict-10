@@ -1,3 +1,4 @@
+import he from 'he';
 import AbstractSmartComponent from './abstract-smart-component';
 import {Emotions} from '../const';
 import {
@@ -376,7 +377,7 @@ export default class FilmDetails extends AbstractSmartComponent {
         if (this._emotion && this._commentText) {
           const newComment = {
             id: String(new Date() + Math.random()),
-            text: this._commentText,
+            text: he.encode(this._commentText),
             emotion: this._emotion,
             author: `You`,
             date: new Date(),
