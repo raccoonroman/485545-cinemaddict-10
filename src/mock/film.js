@@ -1,4 +1,4 @@
-import {text} from './../const';
+import {text, Emotions} from '../const';
 import {
   getRandomArbitrary,
   getRandomIntInclusive,
@@ -40,14 +40,6 @@ const Genres = [
   `Sci-Fi`,
   `Thriller`,
   `Western`,
-];
-
-const Emotions = [
-  `angry`,
-  `puke`,
-  `sleeping`,
-  `smile`,
-  `trophy`,
 ];
 
 const Users = [
@@ -107,8 +99,9 @@ const generateGenres = (genres) => genres
 
 const generateComment = () => {
   return {
+    id: String(new Date() + Math.random()),
     text: generateDescription(),
-    emotions: getRandomArrayItem(Emotions),
+    emotion: getRandomArrayItem(Emotions),
     author: getRandomArrayItem(Users),
     date: getRandomCommentDate(),
   };
@@ -125,16 +118,26 @@ const generateComments = () => {
   return result;
 };
 
+const generateRating = (userRating) => {
+  if (getRandomBooleanValue()) {
+    return getRandomRating();
+  }
+
+  return userRating || null;
+};
+
 
 const generateFilm = () => {
-  const rating = getRandomBooleanValue() ? getRandomRating() : null;
-  const userRating = getRandomBooleanValue() ? getRandomIntInclusive(1, 9) : null;
   const isWatched = getRandomBooleanValue();
+  const userRating = getRandomBooleanValue() ? getRandomIntInclusive(1, 9) : null;
+  const rating = generateRating(userRating);
+
 
   return {
+    id: String(new Date() + Math.random()),
     title: getRandomArrayItem(FilmTitles),
     rating,
-    userRating: isWatched && rating ? userRating : null,
+    userRating: isWatched ? userRating : null,
     releaseDate: getRandomReleaseDate(),
     genres: [...new Set(generateGenres(Genres))],
     duration: getRandomIntInclusive(10, 180),

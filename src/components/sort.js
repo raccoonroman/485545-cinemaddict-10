@@ -8,7 +8,7 @@ export const SortType = {
 };
 
 
-const createSortListTemplate = () =>
+const createSortTemplate = () =>
   `<ul class="sort">
     <li><a href="#" data-sort-type="${SortType.DEFAULT}" class="sort__button sort__button--active">Sort by default</a></li>
     <li><a href="#" data-sort-type="${SortType.DATE}" class="sort__button">Sort by date</a></li>
@@ -16,17 +16,17 @@ const createSortListTemplate = () =>
   </ul>`;
 
 
-export default class SortList extends AbstractComponent {
+export default class Sort extends AbstractComponent {
   constructor() {
     super();
     this._currentSortType = SortType.DEFAULT;
   }
 
   getTemplate() {
-    return createSortListTemplate();
+    return createSortTemplate();
   }
 
-  setActiveCurrentSortItem(currentSortItem) {
+  _setActiveCurrentSortItem(currentSortItem) {
     const activeSortItem = this.getElement().querySelector(`.sort__button--active`);
     activeSortItem.classList.remove(`sort__button--active`);
     currentSortItem.classList.add(`sort__button--active`);
@@ -47,7 +47,7 @@ export default class SortList extends AbstractComponent {
       }
 
       this._currentSortType = sortType;
-      this.setActiveCurrentSortItem(evt.target);
+      this._setActiveCurrentSortItem(evt.target);
 
       handler(this._currentSortType);
     });

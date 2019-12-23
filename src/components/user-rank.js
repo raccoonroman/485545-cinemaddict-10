@@ -4,26 +4,26 @@ import AbstractComponent from './abstract-component';
 const userRanks = [
   {
     userRank: ``,
-    check: (watchedMovies) => watchedMovies === 0,
+    check: (watchedMovies) => watchedMovies.length === 0,
   },
   {
     userRank: `novice`,
-    check: (watchedMovies) => watchedMovies > 0 && watchedMovies <= 10,
+    check: (watchedMovies) => watchedMovies.length > 0 && watchedMovies.length <= 10,
   },
   {
     userRank: `fan`,
-    check: (watchedMovies) => watchedMovies > 10 && watchedMovies <= 20,
+    check: (watchedMovies) => watchedMovies.length > 10 && watchedMovies.length <= 20,
   },
   {
     userRank: `movie buff`,
-    check: (watchedMovies) => watchedMovies > 20,
+    check: (watchedMovies) => watchedMovies.length > 20,
   },
 ];
 
 const getUserRank = (watchedMovies) => userRanks.find(({check}) => check(watchedMovies));
 
-const createUserRankTemplate = (watchedMoviesCount) => {
-  const {userRank} = getUserRank(watchedMoviesCount);
+const createUserRankTemplate = (watchedMovies) => {
+  const {userRank} = getUserRank(watchedMovies);
 
   return `<section class="header__profile profile">
     <p class="profile__rating">${userRank}</p>
@@ -33,12 +33,12 @@ const createUserRankTemplate = (watchedMoviesCount) => {
 
 
 export default class UserRank extends AbstractComponent {
-  constructor(watchedMoviesCount) {
+  constructor(watchedMovies) {
     super();
-    this._watchedMoviesCount = watchedMoviesCount;
+    this._watchedMovies = watchedMovies;
   }
 
   getTemplate() {
-    return createUserRankTemplate(this._watchedMoviesCount);
+    return createUserRankTemplate(this._watchedMovies);
   }
 }
