@@ -26,7 +26,7 @@ footerStatisticsElement.textContent = `${films.length} movies inside`;
 
 const filmsComponent = new FilmsComponent();
 const sortComponent = new SortComponent();
-const statsComponent = new StatsComponent();
+const statsComponent = new StatsComponent(moviesModel);
 
 const userRankController = new UserRankController(headerElement, moviesModel);
 const pageController = new PageController(filmsComponent, sortComponent, moviesModel);
