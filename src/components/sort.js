@@ -52,4 +52,9 @@ export default class Sort extends AbstractComponent {
       handler(this._currentSortType);
     });
   }
+
+  setSortTypeDefault() {
+    const sortByDefaultLink = this.getElement().querySelector(`a[data-sort-type="default"]`);
+    sortByDefaultLink.click();
+  }
 }

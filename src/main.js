@@ -4,6 +4,7 @@ import SortComponent from './components/sort';
 import FilmsComponent from './components/films';
 import FilmsListComponent from './components/films-list';
 import FilmListTitleComponent from './components/film-list-title';
+import StatsComponent from './components/stats';
 import MoviesModel from './models/movies';
 import PageController from './controllers/page';
 import {generateFilms} from './mock/film';
@@ -25,16 +26,19 @@ footerStatisticsElement.textContent = `${films.length} movies inside`;
 
 const filmsComponent = new FilmsComponent();
 const sortComponent = new SortComponent();
+const statsComponent = new StatsComponent();
 
-const filterController = new FilterController(mainElement, moviesModel);
 const userRankController = new UserRankController(headerElement, moviesModel);
+const pageController = new PageController(filmsComponent, sortComponent, moviesModel);
+const filterController = new FilterController(mainElement, moviesModel, pageController, sortComponent, statsComponent);
 
-filterController.render();
+
 userRankController.render();
+filterController.render();
 
+render(mainElement, statsComponent, RenderPosition.BEFOREEND);
 render(mainElement, sortComponent, RenderPosition.BEFOREEND);
 render(mainElement, filmsComponent, RenderPosition.BEFOREEND);
-
 
 const filmsElement = mainElement.querySelector(`.films`);
 
@@ -44,9 +48,7 @@ const filmsListElement = filmsElement.querySelector(`.films-list`);
 
 render(filmsListElement, new FilmListTitleComponent(films), RenderPosition.BEFOREEND);
 
-const pageController = new PageController(filmsComponent, sortComponent, moviesModel);
-
+statsComponent.hide();
 pageController.render();
 pageController.renderTopRatedList();
 pageController.renderMostCommentedList();
-
