@@ -44,6 +44,13 @@ const getFileName = (title) => title
 
 const createRatingText = (rating) => rating || `N/A`;
 
+const convertTextToKebabCase = (text) => text.toLowerCase().split(` `).join(`-`);
+
+const convertToTextFromKebabCase = (str) => {
+  const strInLowerCase = str.split(`-`).join(` `);
+  return strInLowerCase[0].toUpperCase() + strInLowerCase.slice(1);
+};
+
 
 export {
   getRandomArbitrary,
@@ -57,4 +64,6 @@ export {
   formatRelativeTime,
   getFileName,
   createRatingText,
+  convertTextToKebabCase,
+  convertToTextFromKebabCase,
 };

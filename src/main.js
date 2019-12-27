@@ -9,6 +9,7 @@ import MoviesModel from './models/movies';
 import PageController from './controllers/page';
 import {generateFilms} from './mock/film';
 import {RenderPosition, render} from './utils/render';
+import {statsPeriods} from './const';
 
 
 const FILM_COUNT = 15;
@@ -26,7 +27,7 @@ footerStatisticsElement.textContent = `${films.length} movies inside`;
 
 const filmsComponent = new FilmsComponent();
 const sortComponent = new SortComponent();
-const statsComponent = new StatsComponent(moviesModel);
+const statsComponent = new StatsComponent(moviesModel, statsPeriods.ALL_TIME);
 
 const userRankController = new UserRankController(headerElement, moviesModel);
 const pageController = new PageController(filmsComponent, sortComponent, moviesModel);

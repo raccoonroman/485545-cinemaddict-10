@@ -8,6 +8,14 @@ const FilterType = {
   STATS: `Stats`,
 };
 
+const statsPeriods = {
+  ALL_TIME: `All time`,
+  TODAY: `Today`,
+  WEEK: `Week`,
+  MONTH: `Month`,
+  YEAR: `Year`,
+};
+
 const Emotions = [
   `smile`,
   `sleeping`,
@@ -16,4 +24,4 @@ const Emotions = [
 ];
 
 
-export {text, FilterType, Emotions};
+export {text, FilterType, statsPeriods, Emotions};
