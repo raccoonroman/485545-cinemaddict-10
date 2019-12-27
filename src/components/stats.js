@@ -11,6 +11,47 @@ import {
 } from '../utils/common';
 
 
+const initialDateByPeriod = [
+  {
+    period: statsPeriods.ALL_TIME,
+    getInitialDate: () => null,
+  },
+  {
+    period: statsPeriods.TODAY,
+    getInitialDate: () => {
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+  },
+  {
+    period: statsPeriods.WEEK,
+    getInitialDate: () => {
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
+    }
+  },
+  {
+    period: statsPeriods.MONTH,
+    getInitialDate: () => {
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+    }
+  },
+  {
+    period: statsPeriods.YEAR,
+    getInitialDate: () => {
+      const now = new Date();
+      return new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+    }
+  },
+];
+
+const getWatchedMoviesByPeriod = (movies, activePeriod) => {
+  const {getInitialDate} = initialDateByPeriod.find(({period}) => period === activePeriod);
+  return movies.filter(({watchingDate}) => watchingDate >= getInitialDate());
+};
+
+
 const createPeriodsMarkup = (activePeriod) => {
   return Object.values(statsPeriods)
     .map((period) => {
@@ -44,6 +85,9 @@ const countGenres = (movies) => {
 };
 
 const getTopGenre = (movies) => {
+  if (!movies.length) {
+    return `oops`;
+  }
   const countedGenres = countGenres(movies);
   const sorterGenres = Object.entries(countedGenres).sort((a, b) => b[1] - a[1]);
   const [[topGenre]] = sorterGenres;
@@ -51,10 +95,15 @@ const getTopGenre = (movies) => {
   return topGenre;
 };
 
+
 const createStatsTemplate = (watchedMovies, period) => {
   const {userRank} = getUserRank(watchedMovies);
-  const {hours, minutes} = getHoursAndMinutes(getTotalDuration(watchedMovies));
-  const topGenre = getTopGenre(watchedMovies);
+
+  const watchedMoviesByPeriod = getWatchedMoviesByPeriod(watchedMovies, period);
+
+  const watchedMoviesCount = watchedMoviesByPeriod.length;
+  const {hours, minutes} = getHoursAndMinutes(getTotalDuration(watchedMoviesByPeriod));
+  const topGenre = getTopGenre(watchedMoviesByPeriod);
 
   return `<section class="statistic">
     <p class="statistic__rank">
@@ -71,7 +120,7 @@ const createStatsTemplate = (watchedMovies, period) => {
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">${watchedMovies.length} <span class="statistic__item-description">movies</span></p>
+        <p class="statistic__item-text">${watchedMoviesCount} <span class="statistic__item-description">movies</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>

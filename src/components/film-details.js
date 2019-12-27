@@ -328,11 +328,8 @@ export default class FilmDetails extends AbstractSmartComponent {
       .addEventListener(`click`, () => {
         if (this._isWatched) {
           this._userRating = null;
-          this._watchingDate = null;
         }
-        if (!this._isWatched) {
-          this._watchingDate = new Date();
-        }
+        this._watchingDate = this._isWatched ? null : new Date();
         this._isWatched = !this._isWatched;
         this.rerender();
       });
