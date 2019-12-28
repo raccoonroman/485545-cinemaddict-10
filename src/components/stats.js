@@ -92,7 +92,7 @@ const getSortedGenres = (movies) => {
 
 const getTopGenre = (movies) => {
   if (!movies.length) {
-    return `oops`;
+    return `-`;
   }
   const sortedGenres = getSortedGenres(movies);
   const [[topGenre]] = sortedGenres;
