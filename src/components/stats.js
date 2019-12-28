@@ -1,5 +1,5 @@
-// import Chart from 'chart.js';
-// import ChartDataLabels from 'chartjs-plugin-datalabels';
+import Chart from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import 'chart.js/dist/Chart.min.css';
 import AbstractSmartComponent from './abstract-smart-component';
 import {getUserRank} from '../utils/user-rank';
@@ -84,15 +84,78 @@ const countGenres = (movies) => {
   return countedGenres;
 };
 
+const getSortedGenres = (movies) => {
+  const countedGenres = countGenres(movies);
+  const sorterGenres = Object.entries(countedGenres).sort((a, b) => b[1] - a[1]);
+  return sorterGenres;
+};
+
 const getTopGenre = (movies) => {
   if (!movies.length) {
     return `oops`;
   }
-  const countedGenres = countGenres(movies);
-  const sorterGenres = Object.entries(countedGenres).sort((a, b) => b[1] - a[1]);
-  const [[topGenre]] = sorterGenres;
+  const sortedGenres = getSortedGenres(movies);
+  const [[topGenre]] = sortedGenres;
 
   return topGenre;
+};
+
+const renderChart = (ctx, watchedMovies, period) => {
+  const watchedMoviesByPeriod = getWatchedMoviesByPeriod(watchedMovies, period);
+  const sorterGenres = new Map(getSortedGenres(watchedMoviesByPeriod));
+  const labels = [...sorterGenres.keys()];
+  const data = [...sorterGenres.values()];
+
+  return new Chart(ctx, {
+    plugins: [ChartDataLabels],
+    type: `horizontalBar`,
+    data: {
+      labels,
+      datasets: [{
+        data,
+        label: `watched movies`,
+        backgroundColor: `#ffe800`,
+      }]
+    },
+    options: {
+      plugins: {
+        datalabels: {
+          anchor: `start`,
+          align: `start`,
+          offset: 40,
+          color: `#ffffff`,
+          font: {
+            size: 18,
+          },
+        }
+      },
+      legend: {
+        display: false,
+      },
+      scales: {
+        xAxes: [{
+          gridLines: {
+            display: false,
+          },
+          ticks: {
+            display: false,
+            beginAtZero: true,
+          },
+        }],
+        yAxes: [{
+          gridLines: {
+            display: false,
+          },
+          ticks: {
+            padding: 100,
+            fontSize: 18,
+            fontColor: `#ffffff`,
+            beginAtZero: true,
+          },
+        }]
+      },
+    }
+  });
 };
 
 
@@ -146,7 +209,10 @@ export default class Stats extends AbstractSmartComponent {
     this._movies = movies;
     this._period = period;
 
+    this._chart = null;
+
     this._subscribeOnEvents();
+    this._renderChart();
   }
 
   getTemplate() {
@@ -168,6 +234,8 @@ export default class Stats extends AbstractSmartComponent {
     this._period = period;
 
     super.rerender();
+
+    this._renderChart();
   }
 
   _subscribeOnEvents() {
@@ -181,5 +249,22 @@ export default class Stats extends AbstractSmartComponent {
         this._period = period;
         this.rerender(this._movies, this._period);
       });
+  }
+
+  _renderChart() {
+    const element = this.getElement();
+
+    const ctx = element.querySelector(`.statistic__chart`);
+
+    this._resetChart();
+
+    this._chart = renderChart(ctx, this._movies.getMoviesByFilter(FilterType.HISTORY), this._period);
+  }
+
+  _resetChart() {
+    if (this._chart) {
+      this._chart.destroy();
+      this._chart = null;
+    }
   }
 }
