@@ -8,8 +8,11 @@ const getFilterHref = (filter) => {
 const createFilterMarkup = (filter, isActive) => {
   const {name, count} = filter;
 
-  return `<a href="${getFilterHref(filter)}" class="main-navigation__item ${isActive ? `main-navigation__item--active` : ``}" data-name="${name}">
-    ${name} ${name === `All movies` ? `` : `<span class="main-navigation__item-count">${count}</span>`}
+  return `<a
+    href="${getFilterHref(filter)}"
+    class="main-navigation__item
+    ${name === `Stats` ? `main-navigation__item--additional` : ``} ${isActive ? `main-navigation__item--active` : ``}" data-name="${name}">
+    ${name} ${name === `All movies` || name === `Stats` ? `` : `<span class="main-navigation__item-count">${count}</span>`}
   </a>`;
 };
 
@@ -18,10 +21,7 @@ const createFilterTemplate = (filters) => {
     .map((filter) => createFilterMarkup(filter, filter.active))
     .join(`\n`);
 
-  return `<nav class="main-navigation">
-    ${filtersMarkup}
-    <a href="#stats" class="main-navigation__item main-navigation__item--additional">Stats</a>
-  </nav>`;
+  return `<nav class="main-navigation">${filtersMarkup}</nav>`;
 };
 
 

@@ -18,12 +18,16 @@ const getRandomArrayItem = (array) => {
 
 const getRandomBooleanValue = () => Math.random() >= 0.5;
 
-
-const formatDuration = (duration) => {
+const getHoursAndMinutes = (duration) => {
   const hours = Math.floor(duration / 60);
   const minutes = duration % 60;
+  return {hours, minutes};
+};
+
+const formatDuration = (duration) => {
+  const {hours, minutes} = getHoursAndMinutes(duration);
   const formatingHours = hours > 0 ? `${hours}h` : ``;
-  const formatingMinutes = minutes > 10 ? `${minutes}m` : `0${minutes}m`;
+  const formatingMinutes = minutes >= 10 ? `${minutes}m` : `0${minutes}m`;
 
   return `${formatingHours} ${formatingMinutes}`;
 };
@@ -40,16 +44,26 @@ const getFileName = (title) => title
 
 const createRatingText = (rating) => rating || `N/A`;
 
+const convertTextToKebabCase = (text) => text.toLowerCase().split(` `).join(`-`);
+
+const convertToTextFromKebabCase = (str) => {
+  const strInLowerCase = str.split(`-`).join(` `);
+  return strInLowerCase[0].toUpperCase() + strInLowerCase.slice(1);
+};
+
 
 export {
   getRandomArbitrary,
   getRandomIntInclusive,
   getRandomArrayItem,
   getRandomBooleanValue,
+  getHoursAndMinutes,
   formatDuration,
   formatYear,
   formatDate,
   formatRelativeTime,
   getFileName,
   createRatingText,
+  convertTextToKebabCase,
+  convertToTextFromKebabCase,
 };

@@ -71,6 +71,7 @@ export default class MovieController {
     this._movieCardComponent.setWatchedButtonClickHandler((evt) => {
       evt.preventDefault();
       this._onDataChange(this, movie, Object.assign({}, movie, {
+        watchingDate: movie.isWatched ? null : new Date(),
         isWatched: !movie.isWatched,
       }));
     });

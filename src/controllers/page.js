@@ -38,6 +38,14 @@ export default class PageController {
     this._moviesModel.setFilterChangeHandler(this._onFilterChange);
   }
 
+  hide() {
+    this._filmsComponent.hide();
+  }
+
+  show() {
+    this._filmsComponent.show();
+  }
+
   render() {
     const films = this._moviesModel.getMovies();
 

@@ -1,13 +1,20 @@
 import AbstractComponent from './abstract-component';
-import {formatDuration, formatYear, getFileName, createRatingText} from './../utils/common';
+import {
+  formatDuration,
+  formatYear,
+  getFileName,
+  createRatingText,
+  convertTextToKebabCase,
+} from './../utils/common';
 
 
-const createControlItemMarkup = (name, buttonText, isActive) =>
-  `<button
-    class="film-card__controls-item button
-    film-card__controls-item--${name}
-    ${isActive ? `film-card__controls-item--active` : ``}
-  ">${buttonText}</button>`;
+const createControlItemMarkup = (name, isActive) => {
+  return `<button
+  class="film-card__controls-item button
+  film-card__controls-item--${convertTextToKebabCase(name)}
+  ${isActive ? `film-card__controls-item--active` : ``}
+">${name}</button>`;
+};
 
 const createCommentsTitleText = (comments) => {
   switch (comments.length) {
@@ -36,9 +43,9 @@ const createFilmCardTemplate = (film) => {
   } = film;
 
   const [mainGenre] = genres;
-  const watchlistButton = createControlItemMarkup(`add-to-watchlist`, `Add to watchlist`, isInWatchlist);
-  const watchedButton = createControlItemMarkup(`mark-as-watched`, `Mark as watched`, isWatched);
-  const favoriteButton = createControlItemMarkup(`favorite`, `Mark as favorite`, isFavorite);
+  const watchlistButton = createControlItemMarkup(`Add to watchlist`, isInWatchlist);
+  const watchedButton = createControlItemMarkup(`Mark as watched`, isWatched);
+  const favoriteButton = createControlItemMarkup(`Favorite`, isFavorite);
 
   return `<article class="film-card">
     <h3 class="film-card__title">${title}</h3>

@@ -250,6 +250,7 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._isWatched = film.isWatched;
     this._isFavorite = film.isFavorite;
     this._comments = film.comments;
+    this._watchingDate = film.watchingDate;
 
     this._emotion = null;
     this._commentText = null;
@@ -288,6 +289,7 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._isWatched = film.isWatched;
     this._isFavorite = film.isFavorite;
     this._comments = film.comments;
+    this._watchingDate = film.watchingDate;
 
     this._emotion = null;
     this._commentText = null;
@@ -302,6 +304,7 @@ export default class FilmDetails extends AbstractSmartComponent {
     return Object.assign({}, parseFormData(formData), {
       rating: this._rating,
       comments: this._comments,
+      watchingDate: this._watchingDate,
     });
   }
 
@@ -326,6 +329,7 @@ export default class FilmDetails extends AbstractSmartComponent {
         if (this._isWatched) {
           this._userRating = null;
         }
+        this._watchingDate = this._isWatched ? null : new Date();
         this._isWatched = !this._isWatched;
         this.rerender();
       });
@@ -346,6 +350,14 @@ export default class FilmDetails extends AbstractSmartComponent {
         }
 
         this._userRating = userRating;
+        this.rerender();
+      });
+    }
+
+    const userRatingUndoButton = element.querySelector(`.film-details__watched-reset`);
+    if (userRatingUndoButton) {
+      userRatingUndoButton.addEventListener(`click`, () => {
+        this._userRating = null;
         this.rerender();
       });
     }

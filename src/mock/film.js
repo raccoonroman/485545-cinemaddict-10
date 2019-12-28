@@ -57,22 +57,24 @@ const Users = [
   `Max Graham`,
 ];
 
+const threeDaysInMs = 1000 * 60 * 60 * 24 * 3;
+const hundredYears = 100;
+const yearInMs = 1000 * 60 * 60 * 24 * 365;
 
 const getRandomRating = () => +getRandomArbitrary(1, 9).toFixed(1);
 
+const getRandomDate = (period) => {
+  const currentDate = Date.now();
+  const diffDate = getRandomIntInclusive(0, period);
+  return new Date(currentDate - diffDate);
+};
+
 const getRandomReleaseDate = () => {
   const targetDate = new Date();
-  const diffYear = getRandomIntInclusive(0, 100);
+  const diffYear = getRandomIntInclusive(0, hundredYears);
   targetDate.setFullYear(targetDate.getFullYear() - diffYear);
 
   return targetDate;
-};
-
-const getRandomCommentDate = () => {
-  const currentDate = Date.now();
-  const threeDaysInMs = 1000 * 60 * 60 * 24 * 3;
-  const diffDate = getRandomIntInclusive(0, threeDaysInMs);
-  return new Date(currentDate - diffDate);
 };
 
 
@@ -103,7 +105,7 @@ const generateComment = () => {
     text: generateDescription(),
     emotion: getRandomArrayItem(Emotions),
     author: getRandomArrayItem(Users),
-    date: getRandomCommentDate(),
+    date: getRandomDate(threeDaysInMs),
   };
 };
 
@@ -144,6 +146,7 @@ const generateFilm = () => {
     description: generateDescription(),
     isInWatchlist: getRandomBooleanValue(),
     isWatched,
+    watchingDate: isWatched ? getRandomDate(yearInMs) : null,
     isFavorite: getRandomBooleanValue(),
     comments: generateComments(),
   };

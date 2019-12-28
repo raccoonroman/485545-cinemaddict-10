@@ -5,9 +5,12 @@ import {getFilmsByFilter} from '../utils/filter';
 
 
 export default class FilterController {
-  constructor(container, moviesModel) {
+  constructor(container, moviesModel, pageController, sortComponent, statsComponent) {
     this._container = container;
     this._moviesModel = moviesModel;
+    this._pageController = pageController;
+    this._sortComponent = sortComponent;
+    this._statsComponent = statsComponent;
 
     this._activeFilterType = FilterType.ALL;
     this._filterComponent = null;
@@ -43,7 +46,20 @@ export default class FilterController {
   _onFilterChange(filterType) {
     this._moviesModel.setFilter(filterType);
     this._activeFilterType = filterType;
+    this._sortComponent.setSortTypeDefault();
     this.render();
+
+    switch (filterType) {
+      case FilterType.STATS:
+        this._pageController.hide();
+        this._sortComponent.hide();
+        this._statsComponent.show();
+        break;
+      default:
+        this._pageController.show();
+        this._sortComponent.show();
+        this._statsComponent.hide();
+    }
   }
 
   _onDataChange() {

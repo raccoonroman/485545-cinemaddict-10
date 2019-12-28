@@ -5,6 +5,15 @@ const FilterType = {
   WATCHLIST: `Watchlist`,
   HISTORY: `History`,
   FAVORITES: `Favorites`,
+  STATS: `Stats`,
+};
+
+const statsPeriods = {
+  ALL_TIME: `All time`,
+  TODAY: `Today`,
+  WEEK: `Week`,
+  MONTH: `Month`,
+  YEAR: `Year`,
 };
 
 const Emotions = [
@@ -15,4 +24,4 @@ const Emotions = [
 ];
 
 
-export {text, FilterType, Emotions};
+export {text, FilterType, statsPeriods, Emotions};
