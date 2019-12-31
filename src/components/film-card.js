@@ -8,12 +8,22 @@ import {
 } from './../utils/common';
 
 
+const maxDescriptionLength = 140;
+
 const createControlItemMarkup = (name, isActive) => {
   return `<button
   class="film-card__controls-item button
   film-card__controls-item--${convertTextToKebabCase(name)}
   ${isActive ? `film-card__controls-item--active` : ``}
 ">${name}</button>`;
+};
+
+const createDescriptionText = (description) => {
+  if (description.length < maxDescriptionLength) {
+    return description;
+  }
+
+  return `${description.slice(0, maxDescriptionLength - 1)}…`;
 };
 
 const createCommentsTitleText = (comments) => {
@@ -56,7 +66,7 @@ const createFilmCardTemplate = (film) => {
       <span class="film-card__genre">${mainGenre}</span>
     </p>
     <img src="./images/posters/${getFileName(title)}.jpg" alt="${title}" class="film-card__poster">
-    <p class="film-card__description">${description}</p>
+    <p class="film-card__description">${createDescriptionText(description)}</p>
     <a class="film-card__comments">${createCommentsTitleText(comments)}</a>
     <form class="film-card__controls">
       ${watchlistButton}
