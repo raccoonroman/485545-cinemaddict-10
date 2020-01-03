@@ -57,7 +57,7 @@ export default class Movies {
   }
 
   hasRatings() {
-    return this._movies.some(({rating}) => !!rating);
+    return this._movies.some((movie) => !!movie.filmInfo.totalRating);
   }
 
   hasComments() {
@@ -65,7 +65,9 @@ export default class Movies {
   }
 
   getSortedMoviesByRating() {
-    return this._movies.slice().sort((a, b) => b.rating - a.rating);
+    return this._movies.slice().sort((a, b) => {
+      return b.filmInfo.totalRating - a.filmInfo.totalRating;
+    });
   }
 
   getSortedMoviesByCommentsCount() {

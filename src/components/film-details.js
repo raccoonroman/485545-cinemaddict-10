@@ -99,10 +99,10 @@ const createFilmDetailsTemplate = (film, options = {}) => {
   const {
     title,
     alternativeTitle,
+    totalRating,
   } = filmInfo;
 
   const {
-    rating,
     userRating,
     isInWatchlist,
     isWatched,
@@ -136,7 +136,7 @@ const createFilmDetailsTemplate = (film, options = {}) => {
               </div>
 
               <div class="film-details__rating">
-                <p class="film-details__total-rating">${createRatingText(rating)}</p>
+                <p class="film-details__total-rating">${createRatingText(totalRating)}</p>
                 ${userRating ? `<p class="film-details__user-rating">Your rate ${userRating}</p>` : ``}
               </div>
             </div>
@@ -250,7 +250,6 @@ export default class FilmDetails extends AbstractSmartComponent {
   constructor(film) {
     super();
     this._film = film;
-    this._rating = film.rating;
     this._userRating = film.userRating;
     this._isInWatchlist = film.isInWatchlist;
     this._isWatched = film.isWatched;
@@ -268,7 +267,6 @@ export default class FilmDetails extends AbstractSmartComponent {
 
   getTemplate() {
     return createFilmDetailsTemplate(this._film, {
-      rating: this._rating,
       userRating: this._userRating,
       isInWatchlist: this._isInWatchlist,
       isWatched: this._isWatched,
@@ -289,7 +287,6 @@ export default class FilmDetails extends AbstractSmartComponent {
 
   reset() {
     const film = this._film;
-    this._rating = film.rating;
     this._userRating = film.userRating;
     this._isInWatchlist = film.isInWatchlist;
     this._isWatched = film.isWatched;
@@ -308,7 +305,6 @@ export default class FilmDetails extends AbstractSmartComponent {
     const formData = new FormData(form);
 
     return Object.assign({}, parseFormData(formData), {
-      rating: this._rating,
       comments: this._comments,
       watchingDate: this._watchingDate,
     });
@@ -350,11 +346,6 @@ export default class FilmDetails extends AbstractSmartComponent {
     if (userRatingElement) {
       userRatingElement.addEventListener(`change`, (evt) => {
         const userRating = +evt.target.value;
-
-        if (!this._rating) {
-          this._rating = userRating;
-        }
-
         this._userRating = userRating;
         this.rerender();
       });

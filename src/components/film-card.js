@@ -23,7 +23,7 @@ const createDescriptionText = (description) => {
     return description;
   }
 
-  return `${description.slice(0, maxDescriptionLength - 1)}â€¦`;
+  return `${description.slice(0, maxDescriptionLength - 1)}…`;
 };
 
 const createCommentsTitleText = (comments) => {
@@ -42,7 +42,6 @@ const createFilmCardTemplate = (film) => {
   const {
     filmInfo,
     poster,
-    rating,
     releaseDate,
     duration,
     genres,
@@ -55,6 +54,7 @@ const createFilmCardTemplate = (film) => {
 
   const {
     title,
+    totalRating,
   } = filmInfo;
 
   const [mainGenre] = genres;
@@ -64,7 +64,7 @@ const createFilmCardTemplate = (film) => {
 
   return `<article class="film-card">
     <h3 class="film-card__title">${title}</h3>
-    <p class="film-card__rating">${createRatingText(rating)}</p>
+    <p class="film-card__rating">${createRatingText(totalRating)}</p>
     <p class="film-card__info">
       <span class="film-card__year">${formatYear(releaseDate)}</span>
       <span class="film-card__duration">${formatDuration(duration)}</span>

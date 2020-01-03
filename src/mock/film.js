@@ -121,29 +121,21 @@ const generateComments = () => {
   return result;
 };
 
-const generateRating = (userRating) => {
-  if (getRandomBooleanValue()) {
-    return getRandomRating();
-  }
-
-  return userRating || null;
-};
-
 
 const generateFilm = () => {
   const title = getRandomArrayItem(FilmTitles);
   const isWatched = getRandomBooleanValue();
   const userRating = getRandomBooleanValue() ? getRandomIntInclusive(1, 9) : null;
-  const rating = generateRating(userRating);
+  const totalRating = getRandomBooleanValue() ? getRandomRating() : null;
 
   return {
     id: String(new Date() + Math.random()),
     filmInfo: {
       title,
       alternativeTitle: `alternative title`,
+      totalRating,
     },
     poster: `./images/posters/${getFileName(title)}.jpg`,
-    rating,
     userRating: isWatched ? userRating : null,
     ageRating: getRandomIntInclusive(0, 21),
     director: getRandomArrayItem(Users),

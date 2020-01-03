@@ -1,3 +1,4 @@
+import {merge} from 'lodash';
 import FilmCardComponent from './../components/film-card';
 import FilmDetailsComponent from './../components/film-details';
 import {RenderPosition, render, replace, remove} from './../utils/render';
@@ -52,7 +53,7 @@ export default class MovieController {
       evt.preventDefault();
 
       const data = this._movieDetailsComponent.getData();
-      this._onDataChange(this, movie, Object.assign({}, movie, data));
+      this._onDataChange(this, movie, merge({}, movie, data));
 
       document.removeEventListener(`keydown`, onEscKeyDown);
     };

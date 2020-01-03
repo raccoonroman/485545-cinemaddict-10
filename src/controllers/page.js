@@ -169,7 +169,9 @@ export default class PageController {
         });
         break;
       case SortType.RATING:
-        sortedFilms = films.slice().sort((a, b) => b.rating - a.rating);
+        sortedFilms = films.slice().sort((a, b) => {
+          return b.filmInfo.totalRating - a.filmInfo.totalRating;
+        });
         break;
       case SortType.DEFAULT:
         sortedFilms = films.slice();
