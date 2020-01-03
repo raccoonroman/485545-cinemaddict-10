@@ -4,6 +4,7 @@ import {
   getRandomIntInclusive,
   getRandomArrayItem,
   getRandomBooleanValue,
+  getFileName,
 } from './../utils/common';
 
 const FilmTitles = [
@@ -130,16 +131,22 @@ const generateRating = (userRating) => {
 
 
 const generateFilm = () => {
+  const title = getRandomArrayItem(FilmTitles);
   const isWatched = getRandomBooleanValue();
   const userRating = getRandomBooleanValue() ? getRandomIntInclusive(1, 9) : null;
   const rating = generateRating(userRating);
 
-
   return {
     id: String(new Date() + Math.random()),
-    title: getRandomArrayItem(FilmTitles),
+    filmInfo: {
+      title,
+      alternativeTitle: `alternative title`,
+    },
+    poster: `./images/posters/${getFileName(title)}.jpg`,
     rating,
     userRating: isWatched ? userRating : null,
+    ageRating: getRandomIntInclusive(0, 21),
+    director: getRandomArrayItem(Users),
     releaseDate: getRandomReleaseDate(),
     genres: [...new Set(generateGenres(Genres))],
     duration: getRandomIntInclusive(10, 180),

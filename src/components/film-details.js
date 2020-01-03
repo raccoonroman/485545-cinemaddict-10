@@ -5,7 +5,6 @@ import {
   formatDuration,
   formatDate,
   formatRelativeTime,
-  getFileName,
   createRatingText,
 } from '../utils/common';
 
@@ -87,12 +86,20 @@ const createGenresTitleText = (genres) => genres.length > 1 ? `Genres` : `Genre`
 
 const createFilmDetailsTemplate = (film, options = {}) => {
   const {
-    title,
+    filmInfo,
+    poster,
+    ageRating,
+    director,
     releaseDate,
     duration,
     genres,
     description,
   } = film;
+
+  const {
+    title,
+    alternativeTitle,
+  } = filmInfo;
 
   const {
     rating,
@@ -104,7 +111,6 @@ const createFilmDetailsTemplate = (film, options = {}) => {
     emotion,
   } = options;
 
-  const fileName = getFileName(title);
   const watchlistItem = createControlItemMarkup(`watchlist`, `Add to watchlist`, isInWatchlist);
   const watchedItem = createControlItemMarkup(`watched`, `Already watched`, isWatched);
   const favoriteItem = createControlItemMarkup(`favorite`, `Add to favorites`, isFavorite);
@@ -117,16 +123,16 @@ const createFilmDetailsTemplate = (film, options = {}) => {
         </div>
         <div class="film-details__info-wrap">
           <div class="film-details__poster">
-            <img class="film-details__poster-img" src="./images/posters/${fileName}.jpg" alt="">
+            <img class="film-details__poster-img" src="${poster}" alt="${title}">
 
-            <p class="film-details__age">18+</p>
+            <p class="film-details__age">${ageRating}+</p>
           </div>
 
           <div class="film-details__info">
             <div class="film-details__info-head">
               <div class="film-details__title-wrap">
                 <h3 class="film-details__title">${title}</h3>
-                <p class="film-details__title-original">Original: ${title}</p>
+                <p class="film-details__title-original">Original: ${alternativeTitle}</p>
               </div>
 
               <div class="film-details__rating">
@@ -138,7 +144,7 @@ const createFilmDetailsTemplate = (film, options = {}) => {
             <table class="film-details__table">
               <tr class="film-details__row">
                 <td class="film-details__term">Director</td>
-                <td class="film-details__cell">Anthony Mann</td>
+                <td class="film-details__cell">${director}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Writers</td>
@@ -185,7 +191,7 @@ const createFilmDetailsTemplate = (film, options = {}) => {
 
           <div class="film-details__user-score">
             <div class="film-details__user-rating-poster">
-              <img src="./images/posters/${fileName}.jpg" alt="film-poster" class="film-details__user-rating-img">
+              <img src="${poster}" alt="film-poster" class="film-details__user-rating-img">
             </div>
 
             <section class="film-details__user-rating-inner">

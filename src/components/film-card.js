@@ -40,7 +40,8 @@ const createCommentsTitleText = (comments) => {
 
 const createFilmCardTemplate = (film) => {
   const {
-    title,
+    filmInfo,
+    poster,
     rating,
     releaseDate,
     duration,
@@ -51,6 +52,10 @@ const createFilmCardTemplate = (film) => {
     isFavorite,
     comments,
   } = film;
+
+  const {
+    title,
+  } = filmInfo;
 
   const [mainGenre] = genres;
   const watchlistButton = createControlItemMarkup(`Add to watchlist`, isInWatchlist);
@@ -65,7 +70,7 @@ const createFilmCardTemplate = (film) => {
       <span class="film-card__duration">${formatDuration(duration)}</span>
       <span class="film-card__genre">${mainGenre}</span>
     </p>
-    <img src="./images/posters/${getFileName(title)}.jpg" alt="${title}" class="film-card__poster">
+    <img src="${poster}" alt="${title}" class="film-card__poster">
     <p class="film-card__description">${createDescriptionText(description)}</p>
     <a class="film-card__comments">${createCommentsTitleText(comments)}</a>
     <form class="film-card__controls">
