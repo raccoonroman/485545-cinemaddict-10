@@ -86,21 +86,20 @@ const createGenresTitleText = (genres) => genres.length > 1 ? `Genres` : `Genre`
 
 const createFilmDetailsTemplate = (film, options = {}) => {
   const {
-    filmInfo,
-    poster,
-    ageRating,
-    director,
-    releaseDate,
-    duration,
-    genres,
-    description,
-  } = film;
-
-  const {
     title,
     alternativeTitle,
     totalRating,
-  } = filmInfo;
+    poster,
+    ageRating,
+    director,
+    writers,
+    actors,
+    releaseDate,
+    releaseCountry,
+    duration,
+    genres,
+    description,
+  } = film.filmInfo;
 
   const {
     userRating,
@@ -148,11 +147,11 @@ const createFilmDetailsTemplate = (film, options = {}) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Writers</td>
-                <td class="film-details__cell">Anne Wigton, Heinz Herald, Richard Weil</td>
+                <td class="film-details__cell">${writers.join(`, `)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Actors</td>
-                <td class="film-details__cell">Erich von Stroheim, Mary Beth Hughes, Dan Duryea</td>
+                <td class="film-details__cell">${actors.join(`, `)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
@@ -164,7 +163,7 @@ const createFilmDetailsTemplate = (film, options = {}) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
-                <td class="film-details__cell">USA</td>
+                <td class="film-details__cell">${releaseCountry}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">${createGenresTitleText(genres)}</td>

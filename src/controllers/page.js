@@ -165,7 +165,7 @@ export default class PageController {
     switch (sortType) {
       case SortType.DATE:
         sortedFilms = films.slice().sort((a, b) => {
-          return new Date(b.releaseDate) - new Date(a.releaseDate);
+          return new Date(b.filmInfo.releaseDate) - new Date(a.filmInfo.releaseDate);
         });
         break;
       case SortType.RATING:

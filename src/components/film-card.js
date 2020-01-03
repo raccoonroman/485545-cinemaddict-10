@@ -2,7 +2,6 @@ import AbstractComponent from './abstract-component';
 import {
   formatDuration,
   formatYear,
-  getFileName,
   createRatingText,
   convertTextToKebabCase,
 } from './../utils/common';
@@ -41,11 +40,6 @@ const createCommentsTitleText = (comments) => {
 const createFilmCardTemplate = (film) => {
   const {
     filmInfo,
-    poster,
-    releaseDate,
-    duration,
-    genres,
-    description,
     isInWatchlist,
     isWatched,
     isFavorite,
@@ -55,6 +49,11 @@ const createFilmCardTemplate = (film) => {
   const {
     title,
     totalRating,
+    poster,
+    releaseDate,
+    duration,
+    genres,
+    description,
   } = filmInfo;
 
   const [mainGenre] = genres;

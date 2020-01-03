@@ -58,6 +58,19 @@ const Users = [
   `Max Graham`,
 ];
 
+const Countries = [
+  `United States`,
+  `China`,
+  `India`,
+  `Japan`,
+  `United Kingdom`,
+  `South Korea`,
+  `France`,
+  `Germany`,
+  `Russia`,
+  `Australia`,
+];
+
 const threeDaysInMs = 1000 * 60 * 60 * 24 * 3;
 const hundredYears = 100;
 const yearInMs = 1000 * 60 * 60 * 24 * 365;
@@ -75,7 +88,7 @@ const getRandomReleaseDate = () => {
   const diffYear = getRandomIntInclusive(0, hundredYears);
   targetDate.setFullYear(targetDate.getFullYear() - diffYear);
 
-  return targetDate;
+  return targetDate.getTime();
 };
 
 
@@ -96,9 +109,9 @@ const generateDescription = () => {
   return result.join(` `);
 };
 
-const generateGenres = (genres) => genres
+const generateItems = (arr) => arr
   .filter(getRandomBooleanValue)
-  .slice(0, getRandomIntInclusive(1, 3));
+  .slice(0, getRandomIntInclusive(1, 5));
 
 const generateComment = () => {
   return {
@@ -134,15 +147,18 @@ const generateFilm = () => {
       title,
       alternativeTitle: `alternative title`,
       totalRating,
+      poster: `./images/posters/${getFileName(title)}.jpg`,
+      ageRating: getRandomIntInclusive(0, 21),
+      director: getRandomArrayItem(Users),
+      writers: [...new Set(generateItems(Users))],
+      actors: [...new Set(generateItems(Users))],
+      releaseDate: getRandomReleaseDate(),
+      releaseCountry: getRandomArrayItem(Countries),
+      duration: getRandomIntInclusive(10, 180),
+      genres: [...new Set(generateItems(Genres))],
+      description: generateDescription(),
     },
-    poster: `./images/posters/${getFileName(title)}.jpg`,
     userRating: isWatched ? userRating : null,
-    ageRating: getRandomIntInclusive(0, 21),
-    director: getRandomArrayItem(Users),
-    releaseDate: getRandomReleaseDate(),
-    genres: [...new Set(generateGenres(Genres))],
-    duration: getRandomIntInclusive(10, 180),
-    description: generateDescription(),
     isInWatchlist: getRandomBooleanValue(),
     isWatched,
     watchingDate: isWatched ? getRandomDate(yearInMs) : null,

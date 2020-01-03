@@ -63,19 +63,19 @@ const createPeriodsMarkup = (activePeriod) => {
 };
 
 const getTotalDuration = (movies) => {
-  return movies.reduce((acc, {duration}) => acc + duration, 0);
+  return movies.reduce((acc, movie) => acc + movie.filmInfo.duration, 0);
 };
 
 const countMoviesByGenre = (movies, selectedGenre) => {
-  const moviesByGenre = movies.filter(({genres}) => {
-    return genres.some((genre) => genre === selectedGenre);
+  const moviesByGenre = movies.filter((movie) => {
+    return movie.filmInfo.genres.some((genre) => genre === selectedGenre);
   });
 
   return moviesByGenre.length;
 };
 
 const countGenres = (movies) => {
-  const allGenres = movies.reduce((acc, {genres}) => [...acc, ...genres], []);
+  const allGenres = movies.reduce((acc, movie) => [...acc, ...movie.filmInfo.genres], []);
   const unicGenres = [...new Set(allGenres)];
   const countedGenres = unicGenres.reduce((acc, genre) => {
     return Object.assign(acc, {[genre]: countMoviesByGenre(movies, genre)});
@@ -102,9 +102,9 @@ const getTopGenre = (movies) => {
 
 const renderChart = (ctx, watchedMovies, period) => {
   const watchedMoviesByPeriod = getWatchedMoviesByPeriod(watchedMovies, period);
-  const sorterGenres = new Map(getSortedGenres(watchedMoviesByPeriod));
-  const labels = [...sorterGenres.keys()];
-  const data = [...sorterGenres.values()];
+  const sortedGenres = new Map(getSortedGenres(watchedMoviesByPeriod));
+  const labels = [...sortedGenres.keys()];
+  const data = [...sortedGenres.values()];
 
   return new Chart(ctx, {
     plugins: [ChartDataLabels],
