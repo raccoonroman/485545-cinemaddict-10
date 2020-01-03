@@ -26,6 +26,7 @@ export default class Movies {
 
   setMovies(movies) {
     this._movies = Array.from(movies);
+    this._callHandlers(this._dataChangeHandlers);
   }
 
   setFilter(filterType) {
