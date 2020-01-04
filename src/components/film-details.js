@@ -1,6 +1,7 @@
 import he from 'he';
 import AbstractSmartComponent from './abstract-smart-component';
 import {Emotions} from '../const';
+import {allComments} from '../mock/film';
 import {
   formatDuration,
   formatDate,
@@ -49,7 +50,8 @@ const createRatingScoreMarkup = (userRating) => {
   return result.join(`\n`);
 };
 
-const createCommentsListMarkup = (comments) => comments
+const createCommentsListMarkup = (commentsId) => commentsId
+  .map((commentId) => allComments.find(({id}) => id === commentId))
   .map((comment) => {
     const {id, text, emotion, author, date} = comment;
     return `<li class="film-details__comment" data-comment-id="${id}">
@@ -362,8 +364,8 @@ export default class FilmDetails extends AbstractSmartComponent {
       deleteButton.addEventListener(`click`, (evt) => {
         evt.preventDefault();
         const commentElement = deleteButton.closest(`.film-details__comment`);
-        const commentId = commentElement.dataset.commentId;
-        const index = this._comments.findIndex((it) => it.id === commentId);
+        const commentId = +commentElement.dataset.commentId;
+        const index = this._comments.findIndex((it) => it === commentId);
         this._comments = [].concat(this._comments.slice(0, index), this._comments.slice(index + 1));
         this.rerender();
       });
@@ -380,23 +382,23 @@ export default class FilmDetails extends AbstractSmartComponent {
       this._commentText = evt.target.value;
     });
 
-    element.addEventListener(`keydown`, (evt) => {
-      if (evt.ctrlKey && evt.keyCode === 13) {
-        if (this._emotion && this._commentText) {
-          const newComment = {
-            id: String(new Date() + Math.random()),
-            text: he.encode(this._commentText),
-            emotion: this._emotion,
-            author: `You`,
-            date: new Date(),
-          };
+    // element.addEventListener(`keydown`, (evt) => {
+    //   if (evt.ctrlKey && evt.keyCode === 13) {
+    //     if (this._emotion && this._commentText) {
+    //       const newComment = {
+    //         id: String(new Date() + Math.random()),
+    //         text: he.encode(this._commentText),
+    //         emotion: this._emotion,
+    //         author: `You`,
+    //         date: new Date(),
+    //       };
 
-          this._comments.push(newComment);
-          this._emotion = null;
-          this._commentText = null;
-          this.rerender();
-        }
-      }
-    });
+    //       this._comments.push(newComment);
+    //       this._emotion = null;
+    //       this._commentText = null;
+    //       this.rerender();
+    //     }
+    //   }
+    // });
   }
 }

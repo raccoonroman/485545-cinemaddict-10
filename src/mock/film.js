@@ -115,23 +115,41 @@ const generateItems = (arr) => arr
 
 const generateComment = () => {
   return {
-    id: String(new Date() + Math.random()),
-    text: generateDescription(),
-    emotion: getRandomArrayItem(Emotions),
     author: getRandomArrayItem(Users),
+    text: generateDescription(),
     date: getRandomDate(threeDaysInMs),
+    emotion: getRandomArrayItem(Emotions),
   };
 };
 
-const generateComments = () => {
-  const commentsAmount = getRandomIntInclusive(0, 5);
-  const result = [];
+
+const gererateAllComments = () => {
+  const commentsAmount = 100;
+  const allComments = [];
 
   for (let i = 0; i < commentsAmount; i++) {
-    result.push(generateComment());
+    const comment = generateComment();
+    comment.id = i;
+    allComments.push(comment);
   }
 
-  return result;
+  return allComments;
+};
+
+const allComments = gererateAllComments();
+const reservedComments = [];
+
+const generateCommentsForFilm = (amount) => {
+  const comments = [];
+  for (let i = 0; i < amount; i++) {
+    const commentId = getRandomArrayItem(allComments).id;
+    if (!reservedComments.includes(commentId)) {
+      comments.push(commentId);
+      reservedComments.push(commentId);
+    }
+  }
+
+  return comments;
 };
 
 
@@ -140,9 +158,11 @@ const generateFilm = () => {
   const isWatched = getRandomBooleanValue();
   const userRating = getRandomBooleanValue() ? getRandomIntInclusive(1, 9) : null;
   const totalRating = getRandomBooleanValue() ? getRandomRating() : null;
+  const commentsAmount = getRandomIntInclusive(1, 10);
+  const comments = generateCommentsForFilm(commentsAmount);
+  // console.log(comments);
 
   return {
-    id: String(new Date() + Math.random()),
     filmInfo: {
       title,
       alternativeTitle: `alternative title`,
@@ -163,19 +183,21 @@ const generateFilm = () => {
     isWatched,
     watchingDate: isWatched ? getRandomDate(yearInMs) : null,
     isFavorite: getRandomBooleanValue(),
-    comments: generateComments(),
+    comments,
   };
 };
 
 
 const generateFilms = (count) => {
-  const result = [];
+  const films = [];
 
   for (let i = 0; i < count; i++) {
-    result.push(generateFilm());
+    const film = generateFilm();
+    film.id = i;
+    films.push(film);
   }
 
-  return result;
+  return films;
 };
 
-export {generateFilm, generateFilms};
+export {generateFilm, generateFilms, allComments};
