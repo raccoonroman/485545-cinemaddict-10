@@ -160,7 +160,6 @@ const generateFilm = () => {
   const totalRating = getRandomBooleanValue() ? getRandomRating() : null;
   const commentsAmount = getRandomIntInclusive(1, 10);
   const comments = generateCommentsForFilm(commentsAmount);
-  // console.log(comments);
 
   return {
     filmInfo: {

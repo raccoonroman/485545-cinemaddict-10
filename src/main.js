@@ -1,3 +1,4 @@
+import API from './api';
 import UserRankController from './controllers/user-rank';
 import FilterController from './controllers/filter';
 import SortComponent from './components/sort';
@@ -7,23 +8,19 @@ import FilmListTitleComponent from './components/film-list-title';
 import StatsComponent from './components/stats';
 import MoviesModel from './models/movies';
 import PageController from './controllers/page';
-import {generateFilms} from './mock/film';
 import {RenderPosition, render} from './utils/render';
 import {statsPeriods} from './const';
 
 
-const FILM_COUNT = 15;
+const AUTHORIZATION = `Basic nginxkByYXNzd29yZAov`;
+const END_POINT = `https://htmlacademy-es-10.appspot.com/cinemaddict`;
 
-const films = generateFilms(FILM_COUNT);
+const api = new API(END_POINT, AUTHORIZATION);
 const moviesModel = new MoviesModel();
-moviesModel.setMovies(films);
-
 
 const headerElement = document.querySelector(`.header`);
 const mainElement = document.querySelector(`.main`);
 const footerStatisticsElement = document.querySelector(`.footer__statistics p`);
-
-footerStatisticsElement.textContent = `${films.length} movies inside`;
 
 const filmsComponent = new FilmsComponent();
 const sortComponent = new SortComponent();
@@ -47,9 +44,16 @@ render(filmsElement, new FilmsListComponent(), RenderPosition.BEFOREEND);
 
 const filmsListElement = filmsElement.querySelector(`.films-list`);
 
-render(filmsListElement, new FilmListTitleComponent(films), RenderPosition.BEFOREEND);
-
 statsComponent.hide();
-pageController.render();
-pageController.renderTopRatedList();
-pageController.renderMostCommentedList();
+
+api.getMovies()
+  .then((movies) => {
+    moviesModel.setMovies(movies);
+
+    render(filmsListElement, new FilmListTitleComponent(movies), RenderPosition.BEFOREEND);
+
+    pageController.render();
+    pageController.renderTopRatedList();
+    pageController.renderMostCommentedList();
+    footerStatisticsElement.textContent = `${movies.length} movies inside`;
+  });

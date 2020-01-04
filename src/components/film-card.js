@@ -22,7 +22,7 @@ const createDescriptionText = (description) => {
     return description;
   }
 
-  return `${description.slice(0, maxDescriptionLength - 1)}…`;
+  return `${description.slice(0, maxDescriptionLength - 3)}...`;
 };
 
 const createCommentsTitleText = (comments) => {

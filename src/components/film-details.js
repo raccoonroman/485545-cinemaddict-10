@@ -1,4 +1,4 @@
-import he from 'he';
+// import he from 'he';
 import AbstractSmartComponent from './abstract-smart-component';
 import {Emotions} from '../const';
 import {allComments} from '../mock/film';
