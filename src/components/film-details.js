@@ -234,17 +234,6 @@ const createFilmDetailsTemplate = (film, options = {}) => {
   </section>`;
 };
 
-const parseFormData = (formData) => {
-  const isChecked = (name) => formData.get(name) === `on`;
-
-  return {
-    userRating: +formData.get(`score`),
-    isInWatchlist: isChecked(`watchlist`),
-    isWatched: isChecked(`watched`),
-    isFavorite: isChecked(`favorite`),
-  };
-};
-
 
 export default class FilmDetails extends AbstractSmartComponent {
   constructor(film) {
@@ -300,14 +289,19 @@ export default class FilmDetails extends AbstractSmartComponent {
     this.rerender();
   }
 
+  // getData() {
+  //   const form = this.getElement().querySelector(`.film-details__inner`);
+  //   const formData = new FormData(form);
+
+  //   return Object.assign({}, parseFormData(formData), {
+  //     comments: this._comments,
+  //     watchingDate: this._watchingDate,
+  //   });
+  // }
+
   getData() {
     const form = this.getElement().querySelector(`.film-details__inner`);
-    const formData = new FormData(form);
-
-    return Object.assign({}, parseFormData(formData), {
-      comments: this._comments,
-      watchingDate: this._watchingDate,
-    });
+    return new FormData(form);
   }
 
   setSubmitHandler(handler) {

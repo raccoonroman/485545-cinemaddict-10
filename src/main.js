@@ -12,7 +12,7 @@ import {RenderPosition, render} from './utils/render';
 import {statsPeriods} from './const';
 
 
-const AUTHORIZATION = `Basic nginxkByYXNzd29yZAov`;
+const AUTHORIZATION = `Basic pK8tvKCpr2`;
 const END_POINT = `https://htmlacademy-es-10.appspot.com/cinemaddict`;
 
 const api = new API(END_POINT, AUTHORIZATION);
@@ -26,7 +26,7 @@ const filmsComponent = new FilmsComponent();
 const sortComponent = new SortComponent();
 
 const userRankController = new UserRankController(headerElement, moviesModel);
-const pageController = new PageController(filmsComponent, sortComponent, moviesModel);
+const pageController = new PageController(filmsComponent, sortComponent, moviesModel, api);
 const statsController = new StatsController(mainElement, moviesModel, statsPeriods.ALL_TIME);
 const filterController = new FilterController(mainElement, moviesModel, pageController, sortComponent, statsController);
 
@@ -45,19 +45,20 @@ render(filmsElement, new FilmsListComponent(), RenderPosition.BEFOREEND);
 const filmsListElement = filmsElement.querySelector(`.films-list`);
 
 const filmListTitleController = new FilmListTitleController(filmsListElement, moviesModel);
+
 filmListTitleController.render();
+
 
 api.getMovies()
   .then((movies) => {
-    // console.log(movies);
 
-    const commentsPromisses = movies.map((movie) => {
+    const commentsPromises = movies.map((movie) => {
       return api.getComments(movie.id).then((comments) => {
         movie.comments = comments;
       });
     });
 
-    Promise.all(commentsPromisses).then(() => {
+    Promise.all(commentsPromises).then(() => {
       moviesModel.setMovies(movies);
 
       pageController.render();
@@ -65,5 +66,7 @@ api.getMovies()
       pageController.renderMostCommentedList();
 
       footerStatisticsElement.textContent = `${movies.length} movies inside`;
+
+      // console.log(movies);
     });
   });

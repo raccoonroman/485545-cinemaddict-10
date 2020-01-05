@@ -1,6 +1,7 @@
 export default class Movie {
   constructor(data) {
     this.id = data[`id`];
+    this.commentsId = data[`comments`];
     this.filmInfo = {};
     this.filmInfo.title = data[`film_info`][`title`];
     this.filmInfo.alternativeTitle = data[`film_info`][`alternative_title`];
@@ -18,15 +19,40 @@ export default class Movie {
     this.userRating = data[`user_details`][`personal_rating`];
     this.isInWatchlist = data[`user_details`][`watchlist`];
     this.isWatched = data[`user_details`][`already_watched`];
-    this.watchingDate = new Date(data[`user_details`][`watching_date`]);
+    this.watchingDate = data[`user_details`][`watching_date`] ? new Date(data[`user_details`][`watching_date`]) : null;
     this.isFavorite = data[`user_details`][`favorite`];
   }
 
-  // toRAW() {
-  //   return {
-  //     'film_info': this.filmInfo,
-  //   };
-  // }
+  toRAW() {
+    return {
+      'id': this.id,
+      'comments': this.commentsId,
+      'film_info': {
+        'title': this.filmInfo.title,
+        'alternative_title': this.filmInfo.alternativeTitle,
+        'total_rating': this.filmInfo.totalRating,
+        'poster': this.filmInfo.poster,
+        'age_rating': this.filmInfo.ageRating,
+        'director': this.filmInfo.director,
+        'writers': this.filmInfo.writers,
+        'actors': this.filmInfo.actors,
+        'release': {
+          'date': this.filmInfo.releaseDate,
+          'release_country': this.filmInfo.releaseCountry,
+        },
+        'runtime': this.filmInfo.duration,
+        'genre': this.filmInfo.genres,
+        'description': this.filmInfo.description,
+      },
+      'user_details': {
+        'personal_rating': this.userRating,
+        'watchlist': this.isInWatchlist,
+        'already_watched': this.isWatched,
+        'watching_date': this.watchingDate ? this.watchingDate.toISOString() : null,
+        'favorite': this.isFavorite,
+      }
+    };
+  }
 
   static parseMovie(data) {
     return new Movie(data);
@@ -36,7 +62,7 @@ export default class Movie {
     return data.map(Movie.parseMovie);
   }
 
-  // static clone(data) {
-  //   return new Movie(data.toRAW());
-  // }
+  static clone(data) {
+    return new Movie(data.toRAW());
+  }
 }
