@@ -4,7 +4,7 @@ import FilterController from './controllers/filter';
 import SortComponent from './components/sort';
 import FilmsComponent from './components/films';
 import FilmsListComponent from './components/films-list';
-import FilmListTitleComponent from './components/film-list-title';
+import FilmListTitleController from './controllers/film-list-title';
 import StatsComponent from './components/stats';
 import MoviesModel from './models/movies';
 import PageController from './controllers/page';
@@ -44,6 +44,9 @@ render(filmsElement, new FilmsListComponent(), RenderPosition.BEFOREEND);
 
 const filmsListElement = filmsElement.querySelector(`.films-list`);
 
+const filmListTitleController = new FilmListTitleController(filmsListElement, moviesModel);
+filmListTitleController.render();
+
 statsComponent.hide();
 
 api.getMovies()
@@ -58,8 +61,6 @@ api.getMovies()
 
     Promise.all(commentsPromisses).then(() => {
       moviesModel.setMovies(movies);
-
-      render(filmsListElement, new FilmListTitleComponent(movies), RenderPosition.BEFOREEND);
 
       pageController.render();
       pageController.renderTopRatedList();
