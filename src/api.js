@@ -1,4 +1,5 @@
 import Movie from './models/movie';
+import MovieComment from './models/movie-comment';
 
 
 const Method = {
@@ -27,6 +28,12 @@ export default class API {
     return this._load({url: `movies`})
       .then((response) => response.json())
       .then(Movie.parseMovies);
+  }
+
+  getComments(movieId) {
+    return this._load({url: `comments/${movieId}`})
+      .then((response) => response.json())
+      .then(MovieComment.parseMovieComments);
   }
 
   // updateMovie(id, movie) {

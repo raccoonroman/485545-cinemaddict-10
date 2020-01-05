@@ -1,5 +1,7 @@
 export default class Movie {
   constructor(data) {
+    this.id = data[`id`];
+    this.comments = data[`comments`];
     this.filmInfo = {};
     this.filmInfo.title = data[`film_info`][`title`];
     this.filmInfo.alternativeTitle = data[`film_info`][`alternative_title`];
@@ -14,9 +16,8 @@ export default class Movie {
     this.filmInfo.duration = data[`film_info`][`runtime`];
     this.filmInfo.genres = data[`film_info`][`genre`];
     this.filmInfo.description = data[`film_info`][`description`];
-    // this.comments = data[`comments`];
 
-    this.comments = [];
+    // this.comments = [];
   }
 
   // toRAW() {

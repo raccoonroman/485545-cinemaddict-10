@@ -1,7 +1,6 @@
 // import he from 'he';
 import AbstractSmartComponent from './abstract-smart-component';
 import {Emotions} from '../const';
-import {allComments} from '../mock/film';
 import {
   formatDuration,
   formatDate,
@@ -50,8 +49,7 @@ const createRatingScoreMarkup = (userRating) => {
   return result.join(`\n`);
 };
 
-const createCommentsListMarkup = (commentsId) => commentsId
-  .map((commentId) => allComments.find(({id}) => id === commentId))
+const createCommentsListMarkup = (comments) => comments
   .map((comment) => {
     const {id, text, emotion, author, date} = comment;
     return `<li class="film-details__comment" data-comment-id="${id}">
@@ -87,6 +85,7 @@ const createGenresTitleText = (genres) => genres.length > 1 ? `Genres` : `Genre`
 
 
 const createFilmDetailsTemplate = (film, options = {}) => {
+
   const {
     title,
     alternativeTitle,
@@ -360,16 +359,16 @@ export default class FilmDetails extends AbstractSmartComponent {
       });
     }
 
-    element.querySelectorAll(`.film-details__comment-delete`).forEach((deleteButton) => {
-      deleteButton.addEventListener(`click`, (evt) => {
-        evt.preventDefault();
-        const commentElement = deleteButton.closest(`.film-details__comment`);
-        const commentId = +commentElement.dataset.commentId;
-        const index = this._comments.findIndex((it) => it === commentId);
-        this._comments = [].concat(this._comments.slice(0, index), this._comments.slice(index + 1));
-        this.rerender();
-      });
-    });
+    // element.querySelectorAll(`.film-details__comment-delete`).forEach((deleteButton) => {
+    //   deleteButton.addEventListener(`click`, (evt) => {
+    //     evt.preventDefault();
+    //     const commentElement = deleteButton.closest(`.film-details__comment`);
+    //     const commentId = commentElement.dataset.commentId;
+    //     const index = this._comments.findIndex((it) => it === commentId);
+    //     this._comments = [].concat(this._comments.slice(0, index), this._comments.slice(index + 1));
+    //     this.rerender();
+    //   });
+    // });
 
     element.querySelector(`.film-details__emoji-list`).addEventListener(`change`, (evt) => {
       const emotion = evt.target.value;

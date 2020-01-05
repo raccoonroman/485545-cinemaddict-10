@@ -48,6 +48,7 @@ statsComponent.hide();
 
 api.getMovies()
   .then((movies) => {
+    // console.log(movies);
     moviesModel.setMovies(movies);
 
     render(filmsListElement, new FilmListTitleComponent(movies), RenderPosition.BEFOREEND);
