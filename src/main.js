@@ -48,13 +48,22 @@ statsComponent.hide();
 
 api.getMovies()
   .then((movies) => {
-    // console.log(movies);
-    moviesModel.setMovies(movies);
+    console.log(movies);
 
-    render(filmsListElement, new FilmListTitleComponent(movies), RenderPosition.BEFOREEND);
+    const commentsPromisses = movies.map((movie) => {
+      return api.getComments(movie.id).then((comments) => {
+        movie.comments = comments;
+      });
+    });
 
-    pageController.render();
-    pageController.renderTopRatedList();
-    pageController.renderMostCommentedList();
-    footerStatisticsElement.textContent = `${movies.length} movies inside`;
+    Promise.all(commentsPromisses).then(() => {
+      moviesModel.setMovies(movies);
+
+      render(filmsListElement, new FilmListTitleComponent(movies), RenderPosition.BEFOREEND);
+
+      pageController.render();
+      pageController.renderTopRatedList();
+      pageController.renderMostCommentedList();
+      footerStatisticsElement.textContent = `${movies.length} movies inside`;
+    });
   });

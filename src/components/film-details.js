@@ -1,4 +1,4 @@
-// import he from 'he';
+import he from 'he';
 import AbstractSmartComponent from './abstract-smart-component';
 import {Emotions} from '../const';
 import {
@@ -359,16 +359,16 @@ export default class FilmDetails extends AbstractSmartComponent {
       });
     }
 
-    // element.querySelectorAll(`.film-details__comment-delete`).forEach((deleteButton) => {
-    //   deleteButton.addEventListener(`click`, (evt) => {
-    //     evt.preventDefault();
-    //     const commentElement = deleteButton.closest(`.film-details__comment`);
-    //     const commentId = commentElement.dataset.commentId;
-    //     const index = this._comments.findIndex((it) => it === commentId);
-    //     this._comments = [].concat(this._comments.slice(0, index), this._comments.slice(index + 1));
-    //     this.rerender();
-    //   });
-    // });
+    element.querySelectorAll(`.film-details__comment-delete`).forEach((deleteButton) => {
+      deleteButton.addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        const commentElement = deleteButton.closest(`.film-details__comment`);
+        const commentId = commentElement.dataset.commentId;
+        const index = this._comments.findIndex(({id}) => id === commentId);
+        this._comments = [].concat(this._comments.slice(0, index), this._comments.slice(index + 1));
+        this.rerender();
+      });
+    });
 
     element.querySelector(`.film-details__emoji-list`).addEventListener(`change`, (evt) => {
       const emotion = evt.target.value;
@@ -381,23 +381,23 @@ export default class FilmDetails extends AbstractSmartComponent {
       this._commentText = evt.target.value;
     });
 
-    // element.addEventListener(`keydown`, (evt) => {
-    //   if (evt.ctrlKey && evt.keyCode === 13) {
-    //     if (this._emotion && this._commentText) {
-    //       const newComment = {
-    //         id: String(new Date() + Math.random()),
-    //         text: he.encode(this._commentText),
-    //         emotion: this._emotion,
-    //         author: `You`,
-    //         date: new Date(),
-    //       };
+    element.addEventListener(`keydown`, (evt) => {
+      if (evt.ctrlKey && evt.keyCode === 13) {
+        if (this._emotion && this._commentText) {
+          const newComment = {
+            id: String(new Date() + Math.random()),
+            text: he.encode(this._commentText),
+            emotion: this._emotion,
+            author: `You`,
+            date: new Date(),
+          };
 
-    //       this._comments.push(newComment);
-    //       this._emotion = null;
-    //       this._commentText = null;
-    //       this.rerender();
-    //     }
-    //   }
-    // });
+          this._comments.push(newComment);
+          this._emotion = null;
+          this._commentText = null;
+          this.rerender();
+        }
+      }
+    });
   }
 }
