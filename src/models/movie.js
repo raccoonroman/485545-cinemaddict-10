@@ -18,7 +18,7 @@ export default class Movie {
     this.userRating = data[`user_details`][`personal_rating`];
     this.isInWatchlist = data[`user_details`][`watchlist`];
     this.isWatched = data[`user_details`][`already_watched`];
-    this.watchingDate = data[`user_details`][`watching_date`];
+    this.watchingDate = new Date(data[`user_details`][`watching_date`]);
     this.isFavorite = data[`user_details`][`favorite`];
   }
 

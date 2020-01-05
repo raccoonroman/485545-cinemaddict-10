@@ -5,7 +5,7 @@ import SortComponent from './components/sort';
 import FilmsComponent from './components/films';
 import FilmsListComponent from './components/films-list';
 import FilmListTitleController from './controllers/film-list-title';
-import StatsComponent from './components/stats';
+import StatsController from './controllers/stats';
 import MoviesModel from './models/movies';
 import PageController from './controllers/page';
 import {RenderPosition, render} from './utils/render';
@@ -24,17 +24,17 @@ const footerStatisticsElement = document.querySelector(`.footer__statistics p`);
 
 const filmsComponent = new FilmsComponent();
 const sortComponent = new SortComponent();
-const statsComponent = new StatsComponent(moviesModel, statsPeriods.ALL_TIME);
 
 const userRankController = new UserRankController(headerElement, moviesModel);
 const pageController = new PageController(filmsComponent, sortComponent, moviesModel);
-const filterController = new FilterController(mainElement, moviesModel, pageController, sortComponent, statsComponent);
-
+const statsController = new StatsController(mainElement, moviesModel, statsPeriods.ALL_TIME);
+const filterController = new FilterController(mainElement, moviesModel, pageController, sortComponent, statsController);
 
 userRankController.render();
 filterController.render();
+statsController.render();
+statsController.hide();
 
-render(mainElement, statsComponent, RenderPosition.BEFOREEND);
 render(mainElement, sortComponent, RenderPosition.BEFOREEND);
 render(mainElement, filmsComponent, RenderPosition.BEFOREEND);
 
@@ -47,11 +47,9 @@ const filmsListElement = filmsElement.querySelector(`.films-list`);
 const filmListTitleController = new FilmListTitleController(filmsListElement, moviesModel);
 filmListTitleController.render();
 
-statsComponent.hide();
-
 api.getMovies()
   .then((movies) => {
-    console.log(movies);
+    // console.log(movies);
 
     const commentsPromisses = movies.map((movie) => {
       return api.getComments(movie.id).then((comments) => {
@@ -65,6 +63,7 @@ api.getMovies()
       pageController.render();
       pageController.renderTopRatedList();
       pageController.renderMostCommentedList();
+
       footerStatisticsElement.textContent = `${movies.length} movies inside`;
     });
   });
