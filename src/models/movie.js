@@ -24,6 +24,7 @@ export default class Movie {
   }
 
   toRAW() {
+    console.log(this.watchingDate);
     return {
       'id': this.id,
       'comments': this.commentsId,

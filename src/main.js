@@ -12,7 +12,7 @@ import {RenderPosition, render} from './utils/render';
 import {statsPeriods} from './const';
 
 
-const AUTHORIZATION = `Basic pK8tvKCpr2`;
+const AUTHORIZATION = `Basic bNB3SQdNkD`;
 const END_POINT = `https://htmlacademy-es-10.appspot.com/cinemaddict`;
 
 const api = new API(END_POINT, AUTHORIZATION);
@@ -57,6 +57,8 @@ api.getMovies()
         movie.comments = comments;
       });
     });
+
+    console.log(movies);
 
     Promise.all(commentsPromises).then(() => {
       moviesModel.setMovies(movies);
