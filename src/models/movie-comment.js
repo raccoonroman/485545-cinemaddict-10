@@ -7,11 +7,15 @@ export default class MovieComment {
     this.emotion = data[`emotion`];
   }
 
-  // toRAW() {
-  //   return {
-  //     'film_info': this.filmInfo,
-  //   };
-  // }
+  toRAW() {
+    return {
+      'id': this.id,
+      'author': this.author,
+      'comment': this.text,
+      'date': this.date,
+      'emotion': this.emotion,
+    };
+  }
 
   static parseMovieComment(data) {
     return new MovieComment(data);
@@ -21,7 +25,7 @@ export default class MovieComment {
     return data.map(MovieComment.parseMovieComment);
   }
 
-  // static clone(data) {
-  //   return new Movie(data.toRAW());
-  // }
+  static clone(data) {
+    return new MovieComment(data.toRAW());
+  }
 }

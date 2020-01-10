@@ -148,6 +148,14 @@ export default class MovieController {
         .then(() => openMovieDetails(evt));
     });
 
+    // this._movieDetailsComponent.setDeleteCommentClickHandler((evt) => {
+    //   const newMovie = MovieModel.clone(movie);
+    //   newMovie.userRating = 0;
+
+    //   this._onDataChange(this, movie, newMovie)
+    //     .then(() => openMovieDetails(evt));
+    // });
+
     // this._movieDetailsComponent.setSubmitHandler(closeMovieDetails);
 
 
