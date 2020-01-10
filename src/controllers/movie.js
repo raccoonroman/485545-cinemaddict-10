@@ -96,7 +96,9 @@ export default class MovieController {
       evt.preventDefault();
       const newMovie = MovieModel.clone(movie);
       newMovie.isWatched = !newMovie.isWatched;
-      newMovie.watchingDate = newMovie.isWatched ? new Date() : null;
+      if (newMovie.isWatched) {
+        newMovie.watchingDate = new Date();
+      }
 
       this._onDataChange(this, movie, newMovie);
     });

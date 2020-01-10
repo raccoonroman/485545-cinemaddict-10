@@ -58,7 +58,7 @@ api.getMovies()
       });
     });
 
-    console.log(movies);
+    // console.log(movies);
 
     Promise.all(commentsPromises).then(() => {
       moviesModel.setMovies(movies);
@@ -68,7 +68,5 @@ api.getMovies()
       pageController.renderMostCommentedList();
 
       footerStatisticsElement.textContent = `${movies.length} movies inside`;
-
-      // console.log(movies);
     });
   });

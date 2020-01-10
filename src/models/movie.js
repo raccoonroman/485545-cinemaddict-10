@@ -24,7 +24,6 @@ export default class Movie {
   }
 
   toRAW() {
-    console.log(this.watchingDate);
     return {
       'id': this.id,
       'comments': this.commentsId,
@@ -49,7 +48,7 @@ export default class Movie {
         'personal_rating': this.userRating,
         'watchlist': this.isInWatchlist,
         'already_watched': this.isWatched,
-        'watching_date': this.watchingDate ? this.watchingDate.toISOString() : null,
+        'watching_date': this.watchingDate.toISOString(),
         'favorite': this.isFavorite,
       }
     };
