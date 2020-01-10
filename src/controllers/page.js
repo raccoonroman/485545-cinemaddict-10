@@ -147,7 +147,7 @@ export default class PageController {
   _onDataChange(movieController, oldData, newData) {
     let movie;
 
-    this._api.updateMovie(oldData.id, newData)
+    return this._api.updateMovie(oldData.id, newData)
       .then((movieData) => {
         movie = movieData;
       })

@@ -84,34 +84,54 @@ export default class MovieController {
     this._movieCardComponent.setFilmTitleClickHandler(openMovieDetails);
     this._movieCardComponent.setFilmCommentsClickHandler(openMovieDetails);
 
-    this._movieCardComponent.setWatchlistButtonClickHandler((evt) => {
+    const watchlistItemClickHandler = (evt) => {
       evt.preventDefault();
       const newMovie = MovieModel.clone(movie);
       newMovie.isInWatchlist = !newMovie.isInWatchlist;
 
-      this._onDataChange(this, movie, newMovie);
-    });
+      return this._onDataChange(this, movie, newMovie);
+    };
 
-    this._movieCardComponent.setWatchedButtonClickHandler((evt) => {
+    const watchedItemClickHandler = (evt) => {
       evt.preventDefault();
       const newMovie = MovieModel.clone(movie);
       newMovie.isWatched = !newMovie.isWatched;
       if (newMovie.isWatched) {
         newMovie.watchingDate = new Date();
       }
+      if (!newMovie.isWatched) {
+        newMovie.userRating = 0;
+      }
 
-      this._onDataChange(this, movie, newMovie);
-    });
+      return this._onDataChange(this, movie, newMovie);
+    };
 
-    this._movieCardComponent.setFavoriteButtonClickHandler((evt) => {
+    const favoriteItemClickHandler = (evt) => {
       evt.preventDefault();
       const newMovie = MovieModel.clone(movie);
       newMovie.isFavorite = !newMovie.isFavorite;
 
-      this._onDataChange(this, movie, newMovie);
+      return this._onDataChange(this, movie, newMovie);
+    };
+
+    this._movieCardComponent.setWatchlistButtonClickHandler(watchlistItemClickHandler);
+    this._movieCardComponent.setWatchedButtonClickHandler(watchedItemClickHandler);
+    this._movieCardComponent.setFavoriteButtonClickHandler(favoriteItemClickHandler);
+
+
+    this._movieDetailsComponent.setWatchlistItemClickHandler((evt) => {
+      watchlistItemClickHandler(evt).then(() => openMovieDetails(evt));
     });
 
-    this._movieDetailsComponent.setSubmitHandler(closeMovieDetails);
+    this._movieDetailsComponent.setWatchedItemClickHandler((evt) => {
+      watchedItemClickHandler(evt).then(() => openMovieDetails(evt));
+    });
+
+    this._movieDetailsComponent.setFavoriteItemClickHandler((evt) => {
+      favoriteItemClickHandler(evt).then(() => openMovieDetails(evt));
+    });
+
+    // this._movieDetailsComponent.setSubmitHandler(closeMovieDetails);
 
 
     // switch (mode) {

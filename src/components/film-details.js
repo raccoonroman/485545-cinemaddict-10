@@ -249,6 +249,9 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._emotion = null;
     this._commentText = null;
 
+    this._watchlistItemClickHandler = null;
+    this._watchedItemClickHandler = null;
+    this._favoriteItemClickHandler = null;
     this._submitHandler = null;
 
     this._subscribeOnEvents();
@@ -266,6 +269,9 @@ export default class FilmDetails extends AbstractSmartComponent {
   }
 
   recoveryListeners() {
+    this.setWatchlistItemClickHandler(this._watchlistItemClickHandler);
+    this.setWatchedItemClickHandler(this._watchedItemClickHandler);
+    this.setFavoriteItemClickHandler(this._favoriteItemClickHandler);
     this.setSubmitHandler(this._submitHandler);
     this._subscribeOnEvents();
   }
@@ -304,6 +310,27 @@ export default class FilmDetails extends AbstractSmartComponent {
     return new FormData(form);
   }
 
+  setWatchlistItemClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__control-label--watchlist`)
+      .addEventListener(`click`, handler);
+
+    this._watchlistItemClickHandler = handler;
+  }
+
+  setWatchedItemClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__control-label--watched`)
+      .addEventListener(`click`, handler);
+
+    this._watchedItemClickHandler = handler;
+  }
+
+  setFavoriteItemClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__control-label--favorite`)
+      .addEventListener(`click`, handler);
+
+    this._favoriteItemClickHandler = handler;
+  }
+
   setSubmitHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);
@@ -313,28 +340,6 @@ export default class FilmDetails extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
     const element = this.getElement();
-
-    element.querySelector(`.film-details__control-label--watchlist`)
-      .addEventListener(`click`, () => {
-        this._isInWatchlist = !this._isInWatchlist;
-        this.rerender();
-      });
-
-    element.querySelector(`.film-details__control-label--watched`)
-      .addEventListener(`click`, () => {
-        if (this._isWatched) {
-          this._userRating = null;
-        }
-        this._watchingDate = this._isWatched ? null : new Date();
-        this._isWatched = !this._isWatched;
-        this.rerender();
-      });
-
-    element.querySelector(`.film-details__control-label--favorite`)
-      .addEventListener(`click`, () => {
-        this._isFavorite = !this._isFavorite;
-        this.rerender();
-      });
 
     const userRatingElement = element.querySelector(`.film-details__user-rating-score`);
     if (userRatingElement) {
