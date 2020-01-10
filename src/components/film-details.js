@@ -5,7 +5,6 @@ import {
   formatDuration,
   formatDate,
   formatRelativeTime,
-  getFileName,
   createRatingText,
 } from '../utils/common';
 
@@ -86,16 +85,24 @@ const createGenresTitleText = (genres) => genres.length > 1 ? `Genres` : `Genre`
 
 
 const createFilmDetailsTemplate = (film, options = {}) => {
+
   const {
     title,
+    alternativeTitle,
+    totalRating,
+    poster,
+    ageRating,
+    director,
+    writers,
+    actors,
     releaseDate,
+    releaseCountry,
     duration,
     genres,
     description,
-  } = film;
+  } = film.filmInfo;
 
   const {
-    rating,
     userRating,
     isInWatchlist,
     isWatched,
@@ -104,7 +111,6 @@ const createFilmDetailsTemplate = (film, options = {}) => {
     emotion,
   } = options;
 
-  const fileName = getFileName(title);
   const watchlistItem = createControlItemMarkup(`watchlist`, `Add to watchlist`, isInWatchlist);
   const watchedItem = createControlItemMarkup(`watched`, `Already watched`, isWatched);
   const favoriteItem = createControlItemMarkup(`favorite`, `Add to favorites`, isFavorite);
@@ -117,20 +123,20 @@ const createFilmDetailsTemplate = (film, options = {}) => {
         </div>
         <div class="film-details__info-wrap">
           <div class="film-details__poster">
-            <img class="film-details__poster-img" src="./images/posters/${fileName}.jpg" alt="">
+            <img class="film-details__poster-img" src="${poster}" alt="${title}">
 
-            <p class="film-details__age">18+</p>
+            <p class="film-details__age">${ageRating}+</p>
           </div>
 
           <div class="film-details__info">
             <div class="film-details__info-head">
               <div class="film-details__title-wrap">
                 <h3 class="film-details__title">${title}</h3>
-                <p class="film-details__title-original">Original: ${title}</p>
+                <p class="film-details__title-original">Original: ${alternativeTitle}</p>
               </div>
 
               <div class="film-details__rating">
-                <p class="film-details__total-rating">${createRatingText(rating)}</p>
+                <p class="film-details__total-rating">${createRatingText(totalRating)}</p>
                 ${userRating ? `<p class="film-details__user-rating">Your rate ${userRating}</p>` : ``}
               </div>
             </div>
@@ -138,15 +144,15 @@ const createFilmDetailsTemplate = (film, options = {}) => {
             <table class="film-details__table">
               <tr class="film-details__row">
                 <td class="film-details__term">Director</td>
-                <td class="film-details__cell">Anthony Mann</td>
+                <td class="film-details__cell">${director}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Writers</td>
-                <td class="film-details__cell">Anne Wigton, Heinz Herald, Richard Weil</td>
+                <td class="film-details__cell">${writers.join(`, `)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Actors</td>
-                <td class="film-details__cell">Erich von Stroheim, Mary Beth Hughes, Dan Duryea</td>
+                <td class="film-details__cell">${actors.join(`, `)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
@@ -158,7 +164,7 @@ const createFilmDetailsTemplate = (film, options = {}) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
-                <td class="film-details__cell">USA</td>
+                <td class="film-details__cell">${releaseCountry}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">${createGenresTitleText(genres)}</td>
@@ -185,7 +191,7 @@ const createFilmDetailsTemplate = (film, options = {}) => {
 
           <div class="film-details__user-score">
             <div class="film-details__user-rating-poster">
-              <img src="./images/posters/${fileName}.jpg" alt="film-poster" class="film-details__user-rating-img">
+              <img src="${poster}" alt="film-poster" class="film-details__user-rating-img">
             </div>
 
             <section class="film-details__user-rating-inner">
@@ -228,23 +234,11 @@ const createFilmDetailsTemplate = (film, options = {}) => {
   </section>`;
 };
 
-const parseFormData = (formData) => {
-  const isChecked = (name) => formData.get(name) === `on`;
-
-  return {
-    userRating: +formData.get(`score`),
-    isInWatchlist: isChecked(`watchlist`),
-    isWatched: isChecked(`watched`),
-    isFavorite: isChecked(`favorite`),
-  };
-};
-
 
 export default class FilmDetails extends AbstractSmartComponent {
   constructor(film) {
     super();
     this._film = film;
-    this._rating = film.rating;
     this._userRating = film.userRating;
     this._isInWatchlist = film.isInWatchlist;
     this._isWatched = film.isWatched;
@@ -255,6 +249,13 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._emotion = null;
     this._commentText = null;
 
+    this._watchlistItemClickHandler = null;
+    this._watchedItemClickHandler = null;
+    this._favoriteItemClickHandler = null;
+
+    this._userRatingClickHandler = null;
+    this._undoUserRatingClickHandler = null;
+
     this._submitHandler = null;
 
     this._subscribeOnEvents();
@@ -262,7 +263,6 @@ export default class FilmDetails extends AbstractSmartComponent {
 
   getTemplate() {
     return createFilmDetailsTemplate(this._film, {
-      rating: this._rating,
       userRating: this._userRating,
       isInWatchlist: this._isInWatchlist,
       isWatched: this._isWatched,
@@ -273,6 +273,13 @@ export default class FilmDetails extends AbstractSmartComponent {
   }
 
   recoveryListeners() {
+    this.setWatchlistItemClickHandler(this._watchlistItemClickHandler);
+    this.setWatchedItemClickHandler(this._watchedItemClickHandler);
+    this.setFavoriteItemClickHandler(this._favoriteItemClickHandler);
+
+    this.setUserRatingClickHandler(this._userRatingClickHandler);
+    this.setUndoUserRatingClickHandler(this._undoUserRatingClickHandler);
+
     this.setSubmitHandler(this._submitHandler);
     this._subscribeOnEvents();
   }
@@ -283,7 +290,6 @@ export default class FilmDetails extends AbstractSmartComponent {
 
   reset() {
     const film = this._film;
-    this._rating = film.rating;
     this._userRating = film.userRating;
     this._isInWatchlist = film.isInWatchlist;
     this._isWatched = film.isWatched;
@@ -297,15 +303,58 @@ export default class FilmDetails extends AbstractSmartComponent {
     this.rerender();
   }
 
+  // getData() {
+  //   const form = this.getElement().querySelector(`.film-details__inner`);
+  //   const formData = new FormData(form);
+
+  //   return Object.assign({}, parseFormData(formData), {
+  //     comments: this._comments,
+  //     watchingDate: this._watchingDate,
+  //   });
+  // }
+
   getData() {
     const form = this.getElement().querySelector(`.film-details__inner`);
-    const formData = new FormData(form);
+    return new FormData(form);
+  }
 
-    return Object.assign({}, parseFormData(formData), {
-      rating: this._rating,
-      comments: this._comments,
-      watchingDate: this._watchingDate,
-    });
+  setWatchlistItemClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__control-label--watchlist`)
+      .addEventListener(`click`, handler);
+
+    this._watchlistItemClickHandler = handler;
+  }
+
+  setWatchedItemClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__control-label--watched`)
+      .addEventListener(`click`, handler);
+
+    this._watchedItemClickHandler = handler;
+  }
+
+  setFavoriteItemClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__control-label--favorite`)
+      .addEventListener(`click`, handler);
+
+    this._favoriteItemClickHandler = handler;
+  }
+
+  setUserRatingClickHandler(handler) {
+    const userRatingElement = this.getElement().querySelector(`.film-details__user-rating-score`);
+    if (userRatingElement) {
+      userRatingElement.addEventListener(`change`, handler);
+    }
+
+    this._userRatingClickHandler = handler;
+  }
+
+  setUndoUserRatingClickHandler(handler) {
+    const undoUserRatingButton = this.getElement().querySelector(`.film-details__watched-reset`);
+    if (undoUserRatingButton) {
+      undoUserRatingButton.addEventListener(`click`, handler);
+    }
+
+    this._undoUserRatingClickHandler = handler;
   }
 
   setSubmitHandler(handler) {
@@ -318,56 +367,12 @@ export default class FilmDetails extends AbstractSmartComponent {
   _subscribeOnEvents() {
     const element = this.getElement();
 
-    element.querySelector(`.film-details__control-label--watchlist`)
-      .addEventListener(`click`, () => {
-        this._isInWatchlist = !this._isInWatchlist;
-        this.rerender();
-      });
-
-    element.querySelector(`.film-details__control-label--watched`)
-      .addEventListener(`click`, () => {
-        if (this._isWatched) {
-          this._userRating = null;
-        }
-        this._watchingDate = this._isWatched ? null : new Date();
-        this._isWatched = !this._isWatched;
-        this.rerender();
-      });
-
-    element.querySelector(`.film-details__control-label--favorite`)
-      .addEventListener(`click`, () => {
-        this._isFavorite = !this._isFavorite;
-        this.rerender();
-      });
-
-    const userRatingElement = element.querySelector(`.film-details__user-rating-score`);
-    if (userRatingElement) {
-      userRatingElement.addEventListener(`change`, (evt) => {
-        const userRating = +evt.target.value;
-
-        if (!this._rating) {
-          this._rating = userRating;
-        }
-
-        this._userRating = userRating;
-        this.rerender();
-      });
-    }
-
-    const userRatingUndoButton = element.querySelector(`.film-details__watched-reset`);
-    if (userRatingUndoButton) {
-      userRatingUndoButton.addEventListener(`click`, () => {
-        this._userRating = null;
-        this.rerender();
-      });
-    }
-
     element.querySelectorAll(`.film-details__comment-delete`).forEach((deleteButton) => {
       deleteButton.addEventListener(`click`, (evt) => {
         evt.preventDefault();
         const commentElement = deleteButton.closest(`.film-details__comment`);
         const commentId = commentElement.dataset.commentId;
-        const index = this._comments.findIndex((it) => it.id === commentId);
+        const index = this._comments.findIndex(({id}) => id === commentId);
         this._comments = [].concat(this._comments.slice(0, index), this._comments.slice(index + 1));
         this.rerender();
       });

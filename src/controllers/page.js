@@ -13,10 +13,11 @@ const SHOWING_FILM_CARD_COUNT_BY_EXTRA = 2;
 
 
 export default class PageController {
-  constructor(filmsComponent, sortComponent, moviesModel) {
+  constructor(filmsComponent, sortComponent, moviesModel, api) {
     this._filmsComponent = filmsComponent;
     this._sortComponent = sortComponent;
     this._moviesModel = moviesModel;
+    this._api = api;
 
     this._films = [];
     // this._showedFilmsControllers = []; пока закомментирую, так как считаю это лишним свойством. Если к следующей лекции это действительно станет не нужным, то удалю.
@@ -144,14 +145,25 @@ export default class PageController {
   }
 
   _onDataChange(movieController, oldData, newData) {
-    const isSuccess = this._moviesModel.updateMovie(oldData.id, newData);
+    let movie;
 
-    if (isSuccess) {
-      movieController.render(newData);
-    }
+    return this._api.updateMovie(oldData.id, newData)
+      .then((movieData) => {
+        movie = movieData;
+      })
+      .then(() => this._api.getComments(movie.id))
+      .then((comments) => {
+        movie.comments = comments;
 
-    this.renderTopRatedList();
-    this.renderMostCommentedList();
+        const isSuccess = this._moviesModel.updateMovie(oldData.id, movie);
+
+        if (isSuccess) {
+          movieController.render(movie);
+        }
+
+        this.renderTopRatedList();
+        this.renderMostCommentedList();
+      });
   }
 
   _onViewChange() {
@@ -165,11 +177,13 @@ export default class PageController {
     switch (sortType) {
       case SortType.DATE:
         sortedFilms = films.slice().sort((a, b) => {
-          return new Date(b.releaseDate) - new Date(a.releaseDate);
+          return new Date(b.filmInfo.releaseDate) - new Date(a.filmInfo.releaseDate);
         });
         break;
       case SortType.RATING:
-        sortedFilms = films.slice().sort((a, b) => b.rating - a.rating);
+        sortedFilms = films.slice().sort((a, b) => {
+          return b.filmInfo.totalRating - a.filmInfo.totalRating;
+        });
         break;
       case SortType.DEFAULT:
         sortedFilms = films.slice();

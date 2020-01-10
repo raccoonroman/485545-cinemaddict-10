@@ -3,53 +3,13 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import 'chart.js/dist/Chart.min.css';
 import AbstractSmartComponent from './abstract-smart-component';
 import {getUserRank} from '../utils/user-rank';
-import {FilterType, statsPeriods} from '../const';
+import {getWatchedMoviesByPeriod, getSortedGenres} from '../utils/stats';
+import {statsPeriods} from '../const';
 import {
   getHoursAndMinutes,
   convertTextToKebabCase,
   convertToTextFromKebabCase
 } from '../utils/common';
-
-
-const initialDateByPeriod = [
-  {
-    period: statsPeriods.ALL_TIME,
-    getInitialDate: () => null,
-  },
-  {
-    period: statsPeriods.TODAY,
-    getInitialDate: () => {
-      const now = new Date();
-      return new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    }
-  },
-  {
-    period: statsPeriods.WEEK,
-    getInitialDate: () => {
-      const now = new Date();
-      return new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
-    }
-  },
-  {
-    period: statsPeriods.MONTH,
-    getInitialDate: () => {
-      const now = new Date();
-      return new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-    }
-  },
-  {
-    period: statsPeriods.YEAR,
-    getInitialDate: () => {
-      const now = new Date();
-      return new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
-    }
-  },
-];
-
-const getWatchedMoviesByPeriod = (movies, activePeriod) => {
-  const {getInitialDate} = initialDateByPeriod.find(({period}) => period === activePeriod);
-  return movies.filter(({watchingDate}) => watchingDate >= getInitialDate());
-};
 
 
 const createPeriodsMarkup = (activePeriod) => {
@@ -63,31 +23,7 @@ const createPeriodsMarkup = (activePeriod) => {
 };
 
 const getTotalDuration = (movies) => {
-  return movies.reduce((acc, {duration}) => acc + duration, 0);
-};
-
-const countMoviesByGenre = (movies, selectedGenre) => {
-  const moviesByGenre = movies.filter(({genres}) => {
-    return genres.some((genre) => genre === selectedGenre);
-  });
-
-  return moviesByGenre.length;
-};
-
-const countGenres = (movies) => {
-  const allGenres = movies.reduce((acc, {genres}) => [...acc, ...genres], []);
-  const unicGenres = [...new Set(allGenres)];
-  const countedGenres = unicGenres.reduce((acc, genre) => {
-    return Object.assign(acc, {[genre]: countMoviesByGenre(movies, genre)});
-  }, {});
-
-  return countedGenres;
-};
-
-const getSortedGenres = (movies) => {
-  const countedGenres = countGenres(movies);
-  const sorterGenres = Object.entries(countedGenres).sort((a, b) => b[1] - a[1]);
-  return sorterGenres;
+  return movies.reduce((acc, movie) => acc + movie.filmInfo.duration, 0);
 };
 
 const getTopGenre = (movies) => {
@@ -102,9 +38,9 @@ const getTopGenre = (movies) => {
 
 const renderChart = (ctx, watchedMovies, period) => {
   const watchedMoviesByPeriod = getWatchedMoviesByPeriod(watchedMovies, period);
-  const sorterGenres = new Map(getSortedGenres(watchedMoviesByPeriod));
-  const labels = [...sorterGenres.keys()];
-  const data = [...sorterGenres.values()];
+  const sortedGenres = new Map(getSortedGenres(watchedMoviesByPeriod));
+  const labels = [...sortedGenres.keys()];
+  const data = [...sortedGenres.values()];
 
   return new Chart(ctx, {
     plugins: [ChartDataLabels],
@@ -204,9 +140,9 @@ const createStatsTemplate = (watchedMovies, period) => {
 
 
 export default class Stats extends AbstractSmartComponent {
-  constructor(movies, period) {
+  constructor(watchedWovies, period) {
     super();
-    this._movies = movies;
+    this._watchedWovies = watchedWovies;
     this._period = period;
 
     this._chart = null;
@@ -216,21 +152,15 @@ export default class Stats extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createStatsTemplate(this._movies.getMoviesByFilter(FilterType.HISTORY), this._period);
-  }
-
-  show() {
-    super.show();
-
-    this.rerender(this._movies, this._period);
+    return createStatsTemplate(this._watchedWovies, this._period);
   }
 
   recoveryListeners() {
     this._subscribeOnEvents();
   }
 
-  rerender(movies, period) {
-    this._movies = movies;
+  rerender(watchedWovies, period) {
+    this._watchedWovies = watchedWovies;
     this._period = period;
 
     super.rerender();
@@ -247,7 +177,7 @@ export default class Stats extends AbstractSmartComponent {
         const periodValue = evt.target.value;
         const period = convertToTextFromKebabCase(periodValue);
         this._period = period;
-        this.rerender(this._movies, this._period);
+        this.rerender(this._watchedWovies, this._period);
       });
   }
 
@@ -258,7 +188,7 @@ export default class Stats extends AbstractSmartComponent {
 
     this._resetChart();
 
-    this._chart = renderChart(ctx, this._movies.getMoviesByFilter(FilterType.HISTORY), this._period);
+    this._chart = renderChart(ctx, this._watchedWovies, this._period);
   }
 
   _resetChart() {

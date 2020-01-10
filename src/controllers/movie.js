@@ -1,5 +1,7 @@
+// import {merge} from 'lodash';
 import FilmCardComponent from './../components/film-card';
 import FilmDetailsComponent from './../components/film-details';
+import MovieModel from '../models/movie';
 import {RenderPosition, render, replace, remove} from './../utils/render';
 
 
@@ -8,6 +10,27 @@ export const Mode = {
   DETAILS: `details`,
 };
 
+// const parseFormData = (formData) => {
+//   const isChecked = (name) => formData.get(name) === `on`;
+
+//   return {
+//     userRating: +formData.get(`score`),
+//     isInWatchlist: isChecked(`watchlist`),
+//     isWatched: isChecked(`watched`),
+//     isFavorite: isChecked(`favorite`),
+//   };
+// };
+
+// const parseFormData = (formData) => {
+//   const isChecked = (name) => formData.get(name) === `on`;
+
+//   return new MovieModel({
+//     userRating: +formData.get(`score`),
+//     isInWatchlist: isChecked(`watchlist`),
+//     isWatched: isChecked(`watched`),
+//     isFavorite: isChecked(`favorite`),
+//   });
+// };
 
 export default class MovieController {
   constructor(cardContainer, detailsContainer, onDataChange, onViewChange) {
@@ -61,29 +84,79 @@ export default class MovieController {
     this._movieCardComponent.setFilmTitleClickHandler(openMovieDetails);
     this._movieCardComponent.setFilmCommentsClickHandler(openMovieDetails);
 
-    this._movieCardComponent.setWatchlistButtonClickHandler((evt) => {
+    const watchlistItemClickHandler = (evt) => {
       evt.preventDefault();
-      this._onDataChange(this, movie, Object.assign({}, movie, {
-        isInWatchlist: !movie.isInWatchlist,
-      }));
+      const newMovie = MovieModel.clone(movie);
+      newMovie.isInWatchlist = !newMovie.isInWatchlist;
+
+      return this._onDataChange(this, movie, newMovie);
+    };
+
+    const watchedItemClickHandler = (evt) => {
+      evt.preventDefault();
+      const newMovie = MovieModel.clone(movie);
+      newMovie.isWatched = !newMovie.isWatched;
+      if (newMovie.isWatched) {
+        newMovie.watchingDate = new Date();
+      }
+      if (!newMovie.isWatched) {
+        newMovie.userRating = 0;
+      }
+
+      return this._onDataChange(this, movie, newMovie);
+    };
+
+    const favoriteItemClickHandler = (evt) => {
+      evt.preventDefault();
+      const newMovie = MovieModel.clone(movie);
+      newMovie.isFavorite = !newMovie.isFavorite;
+
+      return this._onDataChange(this, movie, newMovie);
+    };
+
+    this._movieCardComponent.setWatchlistButtonClickHandler(watchlistItemClickHandler);
+    this._movieCardComponent.setWatchedButtonClickHandler(watchedItemClickHandler);
+    this._movieCardComponent.setFavoriteButtonClickHandler(favoriteItemClickHandler);
+
+
+    this._movieDetailsComponent.setWatchlistItemClickHandler((evt) => {
+      watchlistItemClickHandler(evt).then(() => openMovieDetails(evt));
     });
 
-    this._movieCardComponent.setWatchedButtonClickHandler((evt) => {
-      evt.preventDefault();
-      this._onDataChange(this, movie, Object.assign({}, movie, {
-        watchingDate: movie.isWatched ? null : new Date(),
-        isWatched: !movie.isWatched,
-      }));
+    this._movieDetailsComponent.setWatchedItemClickHandler((evt) => {
+      watchedItemClickHandler(evt).then(() => openMovieDetails(evt));
     });
 
-    this._movieCardComponent.setFavoriteButtonClickHandler((evt) => {
-      evt.preventDefault();
-      this._onDataChange(this, movie, Object.assign({}, movie, {
-        isFavorite: !movie.isFavorite,
-      }));
+    this._movieDetailsComponent.setFavoriteItemClickHandler((evt) => {
+      favoriteItemClickHandler(evt).then(() => openMovieDetails(evt));
     });
 
-    this._movieDetailsComponent.setSubmitHandler(closeMovieDetails);
+    this._movieDetailsComponent.setUserRatingClickHandler((evt) => {
+      const userRating = +evt.target.value;
+      const newMovie = MovieModel.clone(movie);
+      newMovie.userRating = userRating;
+
+      this._onDataChange(this, movie, newMovie)
+        .then(() => openMovieDetails(evt));
+    });
+
+    this._movieDetailsComponent.setUndoUserRatingClickHandler((evt) => {
+      const newMovie = MovieModel.clone(movie);
+      newMovie.userRating = 0;
+
+      this._onDataChange(this, movie, newMovie)
+        .then(() => openMovieDetails(evt));
+    });
+
+    // this._movieDetailsComponent.setDeleteCommentClickHandler((evt) => {
+    //   const newMovie = MovieModel.clone(movie);
+    //   newMovie.userRating = 0;
+
+    //   this._onDataChange(this, movie, newMovie)
+    //     .then(() => openMovieDetails(evt));
+    // });
+
+    // this._movieDetailsComponent.setSubmitHandler(closeMovieDetails);
 
 
     // switch (mode) {
