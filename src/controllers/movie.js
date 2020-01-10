@@ -131,6 +131,23 @@ export default class MovieController {
       favoriteItemClickHandler(evt).then(() => openMovieDetails(evt));
     });
 
+    this._movieDetailsComponent.setUserRatingClickHandler((evt) => {
+      const userRating = +evt.target.value;
+      const newMovie = MovieModel.clone(movie);
+      newMovie.userRating = userRating;
+
+      this._onDataChange(this, movie, newMovie)
+        .then(() => openMovieDetails(evt));
+    });
+
+    this._movieDetailsComponent.setUndoUserRatingClickHandler((evt) => {
+      const newMovie = MovieModel.clone(movie);
+      newMovie.userRating = 0;
+
+      this._onDataChange(this, movie, newMovie)
+        .then(() => openMovieDetails(evt));
+    });
+
     // this._movieDetailsComponent.setSubmitHandler(closeMovieDetails);
 
 

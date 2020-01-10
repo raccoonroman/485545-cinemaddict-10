@@ -252,6 +252,10 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._watchlistItemClickHandler = null;
     this._watchedItemClickHandler = null;
     this._favoriteItemClickHandler = null;
+
+    this._userRatingClickHandler = null;
+    this._undoUserRatingClickHandler = null;
+
     this._submitHandler = null;
 
     this._subscribeOnEvents();
@@ -272,6 +276,10 @@ export default class FilmDetails extends AbstractSmartComponent {
     this.setWatchlistItemClickHandler(this._watchlistItemClickHandler);
     this.setWatchedItemClickHandler(this._watchedItemClickHandler);
     this.setFavoriteItemClickHandler(this._favoriteItemClickHandler);
+
+    this.setUserRatingClickHandler(this._userRatingClickHandler);
+    this.setUndoUserRatingClickHandler(this._undoUserRatingClickHandler);
+
     this.setSubmitHandler(this._submitHandler);
     this._subscribeOnEvents();
   }
@@ -331,6 +339,24 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._favoriteItemClickHandler = handler;
   }
 
+  setUserRatingClickHandler(handler) {
+    const userRatingElement = this.getElement().querySelector(`.film-details__user-rating-score`);
+    if (userRatingElement) {
+      userRatingElement.addEventListener(`change`, handler);
+    }
+
+    this._userRatingClickHandler = handler;
+  }
+
+  setUndoUserRatingClickHandler(handler) {
+    const undoUserRatingButton = this.getElement().querySelector(`.film-details__watched-reset`);
+    if (undoUserRatingButton) {
+      undoUserRatingButton.addEventListener(`click`, handler);
+    }
+
+    this._undoUserRatingClickHandler = handler;
+  }
+
   setSubmitHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);
@@ -340,23 +366,6 @@ export default class FilmDetails extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
     const element = this.getElement();
-
-    const userRatingElement = element.querySelector(`.film-details__user-rating-score`);
-    if (userRatingElement) {
-      userRatingElement.addEventListener(`change`, (evt) => {
-        const userRating = +evt.target.value;
-        this._userRating = userRating;
-        this.rerender();
-      });
-    }
-
-    const userRatingUndoButton = element.querySelector(`.film-details__watched-reset`);
-    if (userRatingUndoButton) {
-      userRatingUndoButton.addEventListener(`click`, () => {
-        this._userRating = null;
-        this.rerender();
-      });
-    }
 
     element.querySelectorAll(`.film-details__comment-delete`).forEach((deleteButton) => {
       deleteButton.addEventListener(`click`, (evt) => {
