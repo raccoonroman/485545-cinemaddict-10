@@ -54,8 +54,10 @@ export default class MovieController {
     const closeMovieDetails = (evt) => {
       evt.preventDefault();
 
-      const data = this._movieDetailsComponent.getData();
-      this._onDataChange(this, movie, Object.assign({}, movie, data));
+      remove(this._movieDetailsComponent);
+
+      this._movieDetailsComponent.recoveryListeners();
+      this._mode = Mode.DEFAULT;
 
       document.removeEventListener(`keydown`, onEscKeyDown);
     };
@@ -161,11 +163,8 @@ export default class MovieController {
       }
     });
 
-    // this._movieDetailsComponent.setSubmitHandler(closeMovieDetails);
+    this._movieDetailsComponent.setCloseButtonHandler(closeMovieDetails);
 
-
-    // switch (mode) {
-    // case Mode.DEFAULT:
     if (oldMovieCardComponent && oldMovieDetailsComponent) {
       replace(this._movieCardComponent, oldMovieCardComponent);
       replace(this._movieDetailsComponent, oldMovieDetailsComponent);
@@ -173,8 +172,6 @@ export default class MovieController {
     } else {
       render(this._cardContainer, this._movieCardComponent, RenderPosition.BEFOREEND);
     }
-    // break;
-    // }
   }
 
   setDefaultView() {

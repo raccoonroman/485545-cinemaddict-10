@@ -84,6 +84,14 @@ const createGenresTitleText = (genres) => genres.length > 1 ? `Genres` : `Genre`
 
 
 const createFilmDetailsTemplate = (film, options = {}) => {
+  const {
+    filmInfo,
+    userRating,
+    isInWatchlist,
+    isWatched,
+    isFavorite,
+    comments,
+  } = film;
 
   const {
     title,
@@ -99,17 +107,9 @@ const createFilmDetailsTemplate = (film, options = {}) => {
     duration,
     genres,
     description,
-  } = film.filmInfo;
+  } = filmInfo;
 
-  const {
-    userRating,
-    isInWatchlist,
-    isWatched,
-    isFavorite,
-    comments,
-    emotion,
-    commentText,
-  } = options;
+  const {emotion, commentText} = options;
 
   const watchlistItem = createControlItemMarkup(`watchlist`, `Add to watchlist`, isInWatchlist);
   const watchedItem = createControlItemMarkup(`watched`, `Already watched`, isWatched);
@@ -239,12 +239,6 @@ export default class FilmDetails extends AbstractSmartComponent {
   constructor(film) {
     super();
     this._film = film;
-    this._userRating = film.userRating;
-    this._isInWatchlist = film.isInWatchlist;
-    this._isWatched = film.isWatched;
-    this._isFavorite = film.isFavorite;
-    this._comments = film.comments;
-    this._watchingDate = film.watchingDate;
 
     this.emotion = null;
     this.commentText = null;
@@ -256,19 +250,13 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._undoUserRatingClickHandler = null;
     this._deleteCommentClickHandler = null;
     this._submitCommentHandler = null;
-    this._submitHandler = null;
+    this._closeButtonHandler = null;
 
     this._subscribeOnEvents();
   }
 
   getTemplate() {
     return createFilmDetailsTemplate(this._film, {
-      userRating: this._userRating,
-      isInWatchlist: this._isInWatchlist,
-      isWatched: this._isWatched,
-      isFavorite: this._isFavorite,
-      comments: this._comments,
-
       emotion: this.emotion,
       commentText: this.commentText,
     });
@@ -282,7 +270,7 @@ export default class FilmDetails extends AbstractSmartComponent {
     this.setUndoUserRatingClickHandler(this._undoUserRatingClickHandler);
     this.setDeleteCommentClickHandler(this._deleteCommentClickHandler);
     this.setSubmitCommentHandler(this._submitCommentHandler);
-    this.setSubmitHandler(this._submitHandler);
+    this.setCloseButtonHandler(this._closeButtonHandler);
     this._subscribeOnEvents();
   }
 
@@ -291,33 +279,10 @@ export default class FilmDetails extends AbstractSmartComponent {
   }
 
   reset() {
-    const film = this._film;
-    this._userRating = film.userRating;
-    this._isInWatchlist = film.isInWatchlist;
-    this._isWatched = film.isWatched;
-    this._isFavorite = film.isFavorite;
-    this._comments = film.comments;
-    this._watchingDate = film.watchingDate;
-
     this.emotion = null;
     this.commentText = null;
 
     this.rerender();
-  }
-
-  // getData() {
-  //   const form = this.getElement().querySelector(`.film-details__inner`);
-  //   const formData = new FormData(form);
-
-  //   return Object.assign({}, parseFormData(formData), {
-  //     comments: this._comments,
-  //     watchingDate: this._watchingDate,
-  //   });
-  // }
-
-  getData() {
-    const form = this.getElement().querySelector(`.film-details__inner`);
-    return new FormData(form);
   }
 
   setWatchlistItemClickHandler(handler) {
@@ -373,24 +338,21 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._submitCommentHandler = handler;
   }
 
-  setSubmitHandler(handler) {
+  setCloseButtonHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);
 
-    this._submitHandler = handler;
+    this._closeButtonHandler = handler;
   }
 
   _subscribeOnEvents() {
-    const element = this.getElement();
-
-    element.querySelector(`.film-details__emoji-list`).addEventListener(`change`, (evt) => {
+    this.getElement().querySelector(`.film-details__emoji-list`).addEventListener(`change`, (evt) => {
       const emotion = evt.target.value;
       this.emotion = emotion;
-
       this.rerender();
     });
 
-    element.querySelector(`.film-details__comment-input`).addEventListener(`input`, (evt) => {
+    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, (evt) => {
       this.commentText = evt.target.value;
     });
   }
