@@ -1,4 +1,3 @@
-import he from 'he';
 import AbstractSmartComponent from './abstract-smart-component';
 import {Emotions} from '../const';
 import {
@@ -109,6 +108,7 @@ const createFilmDetailsTemplate = (film, options = {}) => {
     isFavorite,
     comments,
     emotion,
+    commentText,
   } = options;
 
   const watchlistItem = createControlItemMarkup(`watchlist`, `Add to watchlist`, isInWatchlist);
@@ -221,7 +221,7 @@ const createFilmDetailsTemplate = (film, options = {}) => {
             </div>
 
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${commentText || ``}</textarea>
             </label>
 
             <div class="film-details__emoji-list">
@@ -246,18 +246,16 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._comments = film.comments;
     this._watchingDate = film.watchingDate;
 
-    this._emotion = null;
-    this._commentText = null;
+    this.emotion = null;
+    this.commentText = null;
 
     this._watchlistItemClickHandler = null;
     this._watchedItemClickHandler = null;
     this._favoriteItemClickHandler = null;
-
     this._userRatingClickHandler = null;
     this._undoUserRatingClickHandler = null;
-
     this._deleteCommentClickHandler = null;
-
+    this._submitCommentHandler = null;
     this._submitHandler = null;
 
     this._subscribeOnEvents();
@@ -270,7 +268,9 @@ export default class FilmDetails extends AbstractSmartComponent {
       isWatched: this._isWatched,
       isFavorite: this._isFavorite,
       comments: this._comments,
-      emotion: this._emotion,
+
+      emotion: this.emotion,
+      commentText: this.commentText,
     });
   }
 
@@ -278,12 +278,10 @@ export default class FilmDetails extends AbstractSmartComponent {
     this.setWatchlistItemClickHandler(this._watchlistItemClickHandler);
     this.setWatchedItemClickHandler(this._watchedItemClickHandler);
     this.setFavoriteItemClickHandler(this._favoriteItemClickHandler);
-
     this.setUserRatingClickHandler(this._userRatingClickHandler);
     this.setUndoUserRatingClickHandler(this._undoUserRatingClickHandler);
-
     this.setDeleteCommentClickHandler(this._deleteCommentClickHandler);
-
+    this.setSubmitCommentHandler(this._submitCommentHandler);
     this.setSubmitHandler(this._submitHandler);
     this._subscribeOnEvents();
   }
@@ -301,8 +299,8 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._comments = film.comments;
     this._watchingDate = film.watchingDate;
 
-    this._emotion = null;
-    this._commentText = null;
+    this.emotion = null;
+    this.commentText = null;
 
     this.rerender();
   }
@@ -370,6 +368,11 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._deleteCommentClickHandler = handler;
   }
 
+  setSubmitCommentHandler(handler) {
+    this.getElement().addEventListener(`keydown`, handler);
+    this._submitCommentHandler = handler;
+  }
+
   setSubmitHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);
@@ -382,32 +385,13 @@ export default class FilmDetails extends AbstractSmartComponent {
 
     element.querySelector(`.film-details__emoji-list`).addEventListener(`change`, (evt) => {
       const emotion = evt.target.value;
-      this._emotion = emotion;
+      this.emotion = emotion;
 
       this.rerender();
     });
 
     element.querySelector(`.film-details__comment-input`).addEventListener(`input`, (evt) => {
-      this._commentText = evt.target.value;
-    });
-
-    element.addEventListener(`keydown`, (evt) => {
-      if (evt.ctrlKey && evt.keyCode === 13) {
-        if (this._emotion && this._commentText) {
-          const newComment = {
-            id: String(new Date() + Math.random()),
-            text: he.encode(this._commentText),
-            emotion: this._emotion,
-            author: `You`,
-            date: new Date(),
-          };
-
-          this._comments.push(newComment);
-          this._emotion = null;
-          this._commentText = null;
-          this.rerender();
-        }
-      }
+      this.commentText = evt.target.value;
     });
   }
 }

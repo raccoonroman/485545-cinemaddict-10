@@ -1,6 +1,8 @@
+import he from 'he';
 import FilmCardComponent from './../components/film-card';
 import FilmDetailsComponent from './../components/film-details';
 import MovieModel from '../models/movie';
+import MovieCommentModel from '../models/movie-comment';
 import {RenderPosition, render, replace, remove} from './../utils/render';
 
 
@@ -8,28 +10,6 @@ export const Mode = {
   DEFAULT: `default`,
   DETAILS: `details`,
 };
-
-// const parseFormData = (formData) => {
-//   const isChecked = (name) => formData.get(name) === `on`;
-
-//   return {
-//     userRating: +formData.get(`score`),
-//     isInWatchlist: isChecked(`watchlist`),
-//     isWatched: isChecked(`watched`),
-//     isFavorite: isChecked(`favorite`),
-//   };
-// };
-
-// const parseFormData = (formData) => {
-//   const isChecked = (name) => formData.get(name) === `on`;
-
-//   return new MovieModel({
-//     userRating: +formData.get(`score`),
-//     isInWatchlist: isChecked(`watchlist`),
-//     isWatched: isChecked(`watched`),
-//     isFavorite: isChecked(`favorite`),
-//   });
-// };
 
 export default class MovieController {
   constructor(cardContainer, detailsContainer, onDataChange, onViewChange, api) {
@@ -154,8 +134,31 @@ export default class MovieController {
       const commentId = commentElement.dataset.commentId;
       this._api.deleteComment(commentId)
         .then(() => MovieModel.clone(movie))
-        .then((newMovie) => this._onDataChange(this, movie, newMovie))
+        .then((newMovie) => {
+          newMovie.commentsId = newMovie.commentsId.filter((id) => id !== commentId);
+          return this._onDataChange(this, movie, newMovie);
+        })
         .then(() => openMovieDetails(evt));
+    });
+
+    this._movieDetailsComponent.setSubmitCommentHandler((evt) => {
+      if (evt.ctrlKey && evt.keyCode === 13) {
+        const emotion = this._movieDetailsComponent.emotion;
+        const commentText = this._movieDetailsComponent.commentText;
+
+        if (emotion && commentText) {
+          const newComment = new MovieCommentModel({
+            'comment': he.encode(commentText),
+            'date': new Date(),
+            'emotion': emotion,
+          });
+
+          this._api.createComment(newComment, movie.id)
+            .then(() => MovieModel.clone(movie))
+            .then((newMovie) => this._onDataChange(this, movie, newMovie))
+            .then(() => openMovieDetails(evt));
+        }
+      }
     });
 
     // this._movieDetailsComponent.setSubmitHandler(closeMovieDetails);
