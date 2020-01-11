@@ -114,7 +114,7 @@ export default class PageController {
   _renderFilms(container, films) {
     const filmsElement = this._filmsComponent.getElement();
 
-    const newFilms = renderFilms(container, filmsElement, films, this._onDataChange, this._onViewChange);
+    const newFilms = renderFilms(container, filmsElement, films, this._onDataChange, this._onViewChange, this._api);
     // this._showedFilmsControllers = this._showedFilmsControllers.concat(newFilms);
     this._allFilmsControllers = this._allFilmsControllers.concat(newFilms);
   }

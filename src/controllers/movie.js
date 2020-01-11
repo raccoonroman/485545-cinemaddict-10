@@ -1,4 +1,3 @@
-// import {merge} from 'lodash';
 import FilmCardComponent from './../components/film-card';
 import FilmDetailsComponent from './../components/film-details';
 import MovieModel from '../models/movie';
@@ -33,11 +32,12 @@ export const Mode = {
 // };
 
 export default class MovieController {
-  constructor(cardContainer, detailsContainer, onDataChange, onViewChange) {
+  constructor(cardContainer, detailsContainer, onDataChange, onViewChange, api) {
     this._cardContainer = cardContainer;
     this._detailsContainer = detailsContainer;
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
+    this._api = api;
 
     this._mode = Mode.DEFAULT;
 
@@ -148,13 +148,15 @@ export default class MovieController {
         .then(() => openMovieDetails(evt));
     });
 
-    // this._movieDetailsComponent.setDeleteCommentClickHandler((evt) => {
-    //   const newMovie = MovieModel.clone(movie);
-    //   newMovie.userRating = 0;
-
-    //   this._onDataChange(this, movie, newMovie)
-    //     .then(() => openMovieDetails(evt));
-    // });
+    this._movieDetailsComponent.setDeleteCommentClickHandler((evt) => {
+      evt.preventDefault();
+      const commentElement = evt.target.closest(`.film-details__comment`);
+      const commentId = commentElement.dataset.commentId;
+      this._api.deleteComment(commentId)
+        .then(() => MovieModel.clone(movie))
+        .then((newMovie) => this._onDataChange(this, movie, newMovie))
+        .then(() => openMovieDetails(evt));
+    });
 
     // this._movieDetailsComponent.setSubmitHandler(closeMovieDetails);
 

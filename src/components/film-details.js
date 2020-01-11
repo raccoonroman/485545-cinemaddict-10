@@ -256,6 +256,8 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._userRatingClickHandler = null;
     this._undoUserRatingClickHandler = null;
 
+    this._deleteCommentClickHandler = null;
+
     this._submitHandler = null;
 
     this._subscribeOnEvents();
@@ -279,6 +281,8 @@ export default class FilmDetails extends AbstractSmartComponent {
 
     this.setUserRatingClickHandler(this._userRatingClickHandler);
     this.setUndoUserRatingClickHandler(this._undoUserRatingClickHandler);
+
+    this.setDeleteCommentClickHandler(this._deleteCommentClickHandler);
 
     this.setSubmitHandler(this._submitHandler);
     this._subscribeOnEvents();
@@ -357,6 +361,15 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._undoUserRatingClickHandler = handler;
   }
 
+  setDeleteCommentClickHandler(handler) {
+    this.getElement().querySelectorAll(`.film-details__comment-delete`)
+      .forEach((deleteButton) => {
+        deleteButton.addEventListener(`click`, handler);
+      });
+
+    this._deleteCommentClickHandler = handler;
+  }
+
   setSubmitHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);
@@ -366,17 +379,6 @@ export default class FilmDetails extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
     const element = this.getElement();
-
-    element.querySelectorAll(`.film-details__comment-delete`).forEach((deleteButton) => {
-      deleteButton.addEventListener(`click`, (evt) => {
-        evt.preventDefault();
-        const commentElement = deleteButton.closest(`.film-details__comment`);
-        const commentId = commentElement.dataset.commentId;
-        const index = this._comments.findIndex(({id}) => id === commentId);
-        this._comments = [].concat(this._comments.slice(0, index), this._comments.slice(index + 1));
-        this.rerender();
-      });
-    });
 
     element.querySelector(`.film-details__emoji-list`).addEventListener(`change`, (evt) => {
       const emotion = evt.target.value;

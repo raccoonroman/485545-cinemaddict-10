@@ -9,8 +9,6 @@ export default class MovieComment {
 
   toRAW() {
     return {
-      'id': this.id,
-      'author': this.author,
       'comment': this.text,
       'date': this.date,
       'emotion': this.emotion,
@@ -25,7 +23,7 @@ export default class MovieComment {
     return data.map(MovieComment.parseMovieComment);
   }
 
-  static clone(data) {
-    return new MovieComment(data.toRAW());
-  }
+  // static clone(data) {
+  //   return new MovieComment(data.toRAW());
+  // }
 }
