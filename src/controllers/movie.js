@@ -6,6 +6,9 @@ import MovieCommentModel from '../models/movie-comment';
 import {RenderPosition, render, replace, remove} from './../utils/render';
 
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
+const ERROR_COLOR = `red`;
+
 export const Mode = {
   DEFAULT: `default`,
   DETAILS: `details`,
@@ -103,7 +106,6 @@ export default class MovieController {
     this._movieCardComponent.setWatchedButtonClickHandler(watchedItemClickHandler);
     this._movieCardComponent.setFavoriteButtonClickHandler(favoriteItemClickHandler);
 
-
     this._movieDetailsComponent.setWatchlistItemClickHandler((evt) => {
       watchlistItemClickHandler(evt).then(() => openMovieDetails(evt));
     });
@@ -116,14 +118,20 @@ export default class MovieController {
       favoriteItemClickHandler(evt).then(() => openMovieDetails(evt));
     });
 
+
     this._movieDetailsComponent.setUserRatingClickHandler((evt) => {
-      this._movieDetailsComponent.disableUserRatingInput();
+      const userRatingInputs = this._movieDetailsComponent.getUserRatingInputs();
+      userRatingInputs.forEach((input) => {
+        input.disabled = true;
+      });
+
       const userRating = +evt.target.value;
       const newMovie = MovieModel.clone(movie);
       newMovie.userRating = userRating;
 
       this._onDataChange(this, movie, newMovie)
-        .then(() => openMovieDetails(evt));
+        .then(() => openMovieDetails(evt))
+        .catch(() => this.shakeRatingItem(evt.target));
     });
 
     this._movieDetailsComponent.setUndoUserRatingClickHandler((evt) => {
@@ -166,7 +174,8 @@ export default class MovieController {
           this._api.createComment(newComment, movie.id)
             .then(() => MovieModel.clone(movie))
             .then((newMovie) => this._onDataChange(this, movie, newMovie))
-            .then(() => openMovieDetails(evt));
+            .then(() => openMovieDetails(evt))
+            .catch(() => this.shakeCommentForm());
         }
       }
     });
@@ -188,11 +197,40 @@ export default class MovieController {
     }
   }
 
-  // destroy() {
-  //   remove(this._movieDetailsComponent);
-  //   remove(this._movieCardComponent);
-  //   document.removeEventListener(`keydown`, this._onEscKeyDown);
-  // }
+  shakeCommentForm() {
+    const commentForm = this._movieDetailsComponent.getCommentForm();
+    const currentBorderColor = commentForm.style.borderColor;
+
+    commentForm.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    commentForm.style.borderColor = ERROR_COLOR;
+
+    setTimeout(() => {
+      commentForm.style.animation = ``;
+      commentForm.style.animation = ``;
+      commentForm.style.borderColor = currentBorderColor;
+      commentForm.disabled = false;
+      commentForm.focus();
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
+  shakeRatingItem(element) {
+    const ratingLabel = element.nextElementSibling;
+    const currentItemColor = ratingLabel.style.backgroundColor;
+    const userRatingInputs = this._movieDetailsComponent.getUserRatingInputs();
+
+    ratingLabel.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    ratingLabel.style.backgroundColor = ERROR_COLOR;
+
+    setTimeout(() => {
+      ratingLabel.style.animation = ``;
+      ratingLabel.style.animation = ``;
+      ratingLabel.style.backgroundColor = currentItemColor;
+      element.checked = false;
+      userRatingInputs.forEach((input) => {
+        input.disabled = false;
+      });
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
 
   _removeDetailsWithoutSaving() {
     this._movieDetailsComponent.reset();

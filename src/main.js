@@ -58,8 +58,6 @@ api.getMovies()
       });
     });
 
-    // console.log(movies);
-
     Promise.all(commentsPromises).then(() => {
       moviesModel.setMovies(movies);
 

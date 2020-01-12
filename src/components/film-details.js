@@ -281,7 +281,6 @@ export default class FilmDetails extends AbstractSmartComponent {
   reset() {
     this.emotion = null;
     this.commentText = null;
-
     this.rerender();
   }
 
@@ -353,10 +352,8 @@ export default class FilmDetails extends AbstractSmartComponent {
     return this.getElement().querySelector(`.film-details__comment-input`);
   }
 
-  disableUserRatingInput() {
-    this.getElement().querySelectorAll(`.film-details__user-rating-input`).forEach((input) => {
-      input.disabled = true;
-    });
+  getUserRatingInputs() {
+    return this.getElement().querySelectorAll(`.film-details__user-rating-input`);
   }
 
   _subscribeOnEvents() {
