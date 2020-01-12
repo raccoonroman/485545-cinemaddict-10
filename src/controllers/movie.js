@@ -68,6 +68,7 @@ export default class MovieController {
 
     const watchlistItemClickHandler = (evt) => {
       evt.preventDefault();
+      evt.target.disabled = true;
       const newMovie = MovieModel.clone(movie);
       newMovie.isInWatchlist = !newMovie.isInWatchlist;
 
@@ -76,6 +77,7 @@ export default class MovieController {
 
     const watchedItemClickHandler = (evt) => {
       evt.preventDefault();
+      evt.target.disabled = true;
       const newMovie = MovieModel.clone(movie);
       newMovie.isWatched = !newMovie.isWatched;
       if (newMovie.isWatched) {
@@ -90,6 +92,7 @@ export default class MovieController {
 
     const favoriteItemClickHandler = (evt) => {
       evt.preventDefault();
+      evt.target.disabled = true;
       const newMovie = MovieModel.clone(movie);
       newMovie.isFavorite = !newMovie.isFavorite;
 
@@ -114,6 +117,7 @@ export default class MovieController {
     });
 
     this._movieDetailsComponent.setUserRatingClickHandler((evt) => {
+      this._movieDetailsComponent.disableUserRatingInput();
       const userRating = +evt.target.value;
       const newMovie = MovieModel.clone(movie);
       newMovie.userRating = userRating;
@@ -123,6 +127,7 @@ export default class MovieController {
     });
 
     this._movieDetailsComponent.setUndoUserRatingClickHandler((evt) => {
+      evt.target.textContent = `Undoing...`;
       const newMovie = MovieModel.clone(movie);
       newMovie.userRating = 0;
 
@@ -132,7 +137,8 @@ export default class MovieController {
 
     this._movieDetailsComponent.setDeleteCommentClickHandler((evt) => {
       evt.preventDefault();
-      const commentElement = evt.target.closest(`.film-details__comment`);
+      evt.target.textContent = `Deleting...`;
+      const commentElement = this._movieDetailsComponent.getClosestComment(evt.target);
       const commentId = commentElement.dataset.commentId;
       this._api.deleteComment(commentId)
         .then(() => MovieModel.clone(movie))
@@ -149,6 +155,8 @@ export default class MovieController {
         const commentText = this._movieDetailsComponent.commentText;
 
         if (emotion && commentText) {
+          this._movieDetailsComponent.getCommentForm().disabled = true;
+
           const newComment = new MovieCommentModel({
             'comment': he.encode(commentText),
             'date': new Date(),

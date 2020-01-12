@@ -12,7 +12,7 @@ import {RenderPosition, render} from './utils/render';
 import {statsPeriods} from './const';
 
 
-const AUTHORIZATION = `Basic o6K445Df7Q1zrcr`;
+const AUTHORIZATION = `Basic mJ7UKvlNLEru54N`;
 const END_POINT = `https://htmlacademy-es-10.appspot.com/cinemaddict`;
 
 const api = new API(END_POINT, AUTHORIZATION);

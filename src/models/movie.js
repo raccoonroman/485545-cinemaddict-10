@@ -50,7 +50,7 @@ export default class Movie {
         'personal_rating': this.userRating,
         'watchlist': this.isInWatchlist,
         'already_watched': this.isWatched,
-        'watching_date': this.watchingDate.toISOString(),
+        'watching_date': this.watchingDate ? this.watchingDate.toISOString() : 0,
         'favorite': this.isFavorite,
       }
     };

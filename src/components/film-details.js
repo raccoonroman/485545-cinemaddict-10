@@ -345,6 +345,20 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._closeButtonHandler = handler;
   }
 
+  getClosestComment(deleteCommentButton) {
+    return deleteCommentButton.closest(`.film-details__comment`);
+  }
+
+  getCommentForm() {
+    return this.getElement().querySelector(`.film-details__comment-input`);
+  }
+
+  disableUserRatingInput() {
+    this.getElement().querySelectorAll(`.film-details__user-rating-input`).forEach((input) => {
+      input.disabled = true;
+    });
+  }
+
   _subscribeOnEvents() {
     this.getElement().querySelector(`.film-details__emoji-list`).addEventListener(`change`, (evt) => {
       const emotion = evt.target.value;
