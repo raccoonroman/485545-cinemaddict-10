@@ -1,4 +1,3 @@
-import he from 'he';
 import AbstractSmartComponent from './abstract-smart-component';
 import {Emotions} from '../const';
 import {
@@ -85,6 +84,14 @@ const createGenresTitleText = (genres) => genres.length > 1 ? `Genres` : `Genre`
 
 
 const createFilmDetailsTemplate = (film, options = {}) => {
+  const {
+    filmInfo,
+    userRating,
+    isInWatchlist,
+    isWatched,
+    isFavorite,
+    comments,
+  } = film;
 
   const {
     title,
@@ -100,16 +107,9 @@ const createFilmDetailsTemplate = (film, options = {}) => {
     duration,
     genres,
     description,
-  } = film.filmInfo;
+  } = filmInfo;
 
-  const {
-    userRating,
-    isInWatchlist,
-    isWatched,
-    isFavorite,
-    comments,
-    emotion,
-  } = options;
+  const {emotion, commentText} = options;
 
   const watchlistItem = createControlItemMarkup(`watchlist`, `Add to watchlist`, isInWatchlist);
   const watchedItem = createControlItemMarkup(`watched`, `Already watched`, isWatched);
@@ -221,7 +221,7 @@ const createFilmDetailsTemplate = (film, options = {}) => {
             </div>
 
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${commentText || ``}</textarea>
             </label>
 
             <div class="film-details__emoji-list">
@@ -239,36 +239,26 @@ export default class FilmDetails extends AbstractSmartComponent {
   constructor(film) {
     super();
     this._film = film;
-    this._userRating = film.userRating;
-    this._isInWatchlist = film.isInWatchlist;
-    this._isWatched = film.isWatched;
-    this._isFavorite = film.isFavorite;
-    this._comments = film.comments;
-    this._watchingDate = film.watchingDate;
 
-    this._emotion = null;
-    this._commentText = null;
+    this.emotion = null;
+    this.commentText = null;
 
     this._watchlistItemClickHandler = null;
     this._watchedItemClickHandler = null;
     this._favoriteItemClickHandler = null;
-
     this._userRatingClickHandler = null;
     this._undoUserRatingClickHandler = null;
-
-    this._submitHandler = null;
+    this._deleteCommentClickHandler = null;
+    this._submitCommentHandler = null;
+    this._closeButtonHandler = null;
 
     this._subscribeOnEvents();
   }
 
   getTemplate() {
     return createFilmDetailsTemplate(this._film, {
-      userRating: this._userRating,
-      isInWatchlist: this._isInWatchlist,
-      isWatched: this._isWatched,
-      isFavorite: this._isFavorite,
-      comments: this._comments,
-      emotion: this._emotion,
+      emotion: this.emotion,
+      commentText: this.commentText,
     });
   }
 
@@ -276,11 +266,11 @@ export default class FilmDetails extends AbstractSmartComponent {
     this.setWatchlistItemClickHandler(this._watchlistItemClickHandler);
     this.setWatchedItemClickHandler(this._watchedItemClickHandler);
     this.setFavoriteItemClickHandler(this._favoriteItemClickHandler);
-
     this.setUserRatingClickHandler(this._userRatingClickHandler);
     this.setUndoUserRatingClickHandler(this._undoUserRatingClickHandler);
-
-    this.setSubmitHandler(this._submitHandler);
+    this.setDeleteCommentClickHandler(this._deleteCommentClickHandler);
+    this.setSubmitCommentHandler(this._submitCommentHandler);
+    this.setCloseButtonHandler(this._closeButtonHandler);
     this._subscribeOnEvents();
   }
 
@@ -289,33 +279,9 @@ export default class FilmDetails extends AbstractSmartComponent {
   }
 
   reset() {
-    const film = this._film;
-    this._userRating = film.userRating;
-    this._isInWatchlist = film.isInWatchlist;
-    this._isWatched = film.isWatched;
-    this._isFavorite = film.isFavorite;
-    this._comments = film.comments;
-    this._watchingDate = film.watchingDate;
-
-    this._emotion = null;
-    this._commentText = null;
-
+    this.emotion = null;
+    this.commentText = null;
     this.rerender();
-  }
-
-  // getData() {
-  //   const form = this.getElement().querySelector(`.film-details__inner`);
-  //   const formData = new FormData(form);
-
-  //   return Object.assign({}, parseFormData(formData), {
-  //     comments: this._comments,
-  //     watchingDate: this._watchingDate,
-  //   });
-  // }
-
-  getData() {
-    const form = this.getElement().querySelector(`.film-details__inner`);
-    return new FormData(form);
   }
 
   setWatchlistItemClickHandler(handler) {
@@ -357,55 +323,48 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._undoUserRatingClickHandler = handler;
   }
 
-  setSubmitHandler(handler) {
+  setDeleteCommentClickHandler(handler) {
+    this.getElement().querySelectorAll(`.film-details__comment-delete`)
+      .forEach((deleteButton) => {
+        deleteButton.addEventListener(`click`, handler);
+      });
+
+    this._deleteCommentClickHandler = handler;
+  }
+
+  setSubmitCommentHandler(handler) {
+    this.getElement().addEventListener(`keydown`, handler);
+    this._submitCommentHandler = handler;
+  }
+
+  setCloseButtonHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);
 
-    this._submitHandler = handler;
+    this._closeButtonHandler = handler;
+  }
+
+  getClosestComment(deleteCommentButton) {
+    return deleteCommentButton.closest(`.film-details__comment`);
+  }
+
+  getCommentForm() {
+    return this.getElement().querySelector(`.film-details__comment-input`);
+  }
+
+  getUserRatingInputs() {
+    return this.getElement().querySelectorAll(`.film-details__user-rating-input`);
   }
 
   _subscribeOnEvents() {
-    const element = this.getElement();
-
-    element.querySelectorAll(`.film-details__comment-delete`).forEach((deleteButton) => {
-      deleteButton.addEventListener(`click`, (evt) => {
-        evt.preventDefault();
-        const commentElement = deleteButton.closest(`.film-details__comment`);
-        const commentId = commentElement.dataset.commentId;
-        const index = this._comments.findIndex(({id}) => id === commentId);
-        this._comments = [].concat(this._comments.slice(0, index), this._comments.slice(index + 1));
-        this.rerender();
-      });
-    });
-
-    element.querySelector(`.film-details__emoji-list`).addEventListener(`change`, (evt) => {
+    this.getElement().querySelector(`.film-details__emoji-list`).addEventListener(`change`, (evt) => {
       const emotion = evt.target.value;
-      this._emotion = emotion;
-
+      this.emotion = emotion;
       this.rerender();
     });
 
-    element.querySelector(`.film-details__comment-input`).addEventListener(`input`, (evt) => {
-      this._commentText = evt.target.value;
-    });
-
-    element.addEventListener(`keydown`, (evt) => {
-      if (evt.ctrlKey && evt.keyCode === 13) {
-        if (this._emotion && this._commentText) {
-          const newComment = {
-            id: String(new Date() + Math.random()),
-            text: he.encode(this._commentText),
-            emotion: this._emotion,
-            author: `You`,
-            date: new Date(),
-          };
-
-          this._comments.push(newComment);
-          this._emotion = null;
-          this._commentText = null;
-          this.rerender();
-        }
-      }
+    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, (evt) => {
+      this.commentText = evt.target.value;
     });
   }
 }

@@ -26,14 +26,8 @@ export default class API {
 
   getMovies() {
     return this._load({url: `movies`})
-      .then((response) => response.json())
-      .then(Movie.parseMovies);
-  }
-
-  getComments(movieId) {
-    return this._load({url: `comments/${movieId}`})
-      .then((response) => response.json())
-      .then(MovieComment.parseMovieComments);
+    .then((response) => response.json())
+    .then(Movie.parseMovies);
   }
 
   updateMovie(id, data) {
@@ -43,8 +37,29 @@ export default class API {
       body: JSON.stringify(data.toRAW()),
       headers: new Headers({'Content-Type': `application/json`})
     })
-      .then((response) => response.json())
-      .then(Movie.parseMovie);
+    .then((response) => response.json())
+    .then(Movie.parseMovie);
+  }
+
+  getComments(movieId) {
+    return this._load({url: `comments/${movieId}`})
+    .then((response) => response.json())
+    .then(MovieComment.parseMovieComments);
+  }
+
+  createComment(comment, movieId) {
+    return this._load({
+      url: `comments/${movieId}`,
+      method: Method.POST,
+      body: JSON.stringify(comment.toRAW()),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+    .then((response) => response.json())
+    .then(MovieComment.parseMovieComment);
+  }
+
+  deleteComment(id) {
+    return this._load({url: `comments/${id}`, method: Method.DELETE});
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {

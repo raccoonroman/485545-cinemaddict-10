@@ -36,6 +36,14 @@ const createCommentsTitleText = (comments) => {
   }
 };
 
+const createMainGenreText = (genres) => {
+  if (!genres.length) {
+    return ``;
+  }
+
+  return genres[0];
+};
+
 
 const createFilmCardTemplate = (film) => {
   const {
@@ -56,7 +64,6 @@ const createFilmCardTemplate = (film) => {
     description,
   } = filmInfo;
 
-  const [mainGenre] = genres;
   const watchlistButton = createControlItemMarkup(`Add to watchlist`, isInWatchlist);
   const watchedButton = createControlItemMarkup(`Mark as watched`, isWatched);
   const favoriteButton = createControlItemMarkup(`Favorite`, isFavorite);
@@ -67,7 +74,7 @@ const createFilmCardTemplate = (film) => {
     <p class="film-card__info">
       <span class="film-card__year">${formatYear(releaseDate)}</span>
       <span class="film-card__duration">${formatDuration(duration)}</span>
-      <span class="film-card__genre">${mainGenre}</span>
+      <span class="film-card__genre">${createMainGenreText(genres)}</span>
     </p>
     <img src="${poster}" alt="${title}" class="film-card__poster">
     <p class="film-card__description">${createDescriptionText(description)}</p>
