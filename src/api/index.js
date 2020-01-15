@@ -1,5 +1,5 @@
 import Movie from '../models/movie';
-import MovieComment from '../models/movie-comment';
+import Comment from '../models/comment';
 
 
 const Method = {
@@ -44,7 +44,7 @@ export default class Api {
   getComments(movieId) {
     return this._load({url: `comments/${movieId}`})
     .then((response) => response.json())
-    .then(MovieComment.parseMovieComments);
+    .then(Comment.parseComments);
   }
 
   createComment(comment, movieId) {
@@ -55,7 +55,7 @@ export default class Api {
       headers: new Headers({'Content-Type': `application/json`})
     })
     .then((response) => response.json())
-    .then(MovieComment.parseMovieComment);
+    .then(Comment.parseComment);
   }
 
   deleteComment(id) {

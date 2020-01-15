@@ -1,4 +1,6 @@
 import Api from './api/index';
+import Store from './api/store';
+import Provider from './api/provider';
 import UserRankController from './controllers/user-rank';
 import FilterController from './controllers/filter';
 import SortComponent from './components/sort';
@@ -12,6 +14,9 @@ import {RenderPosition, render} from './utils/render';
 import {statsPeriods} from './const';
 
 
+const STORE_PREFIX = `cinemaddict-localstorage`;
+const STORE_VER = `v1`;
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 const AUTHORIZATION = `Basic mJ7UKvlNLEru54N`;
 const END_POINT = `https://htmlacademy-es-10.appspot.com/cinemaddict`;
 
@@ -25,6 +30,8 @@ window.addEventListener(`load`, () => {
 });
 
 const api = new Api(END_POINT, AUTHORIZATION);
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store);
 const moviesModel = new MoviesModel();
 
 const headerElement = document.querySelector(`.header`);
@@ -35,7 +42,7 @@ const filmsComponent = new FilmsComponent();
 const sortComponent = new SortComponent();
 
 const userRankController = new UserRankController(headerElement, moviesModel);
-const pageController = new PageController(filmsComponent, sortComponent, moviesModel, api);
+const pageController = new PageController(filmsComponent, sortComponent, moviesModel, apiWithProvider);
 const statsController = new StatsController(mainElement, moviesModel, statsPeriods.ALL_TIME);
 const filterController = new FilterController(mainElement, moviesModel, pageController, sortComponent, statsController);
 
@@ -58,11 +65,11 @@ const filmListTitleController = new FilmListTitleController(filmsListElement, mo
 filmListTitleController.render();
 
 
-api.getMovies()
+apiWithProvider.getMovies()
   .then((movies) => {
 
     const commentsPromises = movies.map((movie) => {
-      return api.getComments(movie.id).then((comments) => {
+      return apiWithProvider.getComments(movie.id).then((comments) => {
         movie.comments = comments;
       });
     });

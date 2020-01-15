@@ -2,7 +2,7 @@ import he from 'he';
 import FilmCardComponent from './../components/film-card';
 import FilmDetailsComponent from './../components/film-details';
 import MovieModel from '../models/movie';
-import MovieCommentModel from '../models/movie-comment';
+import CommentModel from '../models/comment';
 import {RenderPosition, render, replace, remove} from './../utils/render';
 
 
@@ -166,7 +166,7 @@ export default class MovieController {
         if (emotion && commentText) {
           this._movieDetailsComponent.getCommentForm().disabled = true;
 
-          const newComment = new MovieCommentModel({
+          const newComment = new CommentModel({
             'comment': he.encode(commentText),
             'date': new Date(),
             'emotion': emotion,

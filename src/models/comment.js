@@ -1,4 +1,4 @@
-export default class MovieComment {
+export default class Comment {
   constructor(data) {
     this.id = data[`id`];
     this.author = data[`author`];
@@ -15,11 +15,11 @@ export default class MovieComment {
     };
   }
 
-  static parseMovieComment(data) {
-    return new MovieComment(data);
+  static parseComment(data) {
+    return new Comment(data);
   }
 
-  static parseMovieComments(data) {
-    return data.map(MovieComment.parseMovieComment);
+  static parseComments(data) {
+    return data.map(Comment.parseComment);
   }
 }
