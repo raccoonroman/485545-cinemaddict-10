@@ -145,6 +145,7 @@ export default class MovieController {
 
     this._movieDetailsComponent.setDeleteCommentClickHandler((evt) => {
       evt.preventDefault();
+      evt.target.disabled = true;
       evt.target.textContent = `Deleting...`;
       const commentElement = this._movieDetailsComponent.getClosestComment(evt.target);
       const commentId = commentElement.dataset.commentId;
@@ -206,7 +207,6 @@ export default class MovieController {
 
     setTimeout(() => {
       commentForm.style.animation = ``;
-      commentForm.style.animation = ``;
       commentForm.style.borderColor = currentBorderColor;
       commentForm.disabled = false;
       commentForm.focus();
@@ -222,7 +222,6 @@ export default class MovieController {
     ratingLabel.style.backgroundColor = ERROR_COLOR;
 
     setTimeout(() => {
-      ratingLabel.style.animation = ``;
       ratingLabel.style.animation = ``;
       ratingLabel.style.backgroundColor = currentItemColor;
       element.checked = false;

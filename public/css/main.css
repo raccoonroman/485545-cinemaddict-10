@@ -1115,3 +1115,8 @@ button {
   cursor: default;
   opacity: 0.7;
 }
+
+.film-details__comment-delete:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
