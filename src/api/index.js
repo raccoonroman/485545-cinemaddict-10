@@ -1,5 +1,5 @@
-import Movie from './models/movie';
-import MovieComment from './models/movie-comment';
+import Movie from '../models/movie';
+import MovieComment from '../models/movie-comment';
 
 
 const Method = {
@@ -18,7 +18,7 @@ const checkStatus = (response) => {
 };
 
 
-export default class API {
+export default class Api {
   constructor(endPoint, authorization) {
     this._endPoint = endPoint;
     this._authorization = authorization;

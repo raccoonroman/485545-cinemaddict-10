@@ -1,4 +1,4 @@
-import API from './api';
+import Api from './api/index';
 import UserRankController from './controllers/user-rank';
 import FilterController from './controllers/filter';
 import SortComponent from './components/sort';
@@ -15,7 +15,16 @@ import {statsPeriods} from './const';
 const AUTHORIZATION = `Basic mJ7UKvlNLEru54N`;
 const END_POINT = `https://htmlacademy-es-10.appspot.com/cinemaddict`;
 
-const api = new API(END_POINT, AUTHORIZATION);
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`)
+    .then(() => {
+      // Действие, в случае успешной регистрации ServiceWorker
+    }).catch(() => {
+      // Действие, в случае ошибки при регистрации ServiceWorker
+    });
+});
+
+const api = new Api(END_POINT, AUTHORIZATION);
 const moviesModel = new MoviesModel();
 
 const headerElement = document.querySelector(`.header`);
