@@ -14,9 +14,8 @@ import {RenderPosition, render} from './utils/render';
 import {statsPeriods} from './const';
 
 
-const STORE_PREFIX = `cinemaddict-localstorage`;
-const STORE_VER = `v1`;
-const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
+const STORE_MOVIES_NAME = `cinemaddict-movies-localstorage-v1`;
+const STORE_COMMENTS_NAME = `cinemaddict-comments-localstorage-v1`;
 const AUTHORIZATION = `Basic mJ7UKvlNLEru54N`;
 const END_POINT = `https://htmlacademy-es-10.appspot.com/cinemaddict`;
 
@@ -30,8 +29,9 @@ window.addEventListener(`load`, () => {
 });
 
 const api = new Api(END_POINT, AUTHORIZATION);
-const store = new Store(STORE_NAME, window.localStorage);
-const apiWithProvider = new Provider(api, store);
+const storeMovies = new Store(STORE_MOVIES_NAME, window.localStorage);
+const storeComments = new Store(STORE_COMMENTS_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, storeMovies, storeComments);
 const moviesModel = new MoviesModel();
 
 const headerElement = document.querySelector(`.header`);
@@ -84,3 +84,12 @@ apiWithProvider.getMovies()
       footerStatisticsElement.textContent = `${movies.length} movies inside`;
     });
   });
+
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.replace(` [offline]`, ``);
+});
+
+window.addEventListener(`offline`, () => {
+  document.title += ` [offline]`;
+});
