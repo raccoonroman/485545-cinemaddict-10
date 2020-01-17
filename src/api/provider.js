@@ -5,11 +5,17 @@ import {getRandomArrayItem} from '../utils/common';
 import {Users} from '../const';
 
 
+const getSyncedMovies = (items) => items
+  .filter(({success}) => success)
+  .map(({payload}) => payload.movie);
+
+
 export default class Provider {
   constructor(api, storeMovies, storeComments) {
     this._api = api;
     this._storeMovies = storeMovies;
     this._storeComments = storeComments;
+    this._isSynchronized = true;
   }
 
   getMovies() {
@@ -24,6 +30,7 @@ export default class Provider {
     }
 
     const storeMovies = Object.values(this._storeMovies.getAll());
+    this._isSynchronized = false;
     return Promise.resolve(Movie.parseMovies(storeMovies));
   }
 
@@ -52,6 +59,8 @@ export default class Provider {
     }
 
     const fakeUpdatedMovie = Movie.parseMovie(Object.assign({}, movie.toRAW(), {id}));
+
+    this._isSynchronized = false;
 
     this._storeMovies.setItem(id, Object.assign({}, fakeUpdatedMovie.toRAW(), {offline: true}));
 
@@ -92,6 +101,44 @@ export default class Provider {
 
     this._storeComments.removeItem(id);
     return Promise.resolve();
+  }
+
+  sync() {
+    if (this._isOnLine()) {
+      const storeMovies = Object.values(this._storeMovies.getAll());
+
+      return this._api.sync(storeMovies)
+        .then((response) => {
+          // Удаляем из хранилища фильмы, что были изменены в оффлайне.
+          // Они нам больше не нужны
+          storeMovies
+            .filter((movie) => movie.offline)
+            .forEach((movie) => {
+              this._storeMovies.removeItem(movie.id);
+            });
+
+          // Забираем из ответа синхронизированные фильмы
+          const updatedMovies = getSyncedMovies(response.updated);
+
+          // Добавляем синхронизированные фильмы в хранилище.
+          // Хранилище должно быть актуальным в любой момент,
+          // вдруг сеть пропадёт
+          updatedMovies.forEach((movie) => {
+            this._storeMovies.setItem(movie.id, movie);
+          });
+
+          // Помечаем, что всё синхронизировано
+          this._isSynchronized = true;
+
+          return Promise.resolve();
+        });
+    }
+
+    return Promise.reject(new Error(`Sync data failed`));
+  }
+
+  getSynchronize() {
+    return this._isSynchronized;
   }
 
   _isOnLine() {
