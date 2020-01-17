@@ -1,4 +1,4 @@
-import {text, Emotions} from '../const';
+import {text, Emotions, Users} from '../const';
 import {
   getRandomArbitrary,
   getRandomIntInclusive,
@@ -41,21 +41,6 @@ const Genres = [
   `Sci-Fi`,
   `Thriller`,
   `Western`,
-];
-
-const Users = [
-  `Sasha`,
-  `Paul van Dyk`,
-  `Armin Van Buuren`,
-  `Ferry Corsten`,
-  `Christopher Lawrence`,
-  `ATB`,
-  `Marco V`,
-  `Benny Benassi`,
-  `Johan Gielen`,
-  `Markus Schulz`,
-  `Above & Beyond`,
-  `Max Graham`,
 ];
 
 const Countries = [

@@ -23,5 +23,20 @@ const Emotions = [
   `angry`,
 ];
 
+const Users = [
+  `Sasha`,
+  `Paul van Dyk`,
+  `Armin Van Buuren`,
+  `Ferry Corsten`,
+  `Christopher Lawrence`,
+  `ATB`,
+  `Marco V`,
+  `Benny Benassi`,
+  `Johan Gielen`,
+  `Markus Schulz`,
+  `Above & Beyond`,
+  `Max Graham`,
+];
 
-export {text, FilterType, statsPeriods, Emotions};
+
+export {text, FilterType, statsPeriods, Emotions, Users};

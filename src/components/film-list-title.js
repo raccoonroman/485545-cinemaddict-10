@@ -3,7 +3,7 @@ import AbstractComponent from './abstract-component';
 
 const createFilmsListTitleTemplate = (films) => {
   return `<h2 class="films-list__title ${films.length ? `visually-hidden` : ``}">
-    ${films.length ? `All movies. Upcoming` : `There are no movies in our database`}
+    ${films.length ? `All movies. Upcoming` : `Loading...`}
   </h2>`;
 };
 

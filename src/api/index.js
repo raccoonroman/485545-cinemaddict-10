@@ -1,5 +1,5 @@
-import Movie from './models/movie';
-import MovieComment from './models/movie-comment';
+import Movie from '../models/movie';
+import Comment from '../models/comment';
 
 
 const Method = {
@@ -18,7 +18,7 @@ const checkStatus = (response) => {
 };
 
 
-export default class API {
+export default class Api {
   constructor(endPoint, authorization) {
     this._endPoint = endPoint;
     this._authorization = authorization;
@@ -44,7 +44,7 @@ export default class API {
   getComments(movieId) {
     return this._load({url: `comments/${movieId}`})
     .then((response) => response.json())
-    .then(MovieComment.parseMovieComments);
+    .then(Comment.parseComments);
   }
 
   createComment(comment, movieId) {
@@ -55,11 +55,22 @@ export default class API {
       headers: new Headers({'Content-Type': `application/json`})
     })
     .then((response) => response.json())
-    .then(MovieComment.parseMovieComment);
+    .then((result) => result.comments)
+    .then(Comment.parseComments);
   }
 
   deleteComment(id) {
     return this._load({url: `comments/${id}`, method: Method.DELETE});
+  }
+
+  sync(data) {
+    return this._load({
+      url: `movies/sync`,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+    .then((response) => response.json());
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {

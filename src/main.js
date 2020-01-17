@@ -1,4 +1,6 @@
-import API from './api';
+import Api from './api/index';
+import Store from './api/store';
+import Provider from './api/provider';
 import UserRankController from './controllers/user-rank';
 import FilterController from './controllers/filter';
 import SortComponent from './components/sort';
@@ -12,10 +14,24 @@ import {RenderPosition, render} from './utils/render';
 import {statsPeriods} from './const';
 
 
+const STORE_MOVIES_NAME = `cinemaddict-movies-localstorage-v1`;
+const STORE_COMMENTS_NAME = `cinemaddict-comments-localstorage-v1`;
 const AUTHORIZATION = `Basic mJ7UKvlNLEru54N`;
 const END_POINT = `https://htmlacademy-es-10.appspot.com/cinemaddict`;
 
-const api = new API(END_POINT, AUTHORIZATION);
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`)
+    .then(() => {
+      // Действие, в случае успешной регистрации ServiceWorker
+    }).catch(() => {
+      // Действие, в случае ошибки при регистрации ServiceWorker
+    });
+});
+
+const api = new Api(END_POINT, AUTHORIZATION);
+const storeMovies = new Store(STORE_MOVIES_NAME, window.localStorage);
+const storeComments = new Store(STORE_COMMENTS_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, storeMovies, storeComments);
 const moviesModel = new MoviesModel();
 
 const headerElement = document.querySelector(`.header`);
@@ -26,7 +42,7 @@ const filmsComponent = new FilmsComponent();
 const sortComponent = new SortComponent();
 
 const userRankController = new UserRankController(headerElement, moviesModel);
-const pageController = new PageController(filmsComponent, sortComponent, moviesModel, api);
+const pageController = new PageController(filmsComponent, sortComponent, moviesModel, apiWithProvider);
 const statsController = new StatsController(mainElement, moviesModel, statsPeriods.ALL_TIME);
 const filterController = new FilterController(mainElement, moviesModel, pageController, sortComponent, statsController);
 
@@ -49,11 +65,11 @@ const filmListTitleController = new FilmListTitleController(filmsListElement, mo
 filmListTitleController.render();
 
 
-api.getMovies()
+apiWithProvider.getMovies()
   .then((movies) => {
 
     const commentsPromises = movies.map((movie) => {
-      return api.getComments(movie.id).then((comments) => {
+      return apiWithProvider.getComments(movie.id).then((comments) => {
         movie.comments = comments;
       });
     });
@@ -68,3 +84,22 @@ api.getMovies()
       footerStatisticsElement.textContent = `${movies.length} movies inside`;
     });
   });
+
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.replace(` [offline]`, ``);
+
+  if (!apiWithProvider.getSynchronize()) {
+    apiWithProvider.sync()
+      .then(() => {
+        // Действие, в случае успешной синхронизации
+      })
+      .catch(() => {
+        // Действие, в случае ошибки синхронизации
+      });
+  }
+});
+
+window.addEventListener(`offline`, () => {
+  document.title += ` [offline]`;
+});
