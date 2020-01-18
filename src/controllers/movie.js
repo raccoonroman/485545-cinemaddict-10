@@ -71,7 +71,6 @@ export default class MovieController {
 
     const watchlistItemClickHandler = (evt) => {
       evt.preventDefault();
-      evt.target.disabled = true;
       const newMovie = MovieModel.clone(movie);
       newMovie.isInWatchlist = !newMovie.isInWatchlist;
 
@@ -80,7 +79,6 @@ export default class MovieController {
 
     const watchedItemClickHandler = (evt) => {
       evt.preventDefault();
-      evt.target.disabled = true;
       const newMovie = MovieModel.clone(movie);
       newMovie.isWatched = !newMovie.isWatched;
       if (newMovie.isWatched) {
@@ -95,7 +93,6 @@ export default class MovieController {
 
     const favoriteItemClickHandler = (evt) => {
       evt.preventDefault();
-      evt.target.disabled = true;
       const newMovie = MovieModel.clone(movie);
       newMovie.isFavorite = !newMovie.isFavorite;
 

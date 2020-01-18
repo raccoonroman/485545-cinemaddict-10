@@ -1,3 +1,4 @@
+import debounce from 'lodash/debounce';
 import AbstractComponent from './abstract-component';
 import {
   formatDuration,
@@ -7,10 +8,12 @@ import {
 } from './../utils/common';
 
 
-const maxDescriptionLength = 140;
+const MAX_DESCRIPTION_LENGTH = 140;
+const DEBOUNCE_TIMEOUT = 500;
 
 const createControlItemMarkup = (name, isActive) => {
   return `<button
+  type="button"
   class="film-card__controls-item button
   film-card__controls-item--${convertTextToKebabCase(name)}
   ${isActive ? `film-card__controls-item--active` : ``}
@@ -18,11 +21,11 @@ const createControlItemMarkup = (name, isActive) => {
 };
 
 const createDescriptionText = (description) => {
-  if (description.length < maxDescriptionLength) {
+  if (description.length < MAX_DESCRIPTION_LENGTH) {
     return description;
   }
 
-  return `${description.slice(0, maxDescriptionLength - 3)}...`;
+  return `${description.slice(0, MAX_DESCRIPTION_LENGTH - 3)}...`;
 };
 
 const createCommentsTitleText = (comments) => {
@@ -114,16 +117,16 @@ export default class FilmCard extends AbstractComponent {
 
   setWatchlistButtonClickHandler(handler) {
     this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`)
-      .addEventListener(`click`, handler);
+      .addEventListener(`click`, debounce(handler, DEBOUNCE_TIMEOUT));
   }
 
   setWatchedButtonClickHandler(handler) {
     this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`)
-      .addEventListener(`click`, handler);
+      .addEventListener(`click`, debounce(handler, DEBOUNCE_TIMEOUT));
   }
 
   setFavoriteButtonClickHandler(handler) {
     this.getElement().querySelector(`.film-card__controls-item--favorite`)
-      .addEventListener(`click`, handler);
+      .addEventListener(`click`, debounce(handler, DEBOUNCE_TIMEOUT));
   }
 }
