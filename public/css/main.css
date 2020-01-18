@@ -1107,9 +1107,9 @@ button {
   cursor: progress;
 }
 
-/* .film-card__controls-item:disabled {
+.film-card__controls-item:disabled {
   cursor: progress;
-} */
+}
 
 .film-details__user-rating-input:disabled + label {
   cursor: default;
