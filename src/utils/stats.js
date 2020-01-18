@@ -1,34 +1,34 @@
-import {statsPeriods} from '../const';
+import {StatsPeriod} from '../const';
 
 
 const initialDateByPeriod = [
   {
-    period: statsPeriods.ALL_TIME,
+    period: StatsPeriod.ALL_TIME,
     getInitialDate: () => null,
   },
   {
-    period: statsPeriods.TODAY,
+    period: StatsPeriod.TODAY,
     getInitialDate: () => {
       const now = new Date();
       return new Date(now.getFullYear(), now.getMonth(), now.getDate());
     }
   },
   {
-    period: statsPeriods.WEEK,
+    period: StatsPeriod.WEEK,
     getInitialDate: () => {
       const now = new Date();
       return new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
     }
   },
   {
-    period: statsPeriods.MONTH,
+    period: StatsPeriod.MONTH,
     getInitialDate: () => {
       const now = new Date();
       return new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
     }
   },
   {
-    period: statsPeriods.YEAR,
+    period: StatsPeriod.YEAR,
     getInitialDate: () => {
       const now = new Date();
       return new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());

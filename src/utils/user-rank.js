@@ -1,4 +1,4 @@
-const userRanks = [
+const UserRanks = [
   {
     userRank: ``,
     check: (watchedMovies) => watchedMovies.length === 0,
@@ -17,7 +17,7 @@ const userRanks = [
   },
 ];
 
-const getUserRank = (watchedMovies) => userRanks.find(({check}) => check(watchedMovies));
+const getUserRank = (watchedMovies) => UserRanks.find(({check}) => check(watchedMovies));
 
 
 export {getUserRank};

@@ -4,16 +4,12 @@ import 'chart.js/dist/Chart.min.css';
 import AbstractSmartComponent from './abstract-smart-component';
 import {getUserRank} from '../utils/user-rank';
 import {getWatchedMoviesByPeriod, getSortedGenres} from '../utils/stats';
-import {statsPeriods} from '../const';
-import {
-  getHoursAndMinutes,
-  convertTextToKebabCase,
-  convertToTextFromKebabCase
-} from '../utils/common';
+import {StatsPeriod} from '../const';
+import {getHoursAndMinutes, convertTextToKebabCase, convertToTextFromKebabCase} from '../utils/common';
 
 
 const createPeriodsMarkup = (activePeriod) => {
-  return Object.values(statsPeriods)
+  return Object.values(StatsPeriod)
     .map((period) => {
       const periodValue = convertTextToKebabCase(period);
       return `<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${periodValue}" value="${periodValue}" ${period === activePeriod ? `checked` : ``}>

@@ -12,4 +12,8 @@ export default class FilmsListMostCommented extends AbstractComponent {
   getTemplate() {
     return createFilmsListMostCommentedTemplate();
   }
+
+  getContainerElement() {
+    return this.getElement().querySelector(`.films-list__container`);
+  }
 }

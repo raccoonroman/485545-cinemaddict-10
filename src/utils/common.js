@@ -36,12 +36,6 @@ const formatYear = (date) => moment(date).format(`YYYY`);
 const formatDate = (date) => moment(date).format(`DD MMMM YYYY`);
 const formatRelativeTime = (date) => moment(date).fromNow();
 
-
-const getFileName = (title) => title
-  .split(` `)
-  .map((word) => word.toLowerCase())
-  .join(`-`);
-
 const createRatingText = (rating) => rating || `N/A`;
 
 const convertTextToKebabCase = (text) => text.toLowerCase().split(` `).join(`-`);
@@ -62,7 +56,6 @@ export {
   formatYear,
   formatDate,
   formatRelativeTime,
-  getFileName,
   createRatingText,
   convertTextToKebabCase,
   convertToTextFromKebabCase,

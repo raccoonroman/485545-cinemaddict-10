@@ -12,4 +12,8 @@ export default class FilmsListTopRated extends AbstractComponent {
   getTemplate() {
     return createFilmsListTopRatedTemplate();
   }
+
+  getContainerElement() {
+    return this.getElement().querySelector(`.films-list__container`);
+  }
 }

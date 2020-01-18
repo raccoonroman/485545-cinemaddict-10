@@ -11,7 +11,7 @@ import StatsController from './controllers/stats';
 import MoviesModel from './models/movies';
 import PageController from './controllers/page';
 import {RenderPosition, render} from './utils/render';
-import {statsPeriods} from './const';
+import {StatsPeriod} from './const';
 
 
 const STORE_MOVIES_NAME = `cinemaddict-movies-localstorage-v1`;
@@ -43,7 +43,7 @@ const sortComponent = new SortComponent();
 
 const userRankController = new UserRankController(headerElement, moviesModel);
 const pageController = new PageController(filmsComponent, sortComponent, moviesModel, apiWithProvider);
-const statsController = new StatsController(mainElement, moviesModel, statsPeriods.ALL_TIME);
+const statsController = new StatsController(mainElement, moviesModel, StatsPeriod.ALL_TIME);
 const filterController = new FilterController(mainElement, moviesModel, pageController, sortComponent, statsController);
 
 userRankController.render();

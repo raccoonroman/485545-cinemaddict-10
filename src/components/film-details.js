@@ -10,6 +10,8 @@ import {
 
 
 const DEBOUNCE_TIMEOUT = 500;
+const MIN_RATING = 1;
+const MAX_RATING = 9;
 
 const createGenresMarkup = (genres) => genres
   .map((genre) => `<span class="film-details__genre">${genre}</span>`)
@@ -29,11 +31,9 @@ const createControlItemMarkup = (name, labelText, isActive) => {
 };
 
 const createRatingScoreMarkup = (userRating) => {
-  const from = 1;
-  const to = 9;
   const result = [];
 
-  for (let i = from; i <= to; i++) {
+  for (let i = MIN_RATING; i <= MAX_RATING; i++) {
     result.push(`<input
       type="radio"
       name="score"
