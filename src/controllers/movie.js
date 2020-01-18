@@ -107,15 +107,30 @@ export default class MovieController {
     this._movieCardComponent.setFavoriteButtonClickHandler(favoriteItemClickHandler);
 
     this._movieDetailsComponent.setWatchlistItemClickHandler((evt) => {
-      watchlistItemClickHandler(evt).then(() => openMovieDetails(evt));
+      const scrollTop = this._movieDetailsComponent.getElement().scrollTop;
+      watchlistItemClickHandler(evt)
+        .then(() => {
+          openMovieDetails(evt);
+          this._movieDetailsComponent.getElement().scrollTop = scrollTop;
+        });
     });
 
     this._movieDetailsComponent.setWatchedItemClickHandler((evt) => {
-      watchedItemClickHandler(evt).then(() => openMovieDetails(evt));
+      const scrollTop = this._movieDetailsComponent.getElement().scrollTop;
+      watchedItemClickHandler(evt)
+        .then(() => {
+          openMovieDetails(evt);
+          this._movieDetailsComponent.getElement().scrollTop = scrollTop;
+        });
     });
 
     this._movieDetailsComponent.setFavoriteItemClickHandler((evt) => {
-      favoriteItemClickHandler(evt).then(() => openMovieDetails(evt));
+      const scrollTop = this._movieDetailsComponent.getElement().scrollTop;
+      favoriteItemClickHandler(evt)
+        .then(() => {
+          openMovieDetails(evt);
+          this._movieDetailsComponent.getElement().scrollTop = scrollTop;
+        });
     });
 
 

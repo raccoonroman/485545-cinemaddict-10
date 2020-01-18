@@ -1,3 +1,4 @@
+import debounce from 'lodash/debounce';
 import AbstractSmartComponent from './abstract-smart-component';
 import {Emotions} from '../const';
 import {
@@ -7,6 +8,8 @@ import {
   createRatingText,
 } from '../utils/common';
 
+
+const DEBOUNCE_TIMEOUT = 500;
 
 const createGenresMarkup = (genres) => genres
   .map((genre) => `<span class="film-details__genre">${genre}</span>`)
@@ -286,21 +289,21 @@ export default class FilmDetails extends AbstractSmartComponent {
 
   setWatchlistItemClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--watchlist`)
-      .addEventListener(`click`, handler);
+      .addEventListener(`click`, debounce(handler, DEBOUNCE_TIMEOUT));
 
     this._watchlistItemClickHandler = handler;
   }
 
   setWatchedItemClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--watched`)
-      .addEventListener(`click`, handler);
+      .addEventListener(`click`, debounce(handler, DEBOUNCE_TIMEOUT));
 
     this._watchedItemClickHandler = handler;
   }
 
   setFavoriteItemClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--favorite`)
-      .addEventListener(`click`, handler);
+      .addEventListener(`click`, debounce(handler, DEBOUNCE_TIMEOUT));
 
     this._favoriteItemClickHandler = handler;
   }
