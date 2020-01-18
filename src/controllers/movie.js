@@ -9,6 +9,11 @@ import {RenderPosition, render, replace, remove} from './../utils/render';
 const SHAKE_ANIMATION_TIMEOUT = 600;
 const ERROR_COLOR = `red`;
 
+const ProcessText = {
+  UNDOING: `Undoing...`,
+  DELETING: `Deleting...`,
+};
+
 export const Mode = {
   DEFAULT: `default`,
   DETAILS: `details`,
@@ -71,7 +76,6 @@ export default class MovieController {
 
     const watchlistItemClickHandler = (evt) => {
       evt.preventDefault();
-      evt.target.disabled = true;
       const newMovie = MovieModel.clone(movie);
       newMovie.isInWatchlist = !newMovie.isInWatchlist;
 
@@ -80,7 +84,6 @@ export default class MovieController {
 
     const watchedItemClickHandler = (evt) => {
       evt.preventDefault();
-      evt.target.disabled = true;
       const newMovie = MovieModel.clone(movie);
       newMovie.isWatched = !newMovie.isWatched;
       if (newMovie.isWatched) {
@@ -95,7 +98,6 @@ export default class MovieController {
 
     const favoriteItemClickHandler = (evt) => {
       evt.preventDefault();
-      evt.target.disabled = true;
       const newMovie = MovieModel.clone(movie);
       newMovie.isFavorite = !newMovie.isFavorite;
 
@@ -136,6 +138,8 @@ export default class MovieController {
 
     this._movieDetailsComponent.setUserRatingClickHandler((evt) => {
       const userRatingInputs = this._movieDetailsComponent.getUserRatingInputs();
+      const scrollTop = this._movieDetailsComponent.getElement().scrollTop;
+
       userRatingInputs.forEach((input) => {
         input.disabled = true;
       });
@@ -145,32 +149,46 @@ export default class MovieController {
       newMovie.userRating = userRating;
 
       this._onDataChange(this, movie, newMovie)
-        .then(() => openMovieDetails(evt))
+        .then(() => {
+          openMovieDetails(evt);
+          this._movieDetailsComponent.getElement().scrollTop = scrollTop;
+        })
         .catch(() => this.shakeRatingItem(evt.target));
     });
 
     this._movieDetailsComponent.setUndoUserRatingClickHandler((evt) => {
-      evt.target.textContent = `Undoing...`;
+      const scrollTop = this._movieDetailsComponent.getElement().scrollTop;
+      evt.target.textContent = ProcessText.UNDOING;
       const newMovie = MovieModel.clone(movie);
       newMovie.userRating = 0;
 
       this._onDataChange(this, movie, newMovie)
-        .then(() => openMovieDetails(evt));
+        .then(() => {
+          openMovieDetails(evt);
+          this._movieDetailsComponent.getElement().scrollTop = scrollTop;
+        });
     });
 
     this._movieDetailsComponent.setDeleteCommentClickHandler((evt) => {
       evt.preventDefault();
-      evt.target.disabled = true;
-      evt.target.textContent = `Deleting...`;
-      const commentElement = this._movieDetailsComponent.getClosestComment(evt.target);
+      const button = evt.target;
+      const scrollTop = this._movieDetailsComponent.getElement().scrollTop;
+      const commentElement = this._movieDetailsComponent.getClosestComment(button);
       const commentId = commentElement.dataset.commentId;
+
+      button.disabled = true;
+      button.textContent = ProcessText.DELETING;
+
       this._api.deleteComment(commentId)
         .then(() => MovieModel.clone(movie))
         .then((newMovie) => {
           newMovie.commentsId = newMovie.commentsId.filter((id) => id !== commentId);
           return this._onDataChange(this, movie, newMovie);
         })
-        .then(() => openMovieDetails(evt));
+        .then(() => {
+          openMovieDetails(evt);
+          this._movieDetailsComponent.getElement().scrollTop = scrollTop;
+        });
     });
 
     this._movieDetailsComponent.setSubmitCommentHandler((evt) => {
@@ -179,6 +197,7 @@ export default class MovieController {
         const commentText = this._movieDetailsComponent.commentText;
 
         if (emotion && commentText) {
+          const scrollTop = this._movieDetailsComponent.getElement().scrollTop;
           this._movieDetailsComponent.getCommentForm().disabled = true;
 
           const newComment = new CommentModel({
@@ -190,7 +209,10 @@ export default class MovieController {
           this._api.createComment(newComment, movie.id)
             .then(() => MovieModel.clone(movie))
             .then((newMovie) => this._onDataChange(this, movie, newMovie))
-            .then(() => openMovieDetails(evt))
+            .then(() => {
+              openMovieDetails(evt);
+              this._movieDetailsComponent.getElement().scrollTop = scrollTop;
+            })
             .catch(() => this.shakeCommentForm());
         }
       }

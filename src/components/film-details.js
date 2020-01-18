@@ -361,9 +361,11 @@ export default class FilmDetails extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
     this.getElement().querySelector(`.film-details__emoji-list`).addEventListener(`change`, (evt) => {
+      const scrollTop = this.getElement().scrollTop;
       const emotion = evt.target.value;
       this.emotion = emotion;
       this.rerender();
+      this.getElement().scrollTop = scrollTop;
     });
 
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, (evt) => {
