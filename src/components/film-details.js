@@ -1,6 +1,6 @@
 import debounce from 'lodash/debounce';
 import AbstractSmartComponent from './abstract-smart-component';
-import {Emotions} from '../const';
+import {emotions} from '../const';
 import {
   formatDuration,
   formatDate,
@@ -10,8 +10,11 @@ import {
 
 
 const DEBOUNCE_TIMEOUT = 500;
-const MIN_RATING = 1;
-const MAX_RATING = 9;
+
+const Rating = {
+  MIN: 1,
+  MAX: 9,
+};
 
 const createGenresMarkup = (genres) => genres
   .map((genre) => `<span class="film-details__genre">${genre}</span>`)
@@ -33,7 +36,7 @@ const createControlItemMarkup = (name, labelText, isActive) => {
 const createRatingScoreMarkup = (userRating) => {
   const result = [];
 
-  for (let i = MIN_RATING; i <= MAX_RATING; i++) {
+  for (let i = Rating.MIN; i <= Rating.MAX; i++) {
     result.push(`<input
       type="radio"
       name="score"
@@ -70,7 +73,7 @@ const createCommentsListMarkup = (comments) => comments
   })
   .join(`\n`);
 
-const createEmojiMarkup = (activeEmotion) => Emotions
+const createEmojiMarkup = (activeEmotion) => emotions
   .map((emotion) => {
     return `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}" ${emotion === activeEmotion ? `checked` : ``}>
     <label class="film-details__emoji-label" for="emoji-${emotion}">

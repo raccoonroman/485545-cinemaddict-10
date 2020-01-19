@@ -2,7 +2,7 @@ import nanoid from 'nanoid';
 import Movie from '../models/movie';
 import Comment from '../models/comment';
 import {getRandomArrayItem} from '../utils/common';
-import {Users} from '../const';
+import {users} from '../const';
 
 
 const getSyncedMovies = (items) => items
@@ -81,7 +81,7 @@ export default class Provider {
     // Нюанс в том, что при создании мы не указываем id комментария, нам его в ответе присылает сервер.
     // Но на случай временного хранения мы должны позаботиться и о временном id
     const fakeNewCommentId = nanoid();
-    const fakeNewCommentAuthor = getRandomArrayItem(Users);
+    const fakeNewCommentAuthor = getRandomArrayItem(users);
 
     const fakeNewComment = Comment.parseComment(comment.toRAW());
 

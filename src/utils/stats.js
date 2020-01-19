@@ -1,7 +1,7 @@
 import {StatsPeriod} from '../const';
 
 
-const initialDateByPeriod = [
+const initialDateByPeriods = [
   {
     period: StatsPeriod.ALL_TIME,
     getInitialDate: () => null,
@@ -37,7 +37,7 @@ const initialDateByPeriod = [
 ];
 
 const getWatchedMoviesByPeriod = (movies, activePeriod) => {
-  const {getInitialDate} = initialDateByPeriod.find(({period}) => period === activePeriod);
+  const {getInitialDate} = initialDateByPeriods.find(({period}) => period === activePeriod);
   return movies.filter(({watchingDate}) => watchingDate >= getInitialDate());
 };
 

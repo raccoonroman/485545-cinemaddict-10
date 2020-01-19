@@ -16,14 +16,14 @@ const StatsPeriod = {
   YEAR: `Year`,
 };
 
-const Emotions = [
+const emotions = [
   `smile`,
   `sleeping`,
   `puke`,
   `angry`,
 ];
 
-const Users = [
+const users = [
   `Sasha`,
   `Paul van Dyk`,
   `Armin Van Buuren`,
@@ -39,4 +39,4 @@ const Users = [
 ];
 
 
-export {TEXT, FilterType, StatsPeriod, Emotions, Users};
+export {TEXT, FilterType, StatsPeriod, emotions, users};
