@@ -9,7 +9,12 @@ import {
 } from '../utils/common';
 
 
-const DEBOUNCE_TIMEOUT = 500;
+const ERROR_COLOR = `red`;
+
+const Timeout = {
+  SHAKE_ANIMATION: 600,
+  DEBOUNCE: 500,
+};
 
 const Rating = {
   MIN: 1,
@@ -292,21 +297,21 @@ export default class FilmDetails extends AbstractSmartComponent {
 
   setWatchlistItemClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--watchlist`)
-      .addEventListener(`click`, debounce(handler, DEBOUNCE_TIMEOUT));
+      .addEventListener(`click`, debounce(handler, Timeout.DEBOUNCE));
 
     this._watchlistItemClickHandler = handler;
   }
 
   setWatchedItemClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--watched`)
-      .addEventListener(`click`, debounce(handler, DEBOUNCE_TIMEOUT));
+      .addEventListener(`click`, debounce(handler, Timeout.DEBOUNCE));
 
     this._watchedItemClickHandler = handler;
   }
 
   setFavoriteItemClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--favorite`)
-      .addEventListener(`click`, debounce(handler, DEBOUNCE_TIMEOUT));
+      .addEventListener(`click`, debounce(handler, Timeout.DEBOUNCE));
 
     this._favoriteItemClickHandler = handler;
   }
@@ -374,5 +379,46 @@ export default class FilmDetails extends AbstractSmartComponent {
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, (evt) => {
       this.commentText = evt.target.value;
     });
+  }
+
+  getScrollTop() {
+    return this.getElement().scrollTop;
+  }
+
+  setScrollTop(scrollTop) {
+    this.getElement().scrollTop = scrollTop;
+  }
+
+  shakeRatingItem(element) {
+    const userRatingInputs = this.getUserRatingInputs();
+    const ratingLabel = element.nextElementSibling;
+    const currentItemColor = ratingLabel.style.backgroundColor;
+
+    ratingLabel.style.animation = `shake ${Timeout.SHAKE_ANIMATION / 1000}s`;
+    ratingLabel.style.backgroundColor = ERROR_COLOR;
+
+    setTimeout(() => {
+      ratingLabel.style.animation = ``;
+      ratingLabel.style.backgroundColor = currentItemColor;
+      element.checked = false;
+      userRatingInputs.forEach((input) => {
+        input.disabled = false;
+      });
+    }, Timeout.SHAKE_ANIMATION);
+  }
+
+  shakeCommentForm() {
+    const commentForm = this.getCommentForm();
+    const currentBorderColor = commentForm.style.borderColor;
+
+    commentForm.style.animation = `shake ${Timeout.SHAKE_ANIMATION / 1000}s`;
+    commentForm.style.borderColor = ERROR_COLOR;
+
+    setTimeout(() => {
+      commentForm.style.animation = ``;
+      commentForm.style.borderColor = currentBorderColor;
+      commentForm.disabled = false;
+      commentForm.focus();
+    }, Timeout.SHAKE_ANIMATION);
   }
 }

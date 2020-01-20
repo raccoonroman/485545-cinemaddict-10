@@ -6,9 +6,6 @@ import CommentModel from '../models/comment';
 import {RenderPosition, render, replace, remove} from './../utils/render';
 
 
-const SHAKE_ANIMATION_TIMEOUT = 600;
-const ERROR_COLOR = `red`;
-
 const ProcessText = {
   UNDOING: `Undoing...`,
   DELETING: `Deleting...`,
@@ -31,6 +28,10 @@ export default class MovieController {
 
     this._movieCardComponent = null;
     this._movieDetailsComponent = null;
+
+    this._onEscKeyDown = this._onEscKeyDown.bind(this);
+    this._removeDetails = this._removeDetails.bind(this);
+    this._renderDetails = this._renderDetails.bind(this);
   }
 
   render(movie) {
@@ -40,39 +41,9 @@ export default class MovieController {
     this._movieCardComponent = new FilmCardComponent(movie);
     this._movieDetailsComponent = new FilmDetailsComponent(movie);
 
-    const onEscKeyDown = (evt) => {
-      const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-
-      if (isEscKey) {
-        closeMovieDetails(evt);
-      }
-    };
-
-    const openMovieDetails = (evt) => {
-      evt.preventDefault();
-      this._onViewChange();
-
-      render(this._detailsContainer, this._movieDetailsComponent, RenderPosition.BEFOREEND);
-
-      this._mode = Mode.DETAILS;
-
-      document.addEventListener(`keydown`, onEscKeyDown);
-    };
-
-    const closeMovieDetails = (evt) => {
-      evt.preventDefault();
-
-      remove(this._movieDetailsComponent);
-
-      this._movieDetailsComponent.recoveryListeners();
-      this._mode = Mode.DEFAULT;
-
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    };
-
-    this._movieCardComponent.setFilmPosterClickHandler(openMovieDetails);
-    this._movieCardComponent.setFilmTitleClickHandler(openMovieDetails);
-    this._movieCardComponent.setFilmCommentsClickHandler(openMovieDetails);
+    this._movieCardComponent.setFilmPosterClickHandler(this._renderDetails);
+    this._movieCardComponent.setFilmTitleClickHandler(this._renderDetails);
+    this._movieCardComponent.setFilmCommentsClickHandler(this._renderDetails);
 
     const watchlistItemClickHandler = (evt) => {
       evt.preventDefault();
@@ -109,36 +80,36 @@ export default class MovieController {
     this._movieCardComponent.setFavoriteButtonClickHandler(favoriteItemClickHandler);
 
     this._movieDetailsComponent.setWatchlistItemClickHandler((evt) => {
-      const scrollTop = this._movieDetailsComponent.getElement().scrollTop;
+      const scrollTop = this._movieDetailsComponent.getScrollTop();
       watchlistItemClickHandler(evt)
         .then(() => {
-          openMovieDetails(evt);
-          this._movieDetailsComponent.getElement().scrollTop = scrollTop;
+          this._renderDetails();
+          this._movieDetailsComponent.setScrollTop(scrollTop);
         });
     });
 
     this._movieDetailsComponent.setWatchedItemClickHandler((evt) => {
-      const scrollTop = this._movieDetailsComponent.getElement().scrollTop;
+      const scrollTop = this._movieDetailsComponent.getScrollTop();
       watchedItemClickHandler(evt)
         .then(() => {
-          openMovieDetails(evt);
-          this._movieDetailsComponent.getElement().scrollTop = scrollTop;
+          this._renderDetails();
+          this._movieDetailsComponent.setScrollTop(scrollTop);
         });
     });
 
     this._movieDetailsComponent.setFavoriteItemClickHandler((evt) => {
-      const scrollTop = this._movieDetailsComponent.getElement().scrollTop;
+      const scrollTop = this._movieDetailsComponent.getScrollTop();
       favoriteItemClickHandler(evt)
         .then(() => {
-          openMovieDetails(evt);
-          this._movieDetailsComponent.getElement().scrollTop = scrollTop;
+          this._renderDetails();
+          this._movieDetailsComponent.setScrollTop(scrollTop);
         });
     });
 
 
     this._movieDetailsComponent.setUserRatingClickHandler((evt) => {
       const userRatingInputs = this._movieDetailsComponent.getUserRatingInputs();
-      const scrollTop = this._movieDetailsComponent.getElement().scrollTop;
+      const scrollTop = this._movieDetailsComponent.getScrollTop();
 
       userRatingInputs.forEach((input) => {
         input.disabled = true;
@@ -146,33 +117,34 @@ export default class MovieController {
 
       const userRating = +evt.target.value;
       const newMovie = MovieModel.clone(movie);
+
       newMovie.userRating = userRating;
 
       this._onDataChange(this, movie, newMovie)
         .then(() => {
-          openMovieDetails(evt);
-          this._movieDetailsComponent.getElement().scrollTop = scrollTop;
+          this._renderDetails();
+          this._movieDetailsComponent.setScrollTop(scrollTop);
         })
-        .catch(() => this.shakeRatingItem(evt.target));
+        .catch(() => this._movieDetailsComponent.shakeRatingItem(evt.target));
     });
 
     this._movieDetailsComponent.setUndoUserRatingClickHandler((evt) => {
-      const scrollTop = this._movieDetailsComponent.getElement().scrollTop;
+      const scrollTop = this._movieDetailsComponent.getScrollTop();
       evt.target.textContent = ProcessText.UNDOING;
       const newMovie = MovieModel.clone(movie);
       newMovie.userRating = 0;
 
       this._onDataChange(this, movie, newMovie)
         .then(() => {
-          openMovieDetails(evt);
-          this._movieDetailsComponent.getElement().scrollTop = scrollTop;
+          this._renderDetails();
+          this._movieDetailsComponent.setScrollTop(scrollTop);
         });
     });
 
     this._movieDetailsComponent.setDeleteCommentClickHandler((evt) => {
       evt.preventDefault();
       const button = evt.target;
-      const scrollTop = this._movieDetailsComponent.getElement().scrollTop;
+      const scrollTop = this._movieDetailsComponent.getScrollTop();
       const commentElement = this._movieDetailsComponent.getClosestComment(button);
       const commentId = commentElement.dataset.commentId;
 
@@ -186,8 +158,8 @@ export default class MovieController {
           return this._onDataChange(this, movie, newMovie);
         })
         .then(() => {
-          openMovieDetails(evt);
-          this._movieDetailsComponent.getElement().scrollTop = scrollTop;
+          this._renderDetails();
+          this._movieDetailsComponent.setScrollTop(scrollTop);
         });
     });
 
@@ -197,7 +169,7 @@ export default class MovieController {
         const commentText = this._movieDetailsComponent.commentText;
 
         if (emotion && commentText) {
-          const scrollTop = this._movieDetailsComponent.getElement().scrollTop;
+          const scrollTop = this._movieDetailsComponent.getScrollTop();
           this._movieDetailsComponent.getCommentForm().disabled = true;
 
           const newComment = new CommentModel({
@@ -210,15 +182,15 @@ export default class MovieController {
             .then(() => MovieModel.clone(movie))
             .then((newMovie) => this._onDataChange(this, movie, newMovie))
             .then(() => {
-              openMovieDetails(evt);
-              this._movieDetailsComponent.getElement().scrollTop = scrollTop;
+              this._renderDetails();
+              this._movieDetailsComponent.setScrollTop(scrollTop);
             })
-            .catch(() => this.shakeCommentForm());
+            .catch(() => this._movieDetailsComponent.shakeCommentForm());
         }
       }
     });
 
-    this._movieDetailsComponent.setCloseButtonHandler(closeMovieDetails);
+    this._movieDetailsComponent.setCloseButtonHandler(this._removeDetails);
 
     if (oldMovieCardComponent && oldMovieDetailsComponent) {
       replace(this._movieCardComponent, oldMovieCardComponent);
@@ -235,45 +207,41 @@ export default class MovieController {
     }
   }
 
-  shakeCommentForm() {
-    const commentForm = this._movieDetailsComponent.getCommentForm();
-    const currentBorderColor = commentForm.style.borderColor;
+  _renderDetails() {
+    this._onViewChange();
 
-    commentForm.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
-    commentForm.style.borderColor = ERROR_COLOR;
+    render(this._detailsContainer, this._movieDetailsComponent, RenderPosition.BEFOREEND);
 
-    setTimeout(() => {
-      commentForm.style.animation = ``;
-      commentForm.style.borderColor = currentBorderColor;
-      commentForm.disabled = false;
-      commentForm.focus();
-    }, SHAKE_ANIMATION_TIMEOUT);
+    this._mode = Mode.DETAILS;
+
+    document.addEventListener(`keydown`, this._onEscKeyDown);
   }
 
-  shakeRatingItem(element) {
-    const ratingLabel = element.nextElementSibling;
-    const currentItemColor = ratingLabel.style.backgroundColor;
-    const userRatingInputs = this._movieDetailsComponent.getUserRatingInputs();
+  _removeDetails() {
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
 
-    ratingLabel.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
-    ratingLabel.style.backgroundColor = ERROR_COLOR;
+    remove(this._movieDetailsComponent);
 
-    setTimeout(() => {
-      ratingLabel.style.animation = ``;
-      ratingLabel.style.backgroundColor = currentItemColor;
-      element.checked = false;
-      userRatingInputs.forEach((input) => {
-        input.disabled = false;
-      });
-    }, SHAKE_ANIMATION_TIMEOUT);
+    this._movieDetailsComponent.recoveryListeners();
+    this._mode = Mode.DEFAULT;
   }
 
   _removeDetailsWithoutSaving() {
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
+
     this._movieDetailsComponent.reset();
 
     remove(this._movieDetailsComponent);
 
     this._movieDetailsComponent.recoveryListeners();
     this._mode = Mode.DEFAULT;
+  }
+
+  _onEscKeyDown(evt) {
+    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+
+    if (isEscKey) {
+      this._removeDetails();
+    }
   }
 }
