@@ -108,12 +108,8 @@ export default class MovieController {
 
 
     this._movieDetailsComponent.setUserRatingClickHandler((evt) => {
-      const userRatingInputs = this._movieDetailsComponent.getUserRatingInputs();
       const scrollTop = this._movieDetailsComponent.getScrollTop();
-
-      userRatingInputs.forEach((input) => {
-        input.disabled = true;
-      });
+      this._movieDetailsComponent.disableUserRatingInputs();
 
       const userRating = +evt.target.value;
       const newMovie = MovieModel.clone(movie);
@@ -170,7 +166,7 @@ export default class MovieController {
 
         if (emotion && commentText) {
           const scrollTop = this._movieDetailsComponent.getScrollTop();
-          this._movieDetailsComponent.getCommentForm().disabled = true;
+          this._movieDetailsComponent.disableCommentForm();
 
           const newComment = new CommentModel({
             'comment': he.encode(commentText),

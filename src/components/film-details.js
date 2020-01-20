@@ -363,8 +363,22 @@ export default class FilmDetails extends AbstractSmartComponent {
     return this.getElement().querySelector(`.film-details__comment-input`);
   }
 
-  getUserRatingInputs() {
-    return this.getElement().querySelectorAll(`.film-details__user-rating-input`);
+  disableCommentForm() {
+    const textarea = this.getCommentForm();
+    const EmojiInputs = this.getElement().querySelectorAll(`.film-details__emoji-item`);
+
+    textarea.disabled = true;
+    EmojiInputs.forEach((input) => {
+      input.disabled = true;
+    });
+  }
+
+  disableUserRatingInputs() {
+    const inputs = this.getElement().querySelectorAll(`.film-details__user-rating-input`);
+
+    inputs.forEach((input) => {
+      input.disabled = true;
+    });
   }
 
   _subscribeOnEvents() {
@@ -390,7 +404,6 @@ export default class FilmDetails extends AbstractSmartComponent {
   }
 
   shakeRatingItem(element) {
-    const userRatingInputs = this.getUserRatingInputs();
     const ratingLabel = element.nextElementSibling;
     const currentItemColor = ratingLabel.style.backgroundColor;
 
@@ -401,9 +414,7 @@ export default class FilmDetails extends AbstractSmartComponent {
       ratingLabel.style.animation = ``;
       ratingLabel.style.backgroundColor = currentItemColor;
       element.checked = false;
-      userRatingInputs.forEach((input) => {
-        input.disabled = false;
-      });
+      this.disableUserRatingInputs();
     }, Timeout.SHAKE_ANIMATION);
   }
 
