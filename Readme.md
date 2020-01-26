@@ -195,29 +195,36 @@
 
 LocalComment:
 
+```javascript
 {
   "comment": "a film that changed my life, a true masterpiece, post-credit scene was just amazing omg.",
   "date": "2019-05-11T16:12:32.554Z",
   "emotion": "neutral-face"
 }
+```
 
 Comment:
 
-`{
+```javascript
+{
   "id": "42",
   "author": "Ilya O'Reilly",
   "comment": "a film that changed my life, a true masterpiece, post-credit scene was just amazing omg.",
   "date": "2019-05-11T16:12:32.554Z",
   "emotion": "neutral-face"
-}`
+}
+```
 
 Comment.emotion — одно из следующих значений:
 
-`["smile", "sleeping", "puke", "angry"]`
+```javascript
+["smile", "sleeping", "puke", "angry"]
+```
 
 Movie:
 
-`{
+```javascript
+{
   "id": "0",
   "comments": [
     $Comment.id$, $Comment.id$
@@ -252,18 +259,23 @@ Movie:
     "watching_date": "2019-05-11T16:12:32.554Z",
     "favorite": false
   }
-}`
+}
+```
 
 AuthorizationError:
 
-`{
+```javascript
+{
   "error": 401,
   "message": "Header Authorization is not correct"
-}`
+}
+```
 
 NotFoundError:
 
-`{
+```javascript
+{
   "error": 404,
   "message": "Not found"
-}`
+}
+```
