@@ -1,4 +1,3 @@
-import nanoid from 'nanoid';
 import Api from './api/index';
 import Store from './api/store';
 import Provider from './api/provider';
@@ -17,7 +16,7 @@ import {StatsPeriod} from './const';
 
 const STORE_MOVIES_NAME = `cinemaddict-movies-localstorage-v1`;
 const STORE_COMMENTS_NAME = `cinemaddict-comments-localstorage-v1`;
-const AUTHORIZATION = `Basic ${nanoid()}`;
+const AUTHORIZATION = `Basic XzPqMSS5af0xrxDj`;
 const END_POINT = `https://htmlacademy-es-10.appspot.com/cinemaddict`;
 
 window.addEventListener(`load`, () => {
